@@ -1,0 +1,7 @@
+{
+  "BIPMedHaplotypeCalling.ConvertPairedFastQsToUnmappedBamWf.gatk_path_override": "/gatk/gatk",
+  "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gotc_path_override": "/usr/gitc/",
+  "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gatk_path_override": "/gatk/gatk",
+  "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.gatk_path_override": "/gatk/gatk",
+  "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.samtools_path_override": "samtools"
+}
