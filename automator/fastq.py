@@ -76,8 +76,8 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
         sample_names = [extract_sample_name(f) for f in forward_files]
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
-        with open(destination, 'w') as file:
-            for sample, forward, reverse, platform_unit in sample_names, forward_files, reverse_files, platform_units:
-                file.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(sample, forward, reverse, library_names[idx],
-                                                                   platform_unit, run_dates[idx], platform_names[idx],
-                                                                   sequencing_centers[idx]))
+        for sample, forward, reverse, platform_unit in sample_names, forward_files, reverse_files, platform_units:
+            destination.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(sample, forward, reverse, library_names[idx],
+                                                                      platform_unit, run_dates[idx],
+                                                                      platform_names[idx],
+                                                                      sequencing_centers[idx]))
