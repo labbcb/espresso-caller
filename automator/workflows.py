@@ -1,19 +1,22 @@
-from automator.json import load_json_file
+from automator import load_json_file
 from automator.references import collect_reference_files
 from pkg_resources import resource_filename
+from os.path import abspath
 
-WORKFLOW_FILES = dict(hc='bipmed-haplotype-calling.wdl')
-PARAMS_FILES = dict(hc='hc.params.json')
-RUNTIME_FILES = dict(hc='hc.runtime.json')
+WORKFLOW_FILES = dict(hc='bipmed-haplotype-calling.wdl', joint='joint-discovery-gatk4-local.wdl')
 PARAM_REF_NAME = 'BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.ref_name'
 PARAM_INPUT_FILE = 'BIPMedHaplotypeCalling.inputFile'
-PARAMS_GATK_PATH = [
+PARAMS_GATK_PATH = dict(hc=[
     "BIPMedHaplotypeCalling.ConvertPairedFastQsToUnmappedBamWf.gatk_path_override",
     "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gatk_path_override",
     "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.gatk_path_override"
-]
+], joint='JointGenotyping.gatk_path_override')
 PARAM_GOTC_PATH = "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gotc_path_override"
 PARAM_SAMTOOLS_PATH = "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.samtools_path_override"
+PARAM_INPUT_GVCF = 'JointGenotyping.sample_names'
+PARAM_INPUT_IDX = 'JointGenotyping.input_gvcfs_indices'
+PARAM_CALLSET = 'JointGenotyping.callset_name'
+
 
 def get_workflow_file(workflow):
     """
@@ -32,7 +35,7 @@ def load_runtime_file(workflow):
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
 
-    params_file = resource_filename(__name__, PARAMS_FILES.get(workflow))
+    params_file = resource_filename(__name__, '{}.runtime.json'.format(workflow))
     return load_json_file(params_file)
 
 
@@ -40,12 +43,12 @@ def load_params_file(workflow):
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
 
-    params_file = resource_filename(__name__, PARAMS_FILES.get(workflow))
+    params_file = resource_filename(__name__, '{}.params.json'.format(workflow))
     return load_json_file(params_file)
 
 
-def haplotype_caller(batch_tsv_file, reference, version, gatk_path_override=None, gotc_path_override=None,
-                     samtools_path_override=None):
+def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_override=None, gotc_path_override=None,
+                            samtools_path_override=None):
     """
     Create inputs for 'bipmed-haplotype-calling' workflow
     :param batch_tsv_file:
@@ -65,12 +68,37 @@ def haplotype_caller(batch_tsv_file, reference, version, gatk_path_override=None
 
     runtime = load_runtime_file('hc')
     if gatk_path_override:
-        for param in PARAMS_GATK_PATH:
-            runtime[param] = gatk_path_override
+        for param in PARAMS_GATK_PATH.get('hc'):
+            runtime[param] = abspath(gatk_path_override)
     if gotc_path_override:
-        runtime[PARAM_GOTC_PATH] = gotc_path_override
+        runtime[PARAM_GOTC_PATH] = abspath(gotc_path_override)
     if samtools_path_override:
-        runtime[PARAM_SAMTOOLS_PATH] = samtools_path_override
+        runtime[PARAM_SAMTOOLS_PATH] = abspath(samtools_path_override)
 
+    return {**params, **references, **runtime}
+
+
+def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override=None):
+    """
+    Create inputs for 'joint-discovery-gatk4-local' workflow
+    :param callset_name:
+    :param vcf_files:
+    :param vcf_index_files:
+    :param reference:
+    :param version:
+    :param gatk_path_override:
+    :return:
+    """
+
+    references = collect_reference_files(reference, 'joint', version)
+
+    params = load_params_file('joint')
+    params[PARAM_INPUT_GVCF] = vcf_files
+    params[PARAM_INPUT_IDX] = vcf_index_files
+    params[PARAM_CALLSET] = callset_name
+
+    runtime = load_runtime_file('joint')
+    if gatk_path_override:
+        runtime[PARAMS_GATK_PATH.get('joint')] = abspath(gatk_path_override)
 
     return {**params, **references, **runtime}

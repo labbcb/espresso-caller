@@ -1,0 +1,10 @@
+include automator/bipmed-haplotype-calling.wdl
+include automator/hc.b37.resources.json
+include automator/hc.hg38.resources.json
+include automator/hc.params.json
+include automator/hc.runtime.json
+include automator/joint.b37.resources.json
+include automator/joint.hg38.references.json
+include automator/joint.params.json
+include automator/joint.runtime.json
+include automator/joint-discovery-gatk4-local.wdl

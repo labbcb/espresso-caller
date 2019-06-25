@@ -29,13 +29,6 @@ class Reference:
         self.path = path
 
 
-REFERENCE_FILES_JSON = dict(
-    hc=dict(
-        hg38='hc.hg38.references.json'
-    )
-)
-
-
 def load_references(workflow, version):
     """
     Loads reference-related inputs from internal JSON
@@ -43,7 +36,7 @@ def load_references(workflow, version):
     :param version: Version of reference files
     :return: list of Reference
     """
-    json_file = resource_filename(__name__, REFERENCE_FILES_JSON.get(workflow).get(version))
+    json_file = resource_filename(__name__, '{}.{}.resources.json'.format(workflow, version))
     references = load_json_file(json_file)
     return [Reference(param, filename) for param, filename in references.items()]
 

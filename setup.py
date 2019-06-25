@@ -10,6 +10,7 @@ setup(
     author_email='well309@gmail.com',
     description='Automates genomic data processing',
     requires=['click'],
+    include_package_data=True,
     entry_points='''
         [console_scripts]
         automator=automator.scripts.automator:cli

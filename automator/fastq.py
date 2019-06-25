@@ -1,35 +1,24 @@
-from os import scandir
-from os.path import basename
-from re import compile, search, IGNORECASE
 from operator import itemgetter
+from os.path import basename
+from re import search, IGNORECASE
+
+from automator import search_regex
 
 
-def search_regex(directory, regex):
-    """
-    Search files by regex in directory
-    :param directory: list of file path
-    :param regex: regex to search
-    :return: list of files that match regex
-    """
-    files = scandir(directory)
-    m = compile(regex)
-    return [file.path for file in files if m.search(file.name)]
-
-
-def glob_fastq_files(fastq_dir):
+def collect_fastq_files(directory):
     """
     Search for paired-end FASTQ files and check parity
-    :param fastq_dir: Directory containing paired-end FASTQ files
+    :param directory: Directory containing paired-end FASTQ files
     :return: two lists with paths to FASTQ files (forward, reverse)
     """
-    forward_files = search_regex(fastq_dir, 'R?1.fastq(\\.gz)?')
-    reverse_files = search_regex(fastq_dir, 'R?2.fastq(\\.gz)?')
+    forward_files = search_regex(directory, '_R?1\\.fastq(\\.gz)?')
+    reverse_files = search_regex(directory, '_R?2\\.fastq(\\.gz)?')
 
     forward_len = len(forward_files)
     reverse_len = len(reverse_files)
 
     if forward_len == 0 or reverse_len == 0:
-        raise Exception('FASTQ files not found in {}'.format(fastq_dir))
+        raise Exception('FASTQ files not found in {}'.format(directory))
 
     if forward_len != reverse_len:
         raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(forward_len, reverse_len))
@@ -84,7 +73,7 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
     """
 
     for directory, library, run_date, platform, center in directories, library_names, run_dates, platform_names, sequencing_centers:
-        forward_files, reverse_files = glob_fastq_files(directory)
+        forward_files, reverse_files = collect_fastq_files(directory)
         sample_names = [extract_sample_name(f) for f in forward_files]
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
