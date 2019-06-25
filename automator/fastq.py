@@ -1,3 +1,4 @@
+import csv
 import gzip
 from os.path import basename
 from re import search, IGNORECASE
@@ -71,17 +72,12 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
     :param destination: file to write data as TSV
     """
 
+    writer = csv.writer(destination, delimiter='\t')
     for i in range(len(directories)):
         forward_files, reverse_files = collect_fastq_files(directories[i])
         sample_names = [extract_sample_name(f) for f in forward_files]
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
         for j in range(len(sample_names)):
-            destination.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(sample_names[j],
-                                                                        forward_files[j],
-                                                                        reverse_files[j],
-                                                                        library_names[i],
-                                                                        platform_units[j],
-                                                                        run_dates[i],
-                                                                        platform_names[i],
-                                                                        sequencing_centers[i]))
+            writer.writerow([sample_names[j], forward_files[j], reverse_files[j], library_names[i],
+                             platform_units[j], run_dates[i], platform_names[i], sequencing_centers[i]])
