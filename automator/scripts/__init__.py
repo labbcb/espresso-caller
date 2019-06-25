@@ -21,19 +21,28 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600
     :param destination: directory to write all files
     :param sleep_time: time in seconds to sleep between workflow status check
     """
-    inputs_file = join(destination, 'hc.{}.inputs.json'.format(version))
-    with open(inputs_file, 'w') as file:
-        dump(inputs, file, indent=4, sort_keys=True)
+
+    click.echo('Starting {} workflow with reference genome version {}'.format(workflow, version), err=True)
 
     pkg_workflow_file = get_workflow_file(workflow)
     workflow_file = join(destination, basename(pkg_workflow_file))
     copyfile(pkg_workflow_file, workflow_file)
 
+    click.echo('Workflow file: ' + workflow_file, err=True)
+
+    inputs_file = join(destination, 'hc.{}.inputs.json'.format(version))
+    with open(inputs_file, 'w') as file:
+        dump(inputs, file, indent=4, sort_keys=True)
+
+    click.echo('Inputs JSON file: ' + workflow_file, err=True)
+
     if not host:
         host = 'http://localhost:8000'
     client = CromwellClient(host)
     workflow_id = client.submit(workflow_file, inputs_file)
-    click.echo('Cromwell workflow id: ' + workflow_id, err=True)
+
+    click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
+    click.echo('Workflow id: ' + workflow_id, err=True)
 
     try:
         while True:
@@ -62,7 +71,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600
         for file in files:
             if exists(file):
                 destination_file = join(destination, basename(file))
-                click.echo('Collecting file ', file)
+                click.echo('Collecting file ' + file, err=True)
                 copyfile(file, destination_file)
             else:
                 click.echo('File not found: ' + file, err=True)
