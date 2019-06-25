@@ -21,6 +21,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600
     :param version: reference genome version
     :param inputs: dict containing inputs data
     :param destination: directory to write all files
+    :param sleep_time: time in seconds to sleep between workflow status check
     """
     inputs_file = join(destination, 'hc.{}.inputs.json'.format(version))
     with open(inputs_file, 'w') as file:

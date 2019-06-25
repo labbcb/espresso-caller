@@ -1,7 +1,7 @@
 from automator import load_json_file, merge_dicts
 from automator.references import collect_reference_files
 from pkg_resources import resource_filename
-from os.path import abspath
+from os.path import abspath, isfile, exists
 
 WORKFLOW_FILES = dict(hc='bipmed-haplotype-calling.wdl', joint='joint-discovery-gatk4-local.wdl')
 PARAM_REF_NAME = 'BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.ref_name'
@@ -69,10 +69,16 @@ def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_overri
     runtime = load_runtime_file('hc')
     if gatk_path_override:
         for param in PARAMS_GATK_PATH.get('hc'):
+            if not isfile(gatk_path_override):
+                raise Exception('GATK found not found: ' + gatk_path_override)
             runtime[param] = abspath(gatk_path_override)
     if gotc_path_override:
-        runtime[PARAM_GOTC_PATH] = abspath(gotc_path_override)
+        if not exists(gotc_path_override):
+            raise Exception('GOTC found not found: ' + gotc_path_override)
+        runtime[PARAM_GOTC_PATH] = abspath(gotc_path_override) + '/'
     if samtools_path_override:
+        if not isfile(samtools_path_override):
+            raise Exception('Samtools found not found: ' + samtools_path_override)
         runtime[PARAM_SAMTOOLS_PATH] = abspath(samtools_path_override)
 
     return merge_dicts(runtime, references, params)
