@@ -1,9 +1,11 @@
 from distutils.core import setup
 
+from setuptools import find_packages
+
 setup(
     name='automator',
     version='1.0.0',
-    packages=[''],
+    packages=find_packages(),
     url='https://github.com/labbcb/workflow-automator',
     license='',
     author='Welliton Souza',
