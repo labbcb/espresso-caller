@@ -36,16 +36,19 @@ def submit_workflow(host, workflow, version, inputs, destination):
     workflow_id = client.submit(workflow_file, inputs_file)
     click.echo('Cromwell workflow id: ' + workflow_id, err=True)
 
-    while True:
-        status = client.status(workflow_id)
-        if status != 'Submitted' and status != 'Running':
-            click.echo('Workflow terminated: ' + status, err=True)
-            break
-        click.echo('Workflow status: ' + status, err=True, nl=False)
-        sleep(600)
-
-    if status != 'Succeed':
-        exit(1)
+    try:
+        while True:
+            sleep(600)
+            status = client.status(workflow_id)
+            if status != 'Submitted' and status != 'Running':
+                click.echo('Workflow terminated: ' + status, err=True)
+                break
+            click.echo('Workflow status: ' + status, err=True, nl=False)
+        if status != 'Succeed':
+            exit(1)
+    except KeyboardInterrupt:
+        click.echo('Aborting workflow.')
+        client.abort(workflow_id)
 
     outputs = client.outputs(workflow_id)
     for task in outputs:
