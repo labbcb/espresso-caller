@@ -1,6 +1,7 @@
 from json import load
-from os import scandir
+from os import listdir
 from re import compile
+from os.path import join, basename
 
 
 def search_regex(directory, regex):
@@ -10,9 +11,9 @@ def search_regex(directory, regex):
     :param regex: regex to search
     :return: list of files that match regex
     """
-    files = scandir(directory)
+    files = listdir(directory)
     m = compile(regex)
-    return [file.path for file in files if m.search(file.name)]
+    return [join(directory, file) for file in files if m.search(basename(file))]
 
 
 def load_json_file(json_file):
