@@ -1,4 +1,4 @@
-from operator import itemgetter
+import gzip
 from os.path import basename
 from re import search, IGNORECASE
 
@@ -45,22 +45,21 @@ def extract_sample_name(fastq_file, regex='(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?
 def extract_platform_unit(fastq_file):
     """
     Extract platform unit from FASTQ header
-    (zcat ${file} | head -n 1 | cut -f3,4,10 -d: | sed 's/:/./g')
     :param fastq_file: a single FASTQ file
     :return: list of str
     """
-    with open(fastq_file) as file:
-        return '.'.join(itemgetter(*file.readline().split(':'))([3, 4, 10]))
+    if fastq_file[-3:] == '.gz':
+        file = gzip.open(fastq_file, 'rt')
+    else:
+        file = open(fastq_file)
+    try:
+        header = file.readline()
+        parts = header.split(':')
+        return '{}.{}.{}'.format(parts[2], parts[3], parts[9])
+    finally:
+        file.close()
 
 
-# 1. Sample name, (tag `SM`)
-# 2. Absolute path to single FASTQ file (forward, R1)
-# 3. Absolute path to single FASTQ file (reverse, R1)
-# 4. Library name (e.g. `Macrogen-102_10`)
-# 5. Platform unit (e.g. `HKKJNBBXX:2:CCTCTATC`)
-# 6. Date of sequencing, run date (e.g. `2016-09-01T02:00:00+0200`)
-# 7. Platform name (e.g. `Illumina`)
-# 8. Sequencing center (e.g. `BCB`)
 def create_batch_tsv(directories, library_names, run_dates, platform_names, sequencing_centers, destination):
     """
     Create TSV file containing absolute path to FASTQ files and their metadata
