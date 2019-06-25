@@ -12,7 +12,7 @@ from wftool.cromwell import CromwellClient
 from automator.workflows import get_workflow_file
 
 
-def submit_workflow(host, workflow, version, inputs, destination):
+def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600):
     """
     Copy workflow file into destination; write inputs JSON file into destination; submit workflow to Cromwell server;
     wait to complete; move output files to destination
@@ -38,12 +38,13 @@ def submit_workflow(host, workflow, version, inputs, destination):
 
     try:
         while True:
-            sleep(600)
+            click.echo('Sleeping for {} seconds..'.format(sleep_time))
+            sleep(sleep_time)
             status = client.status(workflow_id)
             if status != 'Submitted' and status != 'Running':
                 click.echo('Workflow terminated: ' + status, err=True)
                 break
-            click.echo('Workflow status: ' + status, err=True, nl=False)
+            click.echo('Workflow status: ' + status, err=True)
         if status != 'Succeed':
             exit(1)
     except KeyboardInterrupt:
