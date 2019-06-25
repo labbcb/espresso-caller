@@ -72,12 +72,13 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
     :param destination: file to write data as TSV
     """
 
-    for directory, library, run_date, platform, center in directories, library_names, run_dates, platform_names, sequencing_centers:
-        forward_files, reverse_files = collect_fastq_files(directory)
+    for idx in range(len(directories)):
+        forward_files, reverse_files = collect_fastq_files(directories[idx])
         sample_names = [extract_sample_name(f) for f in forward_files]
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
         with open(destination, 'w') as file:
             for sample, forward, reverse, platform_unit in sample_names, forward_files, reverse_files, platform_units:
-                file.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(sample, forward, reverse, library, platform_unit,
-                                                                   run_date, platform, center))
+                file.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(sample, forward, reverse, library_names[idx],
+                                                                   platform_unit, run_dates[idx], platform_names[idx],
+                                                                   sequencing_centers[idx]))
