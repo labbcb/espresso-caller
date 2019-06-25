@@ -77,7 +77,7 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
         for j in range(len(sample_names)):
-            destination.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}'.format(sample_names[j],
+            destination.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(sample_names[j],
                                                                       forward_files[j],
                                                                       reverse_files[j],
                                                                       library_names[i],

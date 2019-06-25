@@ -22,8 +22,8 @@ def generate_intervals_gatk(genome_sizes_file, window_size, destination=sys.stdo
             for i in range(n):
                 chr_start = i * window_size + i + 1
                 chr_end = i * window_size + window_size + i + 1
-                destination.write('{}:{}-{}'.format(reference_name, chr_start, chr_end))
+                destination.write('{}:{}-{}\n'.format(reference_name, chr_start, chr_end))
 
             chr_start = n * window_size + n + 1
             chr_end = size
-            destination.write('{}:{}-{}'.format(reference_name, chr_start, chr_end))
+            destination.write('{}:{}-{}\n'.format(reference_name, chr_start, chr_end))
