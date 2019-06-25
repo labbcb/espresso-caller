@@ -105,6 +105,8 @@ def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, 
 
     runtime = load_runtime_file('joint')
     if gatk_path_override:
+        if not isfile(gatk_path_override):
+            raise Exception('GATK found not found: ' + gatk_path_override)
         runtime[PARAMS_GATK_PATH.get('joint')] = abspath(gatk_path_override)
 
     return merge_dicts(runtime, references, params)
