@@ -66,4 +66,4 @@ def collect_reference_files(reference_dir, workflow, version):
     if len(missing_references) != 0:
         raise Exception('Missing resource files ' + join_list_mixed(missing_references))
 
-    return [{r.param: r.path} for r in references]
+    return {r.param: r.path for r in references}
