@@ -22,8 +22,8 @@ def load_json_file(json_file):
     :param json_file: Path to JSON file
     :return: dict
     """
-
-    load(json_file)
+    with open(json_file) as file:
+        return load(file)
 
 
 def merge_dicts(*dict_args):
