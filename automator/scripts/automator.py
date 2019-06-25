@@ -153,7 +153,7 @@ def joint(host, vcf, reference, version, gatk_path_override, callset_name, desti
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.argument('destination', type=click.Path())
-def hc(host, fastq, library, platform, center, sample_regex, platform_unit, batch_tsv_file, reference, version,
+def hc(host, fastq, library, date, platform, center, batch_tsv_file, reference, version,
        gatk_path_override, gotc_path_override, samtools_path_override, destination):
     """Submit FASTQ files to 'bipmed-haplotype-calling' workflow to Cromwell server"""
     destination = abspath(destination)
@@ -161,7 +161,7 @@ def hc(host, fastq, library, platform, center, sample_regex, platform_unit, batc
         mkdir(destination)
 
     batch_tsv_file = join(destination, batch_tsv_file)
-    create_batch_tsv(fastq, library, platform, center, sample_regex, platform_unit)
+    create_batch_tsv(fastq, library, date, platform, center, batch_tsv_file)
 
     inputs = haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_override, gotc_path_override,
                                      samtools_path_override)
