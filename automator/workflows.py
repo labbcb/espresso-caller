@@ -75,7 +75,7 @@ def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_overri
     if samtools_path_override:
         runtime[PARAM_SAMTOOLS_PATH] = abspath(samtools_path_override)
 
-    return merge_dicts(params, references, runtime)
+    return merge_dicts(runtime, references, params)
 
 
 def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override=None):
@@ -101,4 +101,4 @@ def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, 
     if gatk_path_override:
         runtime[PARAMS_GATK_PATH.get('joint')] = abspath(gatk_path_override)
 
-    return merge_dicts(params, references, runtime)
+    return merge_dicts(runtime, references, params)

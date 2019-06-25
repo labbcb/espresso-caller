@@ -24,7 +24,7 @@ def submit_workflow(host, workflow, version, inputs, destination):
     """
     inputs_file = join(destination, 'hc.{}.inputs.json'.format(version))
     with open(inputs_file, 'w') as file:
-        dump(inputs, file)
+        dump(inputs, file, indent=4)
 
     pkg_workflow_file = get_workflow_file(workflow)
     workflow_file = join(destination, basename(pkg_workflow_file))
