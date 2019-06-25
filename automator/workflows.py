@@ -1,4 +1,4 @@
-from automator import load_json_file
+from automator import load_json_file, merge_dicts
 from automator.references import collect_reference_files
 from pkg_resources import resource_filename
 from os.path import abspath
@@ -75,7 +75,7 @@ def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_overri
     if samtools_path_override:
         runtime[PARAM_SAMTOOLS_PATH] = abspath(samtools_path_override)
 
-    return {**params, **references, **runtime}
+    return merge_dicts(params, references, runtime)
 
 
 def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override=None):
@@ -101,4 +101,4 @@ def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, 
     if gatk_path_override:
         runtime[PARAMS_GATK_PATH.get('joint')] = abspath(gatk_path_override)
 
-    return {**params, **references, **runtime}
+    return merge_dicts(params, references, runtime)
