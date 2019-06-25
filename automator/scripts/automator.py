@@ -45,7 +45,8 @@ def automate(host, fastq, library, platform, date, center, batch_tsv_file, refer
         mkdir(destination)
 
     batch_tsv_file = join(destination, batch_tsv_file)
-    create_batch_tsv(fastq, library, date, platform, center, batch_tsv_file)
+    with open(batch_tsv_file, 'w') as file:
+        create_batch_tsv(fastq, library, date, platform, center, file)
 
     inputs = haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_override, gotc_path_override,
                                      samtools_path_override)
@@ -139,9 +140,9 @@ def joint(host, vcf, reference, version, gatk_path_override, callset_name, desti
               help='Path to directory containing paired-end FASTQ files')
 @click.option('--library', required=True, multiple=True,
               help='Library name. One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', required=True, multiple=True, help='Name of the sequencing platform')
 @click.option('--date', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
+@click.option('--platform', required=True, multiple=True, help='Name of the sequencing platform')
 @click.option('--center', required=True, multiple=True,
               help='Sequencing center name.  One value for all samples or one for each FASTQ directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
@@ -153,7 +154,7 @@ def joint(host, vcf, reference, version, gatk_path_override, callset_name, desti
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.argument('destination', type=click.Path())
-def hc(host, fastq, library, date, platform, center, batch_tsv_file, reference, version,
+def hc(host, fastq, library, date, platform, center, reference, version, batch_tsv_file,
        gatk_path_override, gotc_path_override, samtools_path_override, destination):
     """Submit FASTQ files to 'bipmed-haplotype-calling' workflow to Cromwell server"""
     destination = abspath(destination)
@@ -161,7 +162,8 @@ def hc(host, fastq, library, date, platform, center, batch_tsv_file, reference, 
         mkdir(destination)
 
     batch_tsv_file = join(destination, batch_tsv_file)
-    create_batch_tsv(fastq, library, date, platform, center, batch_tsv_file)
+    with open(batch_tsv_file, 'w') as file:
+        create_batch_tsv(fastq, library, date, platform, center, file)
 
     inputs = haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_override, gotc_path_override,
                                      samtools_path_override)
