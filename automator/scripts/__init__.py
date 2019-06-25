@@ -1,8 +1,6 @@
-import itertools
-import os
-import shutil
+from itertools import chain
 from json import dump
-from os.path import join, basename
+from os.path import join, basename, exists
 from shutil import copyfile
 from time import sleep
 
@@ -14,8 +12,8 @@ from automator.workflows import get_workflow_file
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600):
     """
-    Copy workflow file into destination; write inputs JSON file into destination; submit workflow to Cromwell server;
-    wait to complete; move output files to destination
+    Copy workflow file into destination; write inputs JSON file into destination;
+    submit workflow to Cromwell server; wait to complete; and copy output files to destination
     :param host: Cromwell server URL
     :param workflow: workflow name
     :param version: reference genome version
@@ -53,17 +51,18 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=600
         client.abort(workflow_id)
 
     outputs = client.outputs(workflow_id)
-    for task in outputs:
-        if isinstance(outputs[task], str):
-            files = [outputs[task]]
-        elif any(isinstance(i, list) for i in outputs[task]):
-            files = itertools.chain.from_iterable(outputs[task])
+    for output in outputs.values():
+        if isinstance(output, str):
+            files = [output]
+        elif any(isinstance(i, list) for i in output):
+            files = list(chain.from_iterable(output))
         else:
-            files = outputs[task]
+            files = output
 
         for file in files:
-            if os.path.exists(file):
-                dest_file = os.path.join(destination, os.path.basename(file))
-                shutil.move(file, dest_file)
+            if exists(file):
+                destination_file = join(destination, basename(file))
+                click.echo('Collecting file ', file)
+                copyfile(file, destination_file)
             else:
                 click.echo('File not found: ' + file, err=True)
