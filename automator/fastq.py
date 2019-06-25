@@ -53,7 +53,7 @@ def extract_platform_unit(fastq_file):
     else:
         file = open(fastq_file)
     try:
-        header = file.readline()
+        header = file.readline().strip()
         parts = header.split(':')
         return '{}.{}.{}'.format(parts[2], parts[3], parts[9])
     finally:
@@ -78,10 +78,10 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
 
         for j in range(len(sample_names)):
             destination.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(sample_names[j],
-                                                                      forward_files[j],
-                                                                      reverse_files[j],
-                                                                      library_names[i],
-                                                                      platform_units[j],
-                                                                      run_dates[i],
-                                                                      platform_names[i],
-                                                                      sequencing_centers[i]))
+                                                                        forward_files[j],
+                                                                        reverse_files[j],
+                                                                        library_names[i],
+                                                                        platform_units[j],
+                                                                        run_dates[i],
+                                                                        platform_names[i],
+                                                                        sequencing_centers[i]))
