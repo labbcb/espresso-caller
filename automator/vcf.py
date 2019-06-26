@@ -11,8 +11,8 @@ def collect_vcf_files(directories):
     all_vcf_files = []
     all_vcf_index_files = []
     for directory in directories:
-        vcf_files = search_regex(directory, '\\.vcf(\\.gz)?')
-        vcf_index_files = search_regex(directory, '\\.vcf(\\.gz)?\\.tbi')
+        vcf_files = search_regex(directory, '\\g.\\.vcf(\\.gz)?$')
+        vcf_index_files = search_regex(directory, '\\g.\\.vcf(\\.gz)?\\.tbi$')
 
         vcf_len = len(vcf_files)
         index_len = len(vcf_index_files)
@@ -21,7 +21,7 @@ def collect_vcf_files(directories):
             raise Exception('VCF files not found in {}'.format(directory))
 
         if vcf_len != index_len:
-            raise Exception('VCF and index files not even. Forward: {}, Reverse: {}'.format(vcf_len, index_len))
+            raise Exception('VCF and index files not even. VCF: {}, Index: {}'.format(vcf_len, index_len))
 
         all_vcf_files.extend(vcf_files)
         all_vcf_index_files.extend(vcf_index_files)
