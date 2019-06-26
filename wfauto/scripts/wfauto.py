@@ -50,9 +50,9 @@ def cli():
 @click.option('--bwa_commandline_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def automate(host, fastq, library, platform, date, center, reference, version, callset_name,
-             gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
-             destination):
+def variant_discovery(host, fastq, library, platform, date, center, reference, version, callset_name,
+                      gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
+                      destination):
     """Run haplotype-calling and joint-discovery workflows"""
     haplotype_calling(host, fastq, library, date, platform, center, reference, version,
                       gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
