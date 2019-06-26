@@ -54,6 +54,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     inputs = load_params_file('haplotype-calling')
     inputs['HaplotypeCalling.ref_name'] = genome_version
 
+    directories = [directories] if isinstance(directories, str) else directories
     for i in range(len(directories)):
         forward_files, reverse_files, sample_names = collect_fastq_files(directories[i])
         inputs['HaplotypeCalling.sample_name'].extend(sample_names)
