@@ -1,4 +1,3 @@
-import csv
 import gzip
 
 from wfauto import search_regex, extract_sample_name
@@ -24,7 +23,8 @@ def collect_fastq_files(directory):
     if forward_len != reverse_len:
         raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(forward_len, reverse_len))
 
-    return forward_files, reverse_files
+    sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
+    return forward_files, reverse_files, sample_names
 
 
 def extract_platform_unit(fastq_file):
@@ -45,23 +45,5 @@ def extract_platform_unit(fastq_file):
         file.close()
 
 
-def create_batch_tsv(directories, library_names, run_dates, platform_names, sequencing_centers, destination):
-    """
-    Create TSV file containing absolute path to FASTQ files and their metadata
-    :param directories: list of directories containing paired-end FASTQ files
-    :param library_names: list of library names, one for each directory
-    :param run_dates: list of run dates, one for each directory
-    :param platform_names: Name of the sequencing platform
-    :param sequencing_centers: list of sequencing center names, one for each directory
-    :param destination: file to write data as TSV
-    """
-
-    writer = csv.writer(destination, delimiter='\t')
-    for i in range(len(directories)):
-        forward_files, reverse_files = collect_fastq_files(directories[i])
-        sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
-        platform_units = [extract_platform_unit(f) for f in forward_files]
-
-        for j in range(len(sample_names)):
-            writer.writerow([sample_names[j], forward_files[j], reverse_files[j], library_names[i],
-                             platform_units[j], run_dates[i], platform_names[i], sequencing_centers[i]])
+def extract_platform_units(fastq_files):
+    return [extract_platform_unit(f) for f in fastq_files]

@@ -1,22 +1,14 @@
-from wfauto import load_json_file, merge_dicts
-from wfauto.references import collect_reference_files
-from pkg_resources import resource_filename
 from os.path import abspath, isfile, exists
 
-WORKFLOW_FILES = dict(hc='bipmed-haplotype-calling.wdl', joint='joint-discovery-gatk4-local.wdl')
-PARAM_REF_NAME = 'BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.ref_name'
-PARAM_INPUT_FILE = 'BIPMedHaplotypeCalling.inputFile'
-PARAMS_GATK_PATH = dict(hc=[
-    "BIPMedHaplotypeCalling.ConvertPairedFastQsToUnmappedBamWf.gatk_path_override",
-    "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gatk_path_override",
-    "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.gatk_path_override"
-], joint='JointGenotyping.gatk_path_override')
-PARAM_GOTC_PATH = "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gotc_path_override"
-PARAM_SAMTOOLS_PATH = "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.samtools_path_override"
-PARAM_INPUT_GVCF = 'JointGenotyping.input_gvcfs'
-PARAM_SAMPLE_NAMES = 'JointGenotyping.sample_names'
-PARAM_INPUT_IDX = 'JointGenotyping.input_gvcfs_indices'
-PARAM_CALLSET = 'JointGenotyping.callset_name'
+from pkg_resources import resource_filename
+
+from wfauto import load_json_file
+from wfauto.fastq import collect_fastq_files, extract_platform_units
+from wfauto.references import collect_resources_files
+from wfauto.vcf import collect_vcf_files
+
+WORKFLOW_FILES = {'haplotype-calling': 'haplotype-calling.wdl',
+                  'joint-discovery': 'joint-discovery-gatk4-local.wdl'}
 
 
 def get_workflow_file(workflow):
@@ -32,14 +24,6 @@ def get_workflow_file(workflow):
     return resource_filename(__name__, WORKFLOW_FILES.get(workflow))
 
 
-def load_runtime_file(workflow):
-    if workflow not in WORKFLOW_FILES.keys():
-        raise Exception('Workflow not found: ' + workflow)
-
-    params_file = resource_filename(__name__, '{}.runtime.json'.format(workflow))
-    return load_json_file(params_file)
-
-
 def load_params_file(workflow):
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
@@ -48,50 +32,65 @@ def load_params_file(workflow):
     return load_json_file(params_file)
 
 
-def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_override=None, gotc_path_override=None,
-                            samtools_path_override=None):
+def haplotype_caller_inputs(directories, library_names, platform_names, run_dates, sequencing_centers, reference,
+                            genome_version, gatk_path_override=None, gotc_path_override=None,
+                            samtools_path_override=None, bwa_commandline_override=None):
     """
     Create inputs for 'bipmed-haplotype-calling' workflow
-    :param batch_tsv_file:
+    :param directories:
+    :param library_names:
+    :param platform_names:
+    :param run_dates:
+    :param sequencing_centers:
     :param reference:
-    :param version:
+    :param genome_version:
     :param gatk_path_override:
     :param gotc_path_override:
     :param samtools_path_override:
+    :param bwa_commandline_override:
     :return:
     """
 
-    references = collect_reference_files(reference, 'hc', version)
+    inputs = load_params_file('haplotype-calling')
+    inputs['HaplotypeCalling.ref_name'] = genome_version
 
-    params = load_params_file('hc')
-    params[PARAM_REF_NAME] = version
-    params[PARAM_INPUT_FILE] = batch_tsv_file
+    for i in range(len(directories)):
+        forward_files, reverse_files, sample_names = collect_fastq_files(directories[i])
+        inputs['HaplotypeCalling.sample_name'].extend(sample_names)
+        inputs['HaplotypeCalling.fastq_1'].externd(forward_files)
+        inputs['HaplotypeCalling.fastq_2'].extend(reverse_files)
+        inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
 
-    runtime = load_runtime_file('hc')
+        num_samples = len(sample_names)
+        inputs['HaplotypeCalling.library_name'].extend(library_names[i] * num_samples)
+        inputs['HaplotypeCalling.platform_name'].extend(platform_names[i] * num_samples)
+        inputs['HaplotypeCalling.run_date'].extend(run_dates[i] * num_samples)
+        inputs['HaplotypeCalling.sequencing_center'].extend(sequencing_centers[i] * num_samples)
+
+    inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
+
     if gatk_path_override:
-        for param in PARAMS_GATK_PATH.get('hc'):
-            if not isfile(gatk_path_override):
-                raise Exception('GATK found not found: ' + gatk_path_override)
-            runtime[param] = abspath(gatk_path_override)
+        if not isfile(gatk_path_override):
+            raise Exception('GATK found not found: ' + gatk_path_override)
+        inputs['HaplotypeCalling.gatk_path_override'] = abspath(gatk_path_override)
     if gotc_path_override:
         if not exists(gotc_path_override):
             raise Exception('GOTC found not found: ' + gotc_path_override)
-        runtime[PARAM_GOTC_PATH] = abspath(gotc_path_override) + '/'
+        inputs['HaplotypeCalling.gotc_path_override'] = abspath(gotc_path_override) + '/'
     if samtools_path_override:
         if not isfile(samtools_path_override):
             raise Exception('Samtools found not found: ' + samtools_path_override)
-        runtime[PARAM_SAMTOOLS_PATH] = abspath(samtools_path_override)
+        inputs['HaplotypeCalling.samtools_path_override'] = abspath(samtools_path_override)
+    if bwa_commandline_override:
+        inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
-    return merge_dicts(runtime, references, params)
+    return inputs
 
 
-def joint_discovery_inputs(sample_names, vcf_files, vcf_index_files, reference, version, callset_name,
-                           gatk_path_override=None):
+def joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override=None):
     """
     Create inputs for 'joint-discovery-gatk4-local' workflow
-    :param sample_names:
-    :param vcf_files:
-    :param vcf_index_files:
+    :param directories:
     :param reference:
     :param version:
     :param gatk_path_override:
@@ -99,18 +98,21 @@ def joint_discovery_inputs(sample_names, vcf_files, vcf_index_files, reference, 
     :return:
     """
 
-    references = collect_reference_files(reference, 'joint', version)
+    inputs = load_params_file('joint')
 
-    params = load_params_file('joint')
-    params[PARAM_SAMPLE_NAMES] = sample_names
-    params[PARAM_INPUT_GVCF] = vcf_files
-    params[PARAM_INPUT_IDX] = vcf_index_files
-    params[PARAM_CALLSET] = callset_name
+    for directory in directories:
+        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory)
+        inputs['JointGenotyping.input_gvcfs'].extend(vcf_files)
+        inputs['JointGenotyping.input_gvcfs_indices'].extend(vcf_index_files)
+        inputs['JointGenotyping.sample_names'].extend(sample_names)
 
-    runtime = load_runtime_file('joint')
+    inputs['JointGenotyping.callset_name'] = callset_name
+
+    inputs.update(collect_resources_files(reference, 'joint', version))
+
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        runtime[PARAMS_GATK_PATH.get('joint')] = abspath(gatk_path_override)
+        inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
 
-    return merge_dicts(runtime, references, params)
+    return inputs

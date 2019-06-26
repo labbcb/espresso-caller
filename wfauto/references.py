@@ -41,7 +41,7 @@ def load_references(workflow, version):
     return [Reference(param, filename) for param, filename in references.items()]
 
 
-def collect_reference_files(reference_dir, workflow, version):
+def collect_resources_files(reference_dir, workflow, version):
     """
     Search for reference files and update reference-related input dict
     :param reference_dir: Path of directory to search
