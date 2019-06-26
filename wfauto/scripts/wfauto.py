@@ -73,7 +73,7 @@ def intervals(genome_sizes, window_size, destination):
 
 @cli.command()
 @click.option('--host', help='Cromwell server URL')
-@click.option('--vcf', required=True, multiple=True, type=click.Path(exists=True),
+@click.option('--vcf', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing raw gVCF and their index files')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
@@ -82,45 +82,45 @@ def intervals(genome_sizes, window_size, destination):
 @click.option('--gatk_path_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def joint_discovery(host, vcf, reference, version, gatk_path_override, callset_name, destination):
+def joint_discovery(host, directories, reference, version, gatk_path_override, callset_name, destination):
     """Run only joint-discovery-gatk4 workflow"""
     destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
 
-    inputs = joint_discovery_inputs(vcf, reference, version, callset_name, gatk_path_override)
+    inputs = joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override)
     submit_workflow(host, 'joint-discovery', version, inputs, destination)
 
 
 @cli.command()
 @click.option('--host', help='Cromwell server URL')
-@click.option('--fastq', required=True, multiple=True, type=click.Path(exists=True),
+@click.option('--fastq', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
-@click.option('--library', required=True, multiple=True,
+@click.option('--library', 'library_names', required=True, multiple=True,
               help='Library name. One value for all samples or one for each FASTQ directory path')
-@click.option('--date', required=True, multiple=True,
+@click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', required=True, multiple=True, help='Name of the sequencing platform')
-@click.option('--center', required=True, multiple=True,
+@click.option('--platform', 'platform_names', required=True, multiple=True, help='Name of the sequencing platform')
+@click.option('--center', 'sequencing_centers', required=True, multiple=True,
               help='Sequencing center name.  One value for all samples or one for each FASTQ directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
-@click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
+@click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
               help='Version of reference files')
 @click.option('--gatk_path_override')
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
 @click.argument('destination', type=click.Path())
-def haplotype_calling(host, fastq, library, date, platform, center, reference, version,
-                      gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
-                      destination):
+def haplotype_calling(host, directories, library_names, run_dates, platform_names, sequencing_centers,
+                      reference, genome_version, gatk_path_override, gotc_path_override, samtools_path_override,
+                      bwa_commandline_override, destination):
     """Run only haplotype-calling workflow"""
     destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
 
-    inputs = haplotype_caller_inputs(fastq, library, date, platform, center, reference, version,
-                                     gatk_path_override, gotc_path_override, samtools_path_override,
-                                     bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', version, inputs, destination)
+    inputs = haplotype_caller_inputs(directories, library_names, platform_names, run_dates, sequencing_centers,
+                                     reference, genome_version, gatk_path_override, gotc_path_override,
+                                     samtools_path_override, bwa_commandline_override)
+    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination)
