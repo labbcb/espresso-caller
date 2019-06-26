@@ -1,10 +1,8 @@
-include wfauto/bipmed-haplotype-calling.wdl
-include wfauto/hc.b37.resources.json
-include wfauto/hc.hg38.resources.json
-include wfauto/hc.params.json
-include wfauto/hc.runtime.json
-include wfauto/joint.b37.resources.json
-include wfauto/joint.hg38.references.json
-include wfauto/joint.params.json
-include wfauto/joint.runtime.json
+include wfauto/haplotype-calling.b37.resources.json
+include wfauto/haplotype-calling.hg38.resources.json
+include wfauto/haplotype-calling.params.json
+include wfauto/haplotype-calling.wdl
+include wfauto/joint-discovery.b37.resources.json
+include wfauto/joint-discovery.hg38.resources.json
+include wfauto/joint-discovery.params.json
 include wfauto/joint-discovery-gatk4-local.wdl
