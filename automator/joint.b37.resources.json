@@ -15,5 +15,5 @@
   "JointGenotyping.axiomPoly_resource_vcf": "Axiom_Exome_Plus.genotypes.all_populations.poly.vcf.gz",
   "JointGenotyping.axiomPoly_resource_vcf_index": "Axiom_Exome_Plus.genotypes.all_populations.poly.vcf.gz.tbi",
   "JointGenotyping.hapmap_resource_vcf": "hapmap_3.3.b37.vcf",
-  "JointGenotyping.hapmap_resource_vcf_index": "hapmap_3.3.b37.vcf.idx",
+  "JointGenotyping.hapmap_resource_vcf_index": "hapmap_3.3.b37.vcf.idx"
 }
