@@ -57,7 +57,7 @@ def haplotype_caller_inputs(directories, library_names, platform_names, run_date
     for i in range(len(directories)):
         forward_files, reverse_files, sample_names = collect_fastq_files(directories[i])
         inputs['HaplotypeCalling.sample_name'].extend(sample_names)
-        inputs['HaplotypeCalling.fastq_1'].externd(forward_files)
+        inputs['HaplotypeCalling.fastq_1'].extend(forward_files)
         inputs['HaplotypeCalling.fastq_2'].extend(reverse_files)
         inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
 
