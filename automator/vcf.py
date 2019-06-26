@@ -11,8 +11,8 @@ def collect_vcf_files(directories):
     all_vcf_files = []
     all_vcf_index_files = []
     for directory in directories:
-        vcf_files = search_regex(directory, '\\g.\\.vcf(\\.gz)?$')
-        vcf_index_files = search_regex(directory, '\\g.\\.vcf(\\.gz)?\\.tbi$')
+        vcf_files = search_regex(directory, '\\.g\\.vcf(\\.gz)?$')
+        vcf_index_files = search_regex(directory, '\\.g\\.vcf(\\.gz)?\\.tbi$')
 
         vcf_len = len(vcf_files)
         index_len = len(vcf_index_files)
