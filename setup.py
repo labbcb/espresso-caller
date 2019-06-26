@@ -3,10 +3,10 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name='automator',
+    name='wfauto',
     version='1.0.0',
     packages=find_packages(),
-    url='https://github.com/labbcb/workflow-automator',
+    url='https://github.com/labbcb/workflow-wfauto',
     license='',
     author='Welliton Souza',
     author_email='well309@gmail.com',
@@ -15,6 +15,6 @@ setup(
     include_package_data=True,
     entry_points='''
         [console_scripts]
-        automator=automator.scripts.automator:cli
+        wfauto=wfauto.scripts.wfauto:cli
     ''',
 )

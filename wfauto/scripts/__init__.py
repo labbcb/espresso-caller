@@ -7,7 +7,7 @@ from time import sleep
 import click
 from wftool.cromwell import CromwellClient
 
-from automator.workflows import get_workflow_file
+from wfauto.workflows import get_workflow_file
 
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300):
@@ -30,7 +30,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     click.echo('Workflow file: ' + workflow_file, err=True)
 
-    inputs_file = join(destination, 'hc.{}.inputs.json'.format(version))
+    inputs_file = join(destination, '{}.{}.inputs.json'.format(workflow, version))
     with open(inputs_file, 'w') as file:
         dump(inputs, file, indent=4, sort_keys=True)
 

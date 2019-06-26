@@ -1,4 +1,4 @@
-from automator import search_regex
+from wfauto import search_regex
 
 
 def collect_vcf_files(directories):

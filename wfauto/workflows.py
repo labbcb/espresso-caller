@@ -1,5 +1,5 @@
-from automator import load_json_file, merge_dicts
-from automator.references import collect_reference_files
+from wfauto import load_json_file, merge_dicts
+from wfauto.references import collect_reference_files
 from pkg_resources import resource_filename
 from os.path import abspath, isfile, exists
 

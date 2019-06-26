@@ -2,7 +2,7 @@
 
 Working with Workflow Description Language (WDL), Cromwell and Docker makes genomic data processing reproducible and (not completely) automatized.
 JSON inputs files must be completed by hand generating user-mistake errors.
-__automator__ is a tool that automates input files generation for [bcblab-workflows](https://github.com/labbcb/bcblab-workflows), mainly for WES/WGS workflows.
+__wfauto__ is a tool that automates input files generation for [bcblab-workflows](https://github.com/labbcb/bcblab-workflows), mainly for WES/WGS workflows.
 It also submits workflow jobs to Cromwell Server (through [wftool](https://github.com/labbcb/wftool)).
 
 This systems was designed as the way we do large-scale genomic data at BCBLab and may not be generalized.

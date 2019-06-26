@@ -3,7 +3,7 @@ import gzip
 from os.path import basename
 from re import search, IGNORECASE
 
-from automator import search_regex
+from wfauto import search_regex
 
 
 def collect_fastq_files(directory):

@@ -3,11 +3,11 @@ from os.path import exists, abspath, join
 
 import click
 
-from automator.fastq import create_batch_tsv
-from automator.intervals import generate_intervals_gatk
-from automator.scripts import submit_workflow
-from automator.vcf import collect_vcf_files
-from automator.workflows import haplotype_caller_inputs, joint_discovery_inputs
+from wfauto.fastq import create_batch_tsv
+from wfauto.intervals import generate_intervals_gatk
+from wfauto.scripts import submit_workflow
+from wfauto.vcf import collect_vcf_files
+from wfauto.workflows import haplotype_caller_inputs, joint_discovery_inputs
 
 
 @click.group()
