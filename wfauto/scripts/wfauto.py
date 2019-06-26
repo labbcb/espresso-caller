@@ -32,18 +32,18 @@ def cli():
 
 @cli.command()
 @click.option('--host', help='Cromwell server URL')
-@click.option('--fastq', required=True, multiple=True, type=click.Path(exists=True),
+@click.option('--fastq', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
-@click.option('--library', required=True, multiple=True,
+@click.option('--library', 'library_names', required=True, multiple=True,
               help='Library name. One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', required=True, multiple=True, help='Name of the sequencing platform')
-@click.option('--date', required=True, multiple=True,
+@click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
-@click.option('--center', required=True, multiple=True,
-              help='Sequencing center name.  One value for all samples or one for each FASTQ directory path')
+@click.option('--platform', 'platform_name', required=True, multiple=True, help='Name of the sequencing platform')
+@click.option('--center', 'sequencing_center', required=True, multiple=True,
+              help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
-@click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
+@click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
               help='Version of reference files')
 @click.option('--gatk_path_override')
 @click.option('--gotc_path_override')
@@ -51,14 +51,14 @@ def cli():
 @click.option('--bwa_commandline_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def variant_discovery(host, fastq, library, platform, date, center, reference, version, callset_name,
-                      gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
-                      destination):
+def variant_discovery(host, directories, library_names, run_dates, platform_name, sequencing_center,
+                      reference, genome_version, gatk_path_override, gotc_path_override, samtools_path_override,
+                      bwa_commandline_override, callset_name, destination):
     """Run haplotype-calling and joint-discovery workflows"""
-    haplotype_calling(host, fastq, library, date, platform, center, reference, version,
-                      gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
-                      destination)
-    joint_discovery(host, destination, reference, version, gatk_path_override, callset_name, destination)
+    haplotype_calling(directories, library_names, platform_name, run_dates, sequencing_center,
+                      reference, genome_version, gatk_path_override, gotc_path_override,
+                      samtools_path_override, bwa_commandline_override)
+    joint_discovery(host, destination, reference, genome_version, gatk_path_override, callset_name, destination)
 
 
 @cli.command()
