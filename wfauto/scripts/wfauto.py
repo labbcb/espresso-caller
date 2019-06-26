@@ -45,7 +45,6 @@ def cli():
               help='Path to directory containing reference files')
 @click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
               help='Version of reference files')
-@click.option('--batch_tsv_file', default='fastq_files.tsv', help='Batch TSV file name', show_default=True)
 @click.option('--gatk_path_override')
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
