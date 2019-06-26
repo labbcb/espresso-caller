@@ -18,7 +18,7 @@ def cli():
     All workflows are submitted to Cromwell server.
     Output files are collected writing them to destination directory.
 
-    'variant-discovery' workflow executes all data processing steps: FASTQs -> CRAMs -> gVCFs -> VCF.
+    'variant-discovery' workflow executes all data processing steps: from raw FASTQs to unified VCF.
 
     'haplotype-calling' workflow takes FASTQ files and their metadata as input (plus resources files) and run
     Broad Institute GATK workflows: convert FASTQ to uBAM; align sequences to reference genome; merge aligned
