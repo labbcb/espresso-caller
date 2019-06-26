@@ -1,9 +1,9 @@
 import csv
 import gzip
-from os.path import basename
-from re import search, IGNORECASE
 
-from wfauto import search_regex
+from wfauto import search_regex, extract_sample_name
+
+FASTQ_NAME_REGEX = '(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'
 
 
 def collect_fastq_files(directory):
@@ -25,22 +25,6 @@ def collect_fastq_files(directory):
         raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(forward_len, reverse_len))
 
     return forward_files, reverse_files
-
-
-def extract_sample_name(fastq_file, regex='(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'):
-    """
-    Extract sample name from FASTQ file name
-    :param fastq_file: a single FASTQ file
-    :param regex: regex pattern used to extract sample name
-    :return: sample name
-    """
-    name = basename(fastq_file)
-    result = search(regex, name, IGNORECASE)
-
-    if not result:
-        raise Exception('Unable to extract sample name from ' + name)
-
-    return result.group('sample')
 
 
 def extract_platform_unit(fastq_file):
@@ -75,7 +59,7 @@ def create_batch_tsv(directories, library_names, run_dates, platform_names, sequ
     writer = csv.writer(destination, delimiter='\t')
     for i in range(len(directories)):
         forward_files, reverse_files = collect_fastq_files(directories[i])
-        sample_names = [extract_sample_name(f) for f in forward_files]
+        sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
         platform_units = [extract_platform_unit(f) for f in forward_files]
 
         for j in range(len(sample_names)):

@@ -52,8 +52,8 @@ def automate(host, fastq, library, platform, date, center, batch_tsv_file, refer
                                      samtools_path_override)
     submit_workflow(host, 'hc', version, inputs, destination)
 
-    vcf_files, vcf_index_files = collect_vcf_files(destination)
-    inputs = joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
+    vcf_files, vcf_index_files, sample_names = collect_vcf_files(destination)
+    inputs = joint_discovery_inputs(sample_names, callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
 
     submit_workflow(host, 'joint', version, inputs, destination)
 
@@ -80,8 +80,8 @@ def automate_batch(host, batch_tsv_file, reference, version, callset_name, gatk_
                                      samtools_path_override)
     submit_workflow(host, 'hc', version, inputs, destination)
 
-    vcf_files, vcf_index_files = collect_vcf_files(destination)
-    inputs = joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
+    vcf_files, vcf_index_files, sample_names = collect_vcf_files(destination)
+    inputs = joint_discovery_inputs(sample_names, callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
 
     submit_workflow(host, 'joint', version, inputs, destination)
 
@@ -128,8 +128,8 @@ def joint(host, vcf, reference, version, gatk_path_override, callset_name, desti
     if not exists(destination):
         mkdir(destination)
 
-    vcf_files, vcf_index_files = collect_vcf_files(vcf)
-    inputs = joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
+    vcf_files, vcf_index_files, sample_names = collect_vcf_files(destination)
+    inputs = joint_discovery_inputs(sample_names, callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
 
     submit_workflow(host, 'joint', version, inputs, destination)
 

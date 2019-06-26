@@ -13,7 +13,8 @@ PARAMS_GATK_PATH = dict(hc=[
 ], joint='JointGenotyping.gatk_path_override')
 PARAM_GOTC_PATH = "BIPMedHaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.gotc_path_override"
 PARAM_SAMTOOLS_PATH = "BIPMedHaplotypeCalling.HaplotypeCallerGvcf_GATK4.samtools_path_override"
-PARAM_INPUT_GVCF = 'JointGenotyping.sample_names'
+PARAM_INPUT_GVCF = 'JointGenotyping.input_gvcfs'
+PARAM_SAMPLE_NAMES = 'JointGenotyping.sample_names'
 PARAM_INPUT_IDX = 'JointGenotyping.input_gvcfs_indices'
 PARAM_CALLSET = 'JointGenotyping.callset_name'
 
@@ -84,21 +85,24 @@ def haplotype_caller_inputs(batch_tsv_file, reference, version, gatk_path_overri
     return merge_dicts(runtime, references, params)
 
 
-def joint_discovery_inputs(callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override=None):
+def joint_discovery_inputs(sample_names, vcf_files, vcf_index_files, reference, version, callset_name,
+                           gatk_path_override=None):
     """
     Create inputs for 'joint-discovery-gatk4-local' workflow
-    :param callset_name:
+    :param sample_names:
     :param vcf_files:
     :param vcf_index_files:
     :param reference:
     :param version:
     :param gatk_path_override:
+    :param callset_name:
     :return:
     """
 
     references = collect_reference_files(reference, 'joint', version)
 
     params = load_params_file('joint')
+    params[PARAM_SAMPLE_NAMES] = sample_names
     params[PARAM_INPUT_GVCF] = vcf_files
     params[PARAM_INPUT_IDX] = vcf_index_files
     params[PARAM_CALLSET] = callset_name

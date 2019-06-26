@@ -1,6 +1,6 @@
 from json import load
 from os import listdir
-from re import compile
+from re import compile, search, IGNORECASE
 from os.path import join, basename
 
 
@@ -35,3 +35,19 @@ def merge_dicts(*dict_args):
     for dictionary in dict_args:
         result.update(dictionary)
     return result
+
+
+def extract_sample_name(file, regex):
+    """
+    Extract sample name from FASTQ file name
+    :param file: a single FASTQ or VCF file
+    :param regex: regex pattern used to extract sample name
+    :return: sample name
+    """
+    name = basename(file)
+    result = search(regex, name, IGNORECASE)
+
+    if not result:
+        raise Exception('Unable to extract sample name from ' + name)
+
+    return result.group('sample')
