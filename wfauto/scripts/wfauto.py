@@ -128,7 +128,7 @@ def joint(host, vcf, reference, version, gatk_path_override, callset_name, desti
     if not exists(destination):
         mkdir(destination)
 
-    vcf_files, vcf_index_files, sample_names = collect_vcf_files(destination)
+    vcf_files, vcf_index_files, sample_names = collect_vcf_files(vcf)
     inputs = joint_discovery_inputs(sample_names, callset_name, vcf_files, vcf_index_files, reference, version, gatk_path_override)
 
     submit_workflow(host, 'joint', version, inputs, destination)
