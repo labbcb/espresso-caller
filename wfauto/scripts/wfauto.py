@@ -55,10 +55,17 @@ def variant_discovery(host, directories, library_names, run_dates, platform_name
                       reference, genome_version, gatk_path_override, gotc_path_override, samtools_path_override,
                       bwa_commandline_override, callset_name, destination):
     """Run haplotype-calling and joint-discovery workflows"""
-    haplotype_calling(directories, library_names, platform_name, run_dates, sequencing_center,
-                      reference, genome_version, gatk_path_override, gotc_path_override,
-                      samtools_path_override, bwa_commandline_override)
-    joint_discovery(host, destination, reference, genome_version, gatk_path_override, callset_name, destination)
+    destination = abspath(destination)
+    if not exists(destination):
+        mkdir(destination)
+
+    inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
+                                     reference, genome_version, gatk_path_override, gotc_path_override,
+                                     samtools_path_override, bwa_commandline_override)
+    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination)
+
+    inputs = joint_discovery_inputs(destination, reference, genome_version, callset_name, gatk_path_override)
+    submit_workflow(host, 'joint-discovery', genome_version, inputs, destination)
 
 
 @cli.command()
@@ -68,27 +75,6 @@ def variant_discovery(host, directories, library_names, run_dates, platform_name
 def intervals(genome_sizes, window_size, destination):
     """Generate genomic intervals in GATK-style .list format"""
     generate_intervals_gatk(genome_sizes, window_size, destination)
-
-
-@cli.command()
-@click.option('--host', help='Cromwell server URL')
-@click.option('--vcf', 'directories', required=True, multiple=True, type=click.Path(exists=True),
-              help='Path to directory containing raw gVCF and their index files')
-@click.option('--reference', required=True, type=click.Path(exists=True),
-              help='Path to directory containing reference files')
-@click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
-              help='Version of reference files')
-@click.option('--gatk_path_override')
-@click.argument('callset_name')
-@click.argument('destination', type=click.Path())
-def joint_discovery(host, directories, reference, version, gatk_path_override, callset_name, destination):
-    """Run only joint-discovery-gatk4 workflow"""
-    destination = abspath(destination)
-    if not exists(destination):
-        mkdir(destination)
-
-    inputs = joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', version, inputs, destination)
 
 
 @cli.command()
@@ -123,3 +109,24 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
     submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination)
+
+
+@cli.command()
+@click.option('--host', help='Cromwell server URL')
+@click.option('--vcf', 'directories', required=True, multiple=True, type=click.Path(exists=True),
+              help='Path to directory containing raw gVCF and their index files')
+@click.option('--reference', required=True, type=click.Path(exists=True),
+              help='Path to directory containing reference files')
+@click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
+              help='Version of reference files')
+@click.option('--gatk_path_override')
+@click.argument('callset_name')
+@click.argument('destination', type=click.Path())
+def joint_discovery(host, directories, reference, version, gatk_path_override, callset_name, destination):
+    """Run only joint-discovery-gatk4 workflow"""
+    destination = abspath(destination)
+    if not exists(destination):
+        mkdir(destination)
+
+    inputs = joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override)
+    submit_workflow(host, 'joint-discovery', version, inputs, destination)
