@@ -32,16 +32,16 @@ def load_params_file(workflow):
     return load_json_file(params_file)
 
 
-def haplotype_caller_inputs(directories, library_names, platform_names, run_dates, sequencing_centers, reference,
+def haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center, reference,
                             genome_version, gatk_path_override=None, gotc_path_override=None,
                             samtools_path_override=None, bwa_commandline_override=None):
     """
     Create inputs for 'bipmed-haplotype-calling' workflow
     :param directories:
     :param library_names:
-    :param platform_names:
+    :param platform_name:
     :param run_dates:
-    :param sequencing_centers:
+    :param sequencing_center:
     :param reference:
     :param genome_version:
     :param gatk_path_override:
@@ -63,9 +63,9 @@ def haplotype_caller_inputs(directories, library_names, platform_names, run_date
 
         num_samples = len(sample_names)
         inputs['HaplotypeCalling.library_name'].extend(library_names[i] * num_samples)
-        inputs['HaplotypeCalling.platform_name'].extend(platform_names[i] * num_samples)
         inputs['HaplotypeCalling.run_date'].extend(run_dates[i] * num_samples)
-        inputs['HaplotypeCalling.sequencing_center'].extend(sequencing_centers[i] * num_samples)
+        inputs['HaplotypeCalling.platform_name'].extend(platform_name * num_samples)
+        inputs['HaplotypeCalling.sequencing_center'].extend(sequencing_center * num_samples)
 
     inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
 

@@ -100,9 +100,9 @@ def joint_discovery(host, directories, reference, version, gatk_path_override, c
               help='Library name. One value for all samples or one for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', 'platform_names', required=True, multiple=True, help='Name of the sequencing platform')
-@click.option('--center', 'sequencing_centers', required=True, multiple=True,
-              help='Sequencing center name.  One value for all samples or one for each FASTQ directory path')
+@click.option('--platform', 'platform_name', required=True, multiple=True, help='Name of the sequencing platform')
+@click.option('--center', 'sequencing_center', required=True, multiple=True,
+              help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -112,7 +112,7 @@ def joint_discovery(host, directories, reference, version, gatk_path_override, c
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
 @click.argument('destination', type=click.Path())
-def haplotype_calling(host, directories, library_names, run_dates, platform_names, sequencing_centers,
+def haplotype_calling(host, directories, library_names, run_dates, platform_name, sequencing_center,
                       reference, genome_version, gatk_path_override, gotc_path_override, samtools_path_override,
                       bwa_commandline_override, destination):
     """Run only haplotype-calling workflow"""
@@ -120,7 +120,7 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
     if not exists(destination):
         mkdir(destination)
 
-    inputs = haplotype_caller_inputs(directories, library_names, platform_names, run_dates, sequencing_centers,
+    inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
     submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination)
