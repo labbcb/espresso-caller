@@ -1,21 +1,14 @@
-# Automates genomic data processing
+# Automates execution of workflows for processing WES/WGS data
 
-Working with Workflow Description Language (WDL), Cromwell and Docker makes genomic data processing reproducible and (not completely) automatized.
-JSON inputs files must be completed by hand generating user-mistake errors.
-__wfauto__ is a tool that automates input files generation for [bcblab-workflows](https://github.com/labbcb/bcblab-workflows), mainly for WES/WGS workflows.
-It also submits workflow jobs to Cromwell Server (through [wftool](https://github.com/labbcb/wftool)).
+Raw paired-end FASTQ or raw gVCF files are collected, together with resources files (b37 or hg38) to generate
+JSON file that is used as input for data processing workflows (haplotype-calling, joint-discovery or both).
+All workflows are submitted to Cromwell server.
+Output files are collected writing them to destination directory.
 
-This systems was designed as the way we do large-scale genomic data at BCBLab and may not be generalized.
-It makes some assumptions to work fine and only supports WES/WGS workflows.
-The list below presents each _automator subcommands_ available:
+'haplotype-calling' workflow takes FASTQ files and their metadata as input (plus resources files) and run
+Broad Institute GATK workflows: convert FASTQ to uBAM; align sequences to reference genome; merge aligned
+with unmapped sequences to create ready-analysis BAM; validate BAM files; convert BAM files to CRAM format;
+and call variants generating one raw gVCF per sample.
 
-- File generation helpers
-    - `fastq_tsv` Generate batch TSV file containing FASTQ file paths and metadata
-    - `intervals_list` Generate genomic intervals in GATK-style .list format
-- Workflow preparation and execution
-    - `hc_batch` - Submit a batch TSV file to 'bipmed-haplotype-calling' workflow to Cromwell server.
-    - `hc` - Submit FASTQ files to 'bipmed-haplotype-calling' workflow to Cromwell server.
-    - `joint` - Submit raw gVCF files to 'joint-analysis' workflow.
-    - `automate_batch` Run all workflows: 'bipmed-haplotype-calling' workflow; 'joint-analysis'.
-    - `automate` Do everything: TSV file; 'bipmed-haplotype-calling' workflow; 'joint-analysis'.
+'joint-discovery' workflows takes raw gVCF files and merge into a single unified VCF.
     

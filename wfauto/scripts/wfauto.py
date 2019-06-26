@@ -10,7 +10,21 @@ from wfauto.workflows import haplotype_caller_inputs, joint_discovery_inputs
 
 @click.group()
 def cli():
-    """Automates execution of BIPMed-related workflows"""
+    """
+    Automates execution of workflows for processing WES/WGS data
+
+    Raw paired-end FASTQ or raw gVCF files are collected, together with resources files (b37 or hg38) to generate
+    JSON file that is used as input for data processing workflows (haplotype-calling, joint-discovery or both).
+    All workflows are submitted to Cromwell server.
+    Output files are collected writing them to destination directory.
+
+    'haplotype-calling' workflow takes FASTQ files and their metadata as input (plus resources files) and run
+    Broad Institute GATK workflows: convert FASTQ to uBAM; align sequences to reference genome; merge aligned
+    with unmapped sequences to create ready-analysis BAM; validate BAM files; convert BAM files to CRAM format;
+    and call variants generating one raw gVCF per sample.
+
+    'joint-discovery' workflows takes raw gVCF files and merge into a single unified VCF.
+    """
     pass
 
 
@@ -39,7 +53,7 @@ def cli():
 def automate(host, fastq, library, platform, date, center, reference, version, callset_name,
              gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
              destination):
-    """Create batch TSV file; submit haplotype-calling and joint-discovery workflows to Cromwell server"""
+    """Run haplotype-calling and joint-discovery workflows"""
     haplotype_calling(host, fastq, library, date, platform, center, reference, version,
                       gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
                       destination)
@@ -58,7 +72,7 @@ def intervals(genome_sizes, window_size, destination):
 @cli.command()
 @click.option('--host', help='Cromwell server URL')
 @click.option('--vcf', required=True, multiple=True, type=click.Path(exists=True),
-              help='Path to directory containing VCF and their index files')
+              help='Path to directory containing raw gVCF and their index files')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -67,7 +81,7 @@ def intervals(genome_sizes, window_size, destination):
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def joint_discovery(host, vcf, reference, version, gatk_path_override, callset_name, destination):
-    """Submit raw gVCF files to 'joint-discovery-gatk4-local' workflow to Cromwell Server"""
+    """Run only joint-discovery-gatk4 workflow"""
     destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
@@ -99,7 +113,7 @@ def joint_discovery(host, vcf, reference, version, gatk_path_override, callset_n
 def haplotype_calling(host, fastq, library, date, platform, center, reference, version,
                       gatk_path_override, gotc_path_override, samtools_path_override, bwa_commandline_override,
                       destination):
-    """Submit FASTQ files to 'bipmed-haplotype-calling' workflow to Cromwell server"""
+    """Run only haplotype-calling workflow"""
     destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
