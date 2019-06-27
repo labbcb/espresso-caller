@@ -101,6 +101,7 @@ def joint_discovery_inputs(directories, reference, version, callset_name, gatk_p
 
     inputs = load_params_file('joint-discovery')
 
+    directories = [directories] if isinstance(directories, str) else directories
     for directory in directories:
         vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory)
         inputs['JointGenotyping.input_gvcfs'].extend(vcf_files)
