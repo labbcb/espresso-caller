@@ -14,10 +14,13 @@ def cli():
 
     Raw paired-end FASTQ or raw gVCF files are collected, together with resources files (b37 or hg38) to generate
     JSON file that is used as input for data processing workflows (haplotype-calling, joint-discovery or both).
-    All workflows are submitted to Cromwell server.
+    It assumes that each directory containing FASTQ files is a library or batch.
+    FASTQ file names must follow this pattern: (sample_name)_R?[12].fastq(.gz)?
+    Input and resources files are checked before workflows are submitted to Cromwell server.
     Output files are collected writing them to destination directory.
 
     'variant-discovery' workflow executes all data processing steps: from raw FASTQs to unified VCF.
+    It is also able to combine previous raw gVCF files when executing 'joint-discovery' workflow.
 
     'haplotype-calling' workflow takes FASTQ files and their metadata as input (plus resources files) and run
     Broad Institute GATK workflows: convert FASTQ to uBAM; align sequences to reference genome; merge aligned
