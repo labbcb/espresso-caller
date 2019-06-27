@@ -36,7 +36,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
                             genome_version, gatk_path_override=None, gotc_path_override=None,
                             samtools_path_override=None, bwa_commandline_override=None):
     """
-    Create inputs for 'bipmed-haplotype-calling' workflow
+    Create inputs for 'haplotype-calling' workflow
     :param directories:
     :param library_names:
     :param platform_name:
