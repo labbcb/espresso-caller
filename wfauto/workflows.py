@@ -63,10 +63,10 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
 
         num_samples = len(sample_names)
-        inputs['HaplotypeCalling.library_name'].extend(library_names[i] * num_samples)
-        inputs['HaplotypeCalling.run_date'].extend(run_dates[i] * num_samples)
-        inputs['HaplotypeCalling.platform_name'].extend(platform_name * num_samples)
-        inputs['HaplotypeCalling.sequencing_center'].extend(sequencing_center * num_samples)
+        inputs['HaplotypeCalling.library_name'].extend([library_names[i]] * num_samples)
+        inputs['HaplotypeCalling.run_date'].extend([run_dates[i]] * num_samples)
+        inputs['HaplotypeCalling.platform_name'].extend([platform_name] * num_samples)
+        inputs['HaplotypeCalling.sequencing_center'].extend([sequencing_center] * num_samples)
 
     inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
 
@@ -99,7 +99,7 @@ def joint_discovery_inputs(directories, reference, version, callset_name, gatk_p
     :return:
     """
 
-    inputs = load_params_file('joint')
+    inputs = load_params_file('joint-discovery')
 
     for directory in directories:
         vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory)
@@ -109,7 +109,7 @@ def joint_discovery_inputs(directories, reference, version, callset_name, gatk_p
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
-    inputs.update(collect_resources_files(reference, 'joint', version))
+    inputs.update(collect_resources_files(reference, 'joint-discovery', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):

@@ -38,9 +38,8 @@ def cli():
               help='Library name. One value for all samples or one for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', 'platform_name', required=True, multiple=True, help='Name of the sequencing platform')
-@click.option('--center', 'sequencing_center', required=True, multiple=True,
-              help='Sequencing center name.')
+@click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
+@click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -85,9 +84,8 @@ def intervals(genome_sizes, window_size, destination):
               help='Library name. One value for all samples or one for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date.  One value for all samples or one for each FASTQ directory path')
-@click.option('--platform', 'platform_name', required=True, multiple=True, help='Name of the sequencing platform')
-@click.option('--center', 'sequencing_center', required=True, multiple=True,
-              help='Sequencing center name.')
+@click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
+@click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
