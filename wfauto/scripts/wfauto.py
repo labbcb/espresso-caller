@@ -3,7 +3,6 @@ from os.path import exists, abspath
 
 import click
 
-from wfauto.intervals import generate_intervals_gatk
 from wfauto.scripts import submit_workflow
 from wfauto.workflows import haplotype_caller_inputs, joint_discovery_inputs
 
@@ -65,15 +64,6 @@ def variant_discovery(host, directories, library_names, run_dates, platform_name
 
     inputs = joint_discovery_inputs(destination, reference, genome_version, callset_name, gatk_path_override)
     submit_workflow(host, 'joint-discovery', genome_version, inputs, destination)
-
-
-@cli.command()
-@click.option('-w', '--window_size', type=click.INT, default=200000, show_default=True, help='Window size')
-@click.argument('genome_sizes')
-@click.argument('destination', default='-', type=click.File('w'))
-def intervals(genome_sizes, window_size, destination):
-    """Generate genomic intervals in GATK-style .list format"""
-    generate_intervals_gatk(genome_sizes, window_size, destination)
 
 
 @cli.command()
