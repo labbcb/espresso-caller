@@ -56,6 +56,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     except KeyboardInterrupt:
         click.echo('Aborting workflow.')
         client.abort(workflow_id)
+        exit(1)
 
     outputs = client.outputs(workflow_id)
     for output in outputs.values():
