@@ -1,13 +1,13 @@
 {
-  "HaplotypeCalling.ref_fasta": "human_g1k_v37.fasta",
-  "HaplotypeCalling.ref_fasta_index": "human_g1k_v37.fasta.fai",
-  "HaplotypeCalling.ref_dict": "human_g1k_v37.dict",
+  "HaplotypeCalling.ref_fasta": "human_g1k_v37_decoy.fasta",
+  "HaplotypeCalling.ref_fasta_index": "human_g1k_v37_decoy.fasta.fai",
+  "HaplotypeCalling.ref_dict": "human_g1k_v37_decoy.dict",
 
-  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_sa": "human_g1k_v37.fasta.sa",
-  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_ann": "human_g1k_v37.fasta.ann",
-  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_bwt": "human_g1k_v37.fasta.bwt",
-  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_amb": "human_g1k_v37.fasta.amb",
-  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_pac": "human_g1k_v37.fasta.pac",
+  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_sa": "human_g1k_v37_decoy.fasta.sa",
+  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_ann": "human_g1k_v37_decoy.fasta.ann",
+  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_bwt": "human_g1k_v37_decoy.fasta.bwt",
+  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_amb": "human_g1k_v37_decoy.fasta.amb",
+  "HaplotypeCalling.PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem.ref_pac": "human_g1k_v37_decoy.fasta.pac",
 
   "HaplotypeCalling.dbSNP_vcf": "dbsnp_138.b37.vcf",
   "HaplotypeCalling.dbSNP_vcf_index": "dbsnp_138.b37.vcf.idx",
