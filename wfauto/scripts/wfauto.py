@@ -29,7 +29,7 @@ def cli():
     pass
 
 
-@cli.command()
+@cli.command('all')
 @click.option('--host', help='Cromwell server URL')
 @click.option('--fastq', 'fastq_directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
@@ -69,7 +69,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     submit_workflow(host, 'joint-discovery', genome_version, inputs, destination)
 
 
-@cli.command()
+@cli.command('hc')
 @click.option('--host', help='Cromwell server URL')
 @click.option('--fastq', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
@@ -102,7 +102,7 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
     submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination)
 
 
-@cli.command()
+@cli.command('joint')
 @click.option('--host', help='Cromwell server URL')
 @click.option('--vcf', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing raw gVCF and their index files')
