@@ -48,6 +48,8 @@ def cli():
               help='Version of reference files')
 @click.option('--vcf', 'vcf_directories', multiple=True, type=click.Path(exists=True),
               help='Path to directory containing raw gVCF and their index files')
+@click.option('--sleep', 'sleep_time', default=300, type=click.INT,
+              help='Time to sleep (in seconds) between each workflow status check')
 @click.option('--dont_run', is_flag=True, default=False, show_default=True,
               help='Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files')
 @click.option('--gatk_path_override')
@@ -57,7 +59,7 @@ def cli():
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center,
-                      reference, genome_version, vcf_directories, dont_run, gatk_path_override, gotc_path_override,
+                      reference, genome_version, vcf_directories, dont_run, sleep_time, gatk_path_override, gotc_path_override,
                       samtools_path_override, bwa_commandline_override, callset_name, destination):
     """Run haplotype-calling and joint-discovery workflows"""
     destination = abspath(destination)
@@ -67,11 +69,11 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, dont_run)
+    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run)
 
     vcf_directories.append(destination)
     inputs = joint_discovery_inputs(vcf_directories, reference, genome_version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', genome_version, inputs, destination, dont_run)
+    submit_workflow(host, 'joint-discovery', genome_version, inputs, destination, sleep_time, dont_run)
 
 
 @cli.command('hc')
@@ -90,13 +92,15 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
               help='Version of reference files')
 @click.option('--dont_run', is_flag=True, default=False, show_default=True,
               help='Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files')
+@click.option('--sleep', 'sleep_time', default=300, type=click.INT,
+              help='Time to sleep (in seconds) between each workflow status check')
 @click.option('--gatk_path_override')
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
 @click.argument('destination', type=click.Path())
 def haplotype_calling(host, directories, library_names, run_dates, platform_name, sequencing_center,
-                      reference, genome_version, dont_run, gatk_path_override, gotc_path_override,
+                      reference, genome_version, dont_run, sleep_time, gatk_path_override, gotc_path_override,
                       samtools_path_override, bwa_commandline_override, destination):
     """Run only haplotype-calling workflow"""
     destination = abspath(destination)
@@ -106,7 +110,7 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
     inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, dont_run)
+    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run)
 
 
 @cli.command('joint')
@@ -119,14 +123,16 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
               help='Version of reference files')
 @click.option('--dont_run', is_flag=True, default=False, show_default=True,
               help='Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files')
+@click.option('--sleep', 'sleep_time', default=300, type=click.INT,
+              help='Time to sleep (in seconds) between each workflow status check')
 @click.option('--gatk_path_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def joint_discovery(host, directories, reference, version, dont_run, gatk_path_override, callset_name, destination):
+def joint_discovery(host, directories, reference, version, dont_run, sleep_time, gatk_path_override, callset_name, destination):
     """Run only joint-discovery-gatk4 workflow"""
     destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
 
     inputs = joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', version, inputs, destination, dont_run)
+    submit_workflow(host, 'joint-discovery', version, inputs, destination, sleep_time, dont_run)
