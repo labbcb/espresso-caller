@@ -23,6 +23,9 @@ def collect_fastq_files(directory):
     if forward_len != reverse_len:
         raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(forward_len, reverse_len))
 
+    forward_files.sort()
+    reverse_files.sort()
+
     sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
     return forward_files, reverse_files, sample_names
 
