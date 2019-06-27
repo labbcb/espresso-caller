@@ -10,7 +10,7 @@ from wftool.cromwell import CromwellClient
 from wfauto.workflows import get_workflow_file
 
 
-def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300):
+def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False):
     """
     Copy workflow file into destination; write inputs JSON file into destination;
     submit workflow to Cromwell server; wait to complete; and copy output files to destination
@@ -20,6 +20,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     :param inputs: dict containing inputs data
     :param destination: directory to write all files
     :param sleep_time: time in seconds to sleep between workflow status check
+    :param dont_run: Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files
     """
 
     click.echo('Starting {} workflow with reference genome version {}'.format(workflow, version), err=True)
@@ -35,6 +36,10 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
         dump(inputs, file, indent=4, sort_keys=True)
 
     click.echo('Inputs JSON file: ' + workflow_file, err=True)
+
+    if dont_run:
+        click.echo('Workflow will not be submitted to Cromwell. See workflow files in ' + destination)
+        exit()
 
     if not host:
         host = 'http://localhost:8000'
