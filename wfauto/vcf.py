@@ -27,3 +27,12 @@ def collect_vcf_files(directory):
     sample_names = [extract_sample_name(f, VCF_NAME_REGEX) for f in vcf_files]
 
     return vcf_files, vcf_index_files, sample_names
+
+
+def strip_version(sample_name, genome_version):
+    """
+    String genome version from VCF file name
+    :type sample_name: str
+    :type genome_version: str
+    """
+    return sample_name.strip('.' + genome_version)
