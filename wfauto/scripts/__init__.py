@@ -1,7 +1,7 @@
+import shutil
 from itertools import chain
 from json import dump
 from os.path import join, basename, exists
-from shutil import copyfile
 from time import sleep
 
 import click
@@ -10,7 +10,7 @@ from wftool.cromwell import CromwellClient
 from wfauto.workflows import get_workflow_file
 
 
-def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False):
+def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
     """
     Copy workflow file into destination; write inputs JSON file into destination;
     submit workflow to Cromwell server; wait to complete; and copy output files to destination
@@ -21,13 +21,14 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     :param destination: directory to write all files
     :param sleep_time: time in seconds to sleep between workflow status check
     :param dont_run: Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files
+    :param move: Move output files to destination directory instead of copying them.
     """
 
     click.echo('Starting {} workflow with reference genome version {}'.format(workflow, version), err=True)
 
     pkg_workflow_file = get_workflow_file(workflow)
     workflow_file = join(destination, basename(pkg_workflow_file))
-    copyfile(pkg_workflow_file, workflow_file)
+    shutil.copyfile(pkg_workflow_file, workflow_file)
 
     click.echo('Workflow file: ' + workflow_file, err=True)
 
@@ -76,6 +77,9 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
             if exists(file):
                 destination_file = join(destination, basename(file))
                 click.echo('Collecting file ' + file, err=True)
-                copyfile(file, destination_file)
+                if move:
+                    shutil.move(file, destination_file)
+                else:
+                    shutil.copyfile(file, destination_file)
             else:
                 click.echo('File not found: ' + file, err=True)
