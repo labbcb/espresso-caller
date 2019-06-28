@@ -35,7 +35,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     with open(inputs_file, 'w') as file:
         dump(inputs, file, indent=4, sort_keys=True)
 
-    click.echo('Inputs JSON file: ' + workflow_file, err=True)
+    click.echo('Inputs JSON file: ' + inputs_file, err=True)
 
     if dont_run:
         click.echo('Workflow will not be submitted to Cromwell. See workflow files in ' + destination)
