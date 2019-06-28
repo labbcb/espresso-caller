@@ -71,6 +71,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
                                      samtools_path_override, bwa_commandline_override)
     submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run)
 
+    vcf_directories = list(vcf_directories)
     vcf_directories.append(destination)
     inputs = joint_discovery_inputs(vcf_directories, reference, genome_version, callset_name, gatk_path_override)
     submit_workflow(host, 'joint-discovery', genome_version, inputs, destination, sleep_time, dont_run)
