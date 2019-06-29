@@ -24,8 +24,6 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     :param move: Move output files to destination directory instead of copying them.
     """
 
-    click.echo('Starting {} workflow with reference genome version {}'.format(workflow, version), err=True)
-
     pkg_workflow_file = get_workflow_file(workflow)
     workflow_file = join(destination, basename(pkg_workflow_file))
     shutil.copyfile(pkg_workflow_file, workflow_file)
@@ -49,6 +47,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
+    click.echo('Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, version), err=True)
 
     try:
         while True:
