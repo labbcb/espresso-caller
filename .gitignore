@@ -1,3 +1,4 @@
 .idea
 venv
 wfauto.egg-info
+__pycache__

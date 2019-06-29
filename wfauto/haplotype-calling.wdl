@@ -1,10 +1,10 @@
-## HaplotypeCalling workflow - from paired FASTQ files to raw gVCF files per sample
+## HaplotypeCalling workflow - from paired-end FASTQ files to per-sample raw gVCF files
 ## Welliton de Souza - well309@gmail.com
 import "https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/1.0.1/paired-fastq-to-unmapped-bam.wdl" as PairedFastqToUnmappedBam
 import "https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/1.1.0/processing-for-variant-discovery-gatk4.wdl" as ProcessingForVariantDiscoveryGATK4
 import "https://raw.githubusercontent.com/gatk-workflows/gatk4-germline-snps-indels/1.1.1/haplotypecaller-gvcf-gatk4.wdl" as HaplotypeCallerGvcfGATK4
 import "https://raw.githubusercontent.com/gatk-workflows/seq-format-validation/1.0.1/validate-bam.wdl" as ValidateBams
-import "https://raw.githubusercontent.com/labbcb/workflows/master/workflows/bam-to-cram/1.0.0/bam-to-cram.wdl" as ConvertToCram
+import "https://raw.githubusercontent.com/labbcb/workflows/master/workflows/bam-to-cram/1.1.0/bam-to-cram.wdl" as ConvertToCram
 
 workflow HaplotypeCalling {
 
@@ -119,12 +119,13 @@ workflow HaplotypeCalling {
         Array[File] duplication_metrics = PreProcessingForVariantDiscovery_GATK4.duplication_metrics
         Array[File] bqsr_report = PreProcessingForVariantDiscovery_GATK4.bqsr_report
         Array[File] cram_files = BamToCram.cram_files
+        Array[File] cram_index = BamToCram.cram_index
         Array[File] unmapped_bams = flatten(ConvertPairedFastQsToUnmappedBamWf.output_bams)
     }
 
     meta {
         author: "Welliton Souza"
         email: "well309@gmail.com"
-        workflow_version: "2.0.0"
+        workflow_version: "2.1.0"
     }
 }
