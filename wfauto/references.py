@@ -50,7 +50,7 @@ def check_intervals_files(intervals_file):
 
     missing_files = [file.strip() for file in open(intervals_file) if not isfile(file.strip())]
     if len(missing_files) != 0:
-        raise Exception('Missing intervals files ' + join_list_mixed(missing_files))
+        raise Exception('Missing intervals files ' + ', '.join(missing_files))
 
 
 def collect_resources_files(reference_dir, workflow, version):
