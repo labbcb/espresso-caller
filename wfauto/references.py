@@ -48,9 +48,16 @@ def check_intervals_files(intervals_file):
     :raise Exception if file not found
     """
 
-    missing_files = [file.strip() for file in open(intervals_file) if not isfile(file.strip())]
+    missing_files = []
+    with open(intervals_file) as file:
+        while True:
+            line = file.readline().strip()
+            if not line:
+                break
+            if not isfile(line):
+                missing_files.append(line)
     if len(missing_files) != 0:
-        raise Exception('Missing intervals files ' + ', '.join(missing_files))
+        raise Exception('Missing intervals files in {}:\n'.format(intervals_file) + '\n'.join(missing_files))
 
 
 def collect_resources_files(reference_dir, workflow, version):
