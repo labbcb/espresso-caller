@@ -48,7 +48,7 @@ def check_intervals_files(intervals_file):
     :raise Exception if file not found
     """
 
-    missing_files = [file for file in open(intervals_file) if not isfile(file.strip())]
+    missing_files = [file.strip() for file in open(intervals_file) if not isfile(file.strip())]
     if len(missing_files) != 0:
         raise Exception('Missing intervals files ' + join_list_mixed(missing_files))
 
