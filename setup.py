@@ -11,7 +11,7 @@ setup(
     author='Welliton Souza',
     author_email='well309@gmail.com',
     description='Automates genomic data processing',
-    requires=['click'],
+    requires=['click', 'wftools'],
     include_package_data=True,
     entry_points='''
         [console_scripts]

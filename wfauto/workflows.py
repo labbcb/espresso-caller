@@ -4,7 +4,7 @@ from pkg_resources import resource_filename
 
 from wfauto import load_json_file
 from wfauto.fastq import collect_fastq_files, extract_platform_units
-from wfauto.references import collect_resources_files
+from wfauto.references import collect_resources_files, check_intervals_files
 from wfauto.vcf import collect_vcf_files, strip_version
 
 WORKFLOW_FILES = {'haplotype-calling': 'haplotype-calling.wdl',
@@ -69,6 +69,8 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.sequencing_center'].extend([sequencing_center] * num_samples)
 
     inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
+
+    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
 
     if gatk_path_override:
         if not isfile(gatk_path_override):

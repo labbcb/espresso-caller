@@ -41,6 +41,18 @@ def load_references(workflow, version):
     return [Reference(param, filename) for param, filename in references.items()]
 
 
+def check_intervals_files(intervals_file):
+    """
+    Checks if all intervals files listed in the combined intervals file exist
+    :param intervals_file: file that has the list of intervals files
+    :raise Exception if file not found
+    """
+
+    missing_files = [file for file in open(intervals_file) if not isfile(file)]
+    if len(missing_files) != 0:
+        raise Exception('Missing intervals files ' + join_list_mixed(missing_files))
+
+
 def collect_resources_files(reference_dir, workflow, version):
     """
     Search for reference files and update reference-related input dict
@@ -48,6 +60,7 @@ def collect_resources_files(reference_dir, workflow, version):
     :param workflow: Workflow name
     :param version: Version of reference files
     :return: dict containing reference-related data updated with absolute path to files
+    :raise Exception if file not found
     """
 
     references = load_references(workflow, version)

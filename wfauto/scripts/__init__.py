@@ -5,7 +5,7 @@ from os.path import join, basename, exists
 from time import sleep
 
 import click
-from wftool.cromwell import CromwellClient
+from wftools.cromwell import CromwellClient
 
 from wfauto.workflows import get_workflow_file
 
