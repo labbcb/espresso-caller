@@ -7,8 +7,8 @@ from wfauto.fastq import collect_fastq_files, extract_platform_units
 from wfauto.references import collect_resources_files, check_intervals_files
 from wfauto.vcf import collect_vcf_files, strip_version
 
-WORKFLOW_FILES = {'haplotype-calling': 'haplotype-calling.wdl',
-                  'joint-discovery': 'joint-discovery-gatk4-local.wdl'}
+WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
+                  'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl'}
 
 
 def get_workflow_file(workflow):
@@ -28,7 +28,7 @@ def load_params_file(workflow):
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
 
-    params_file = resource_filename(__name__, '{}.params.json'.format(workflow))
+    params_file = resource_filename(__name__, 'inputs/{}.params.json'.format(workflow))
     return load_json_file(params_file)
 
 

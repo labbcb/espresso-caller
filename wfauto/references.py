@@ -36,7 +36,7 @@ def load_references(workflow, version):
     :param version: Version of reference files
     :return: list of Reference
     """
-    json_file = resource_filename(__name__, '{}.{}.resources.json'.format(workflow, version))
+    json_file = resource_filename(__name__, 'inputs/{}.{}.resources.json'.format(workflow, version))
     references = load_json_file(json_file)
     return [Reference(param, filename) for param, filename in references.items()]
 

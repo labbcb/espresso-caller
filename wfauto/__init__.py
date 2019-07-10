@@ -1,8 +1,8 @@
 from json import load
 from os import listdir
-from re import compile, search, IGNORECASE
 from os.path import join, basename
 from re import compile
+from re import search, IGNORECASE
 
 
 def search_regex(directory, regex):

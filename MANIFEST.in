@@ -1,8 +1,8 @@
-include wfauto/haplotype-calling.b37.resources.json
-include wfauto/haplotype-calling.hg38.resources.json
-include wfauto/haplotype-calling.params.json
-include wfauto/haplotype-calling.wdl
-include wfauto/joint-discovery.b37.resources.json
-include wfauto/joint-discovery.hg38.resources.json
-include wfauto/joint-discovery.params.json
-include wfauto/joint-discovery-gatk4-local.wdl
+include wfauto/inputs/haplotype-calling.b37.resources.json
+include wfauto/inputs/haplotype-calling.hg38.resources.json
+include wfauto/inputs/haplotype-calling.params.json
+include wfauto/workflows/haplotype-calling.wdl
+include wfauto/inputs/joint-discovery.b37.resources.json
+include wfauto/inputs/joint-discovery.hg38.resources.json
+include wfauto/inputs/joint-discovery.params.json
+include wfauto/workflows/joint-discovery-gatk4-local.wdl
