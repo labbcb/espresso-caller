@@ -37,11 +37,13 @@ def cli():
 @click.option('--fastq', 'fastq_directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
 @click.option('--library', 'library_names', required=True, multiple=True,
-              help='Library name. One value for all samples or one for each FASTQ directory path')
+              help='Library name. One value for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date in ISO8601 format. One value for each FASTQ directory path')
-@click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
-@click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
+@click.option('--platform', 'platform_name', required=True,
+              help='Name of the sequencing platform. One value for each FASTQ directory path')
+@click.option('--center', 'sequencing_center', required=True,
+              help='Sequencing center name. One value for each FASTQ directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -84,11 +86,13 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
 @click.option('--fastq', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing paired-end FASTQ files')
 @click.option('--library', 'library_names', required=True, multiple=True,
-              help='Library name. One value for all samples or one for each FASTQ directory path')
+              help='Library name. One value for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
               help='Run date in ISO8601 format. One value for each FASTQ directory path')
-@click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
-@click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
+@click.option('--platform', 'platform_name', required=True,
+              help='Name of the sequencing platform. One value for each FASTQ directory path')
+@click.option('--center', 'sequencing_center', required=True,
+              help='Sequencing center name. One value for each FASTQ directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
