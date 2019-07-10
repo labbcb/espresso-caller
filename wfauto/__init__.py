@@ -2,6 +2,7 @@ from json import load
 from os import listdir
 from re import compile, search, IGNORECASE
 from os.path import join, basename
+from re import compile
 
 
 def search_regex(directory, regex):
@@ -51,3 +52,14 @@ def extract_sample_name(file, regex):
         raise Exception('Unable to extract sample name from ' + name)
 
     return result.group('sample')
+
+
+def is_valid_run_date(date):
+    """
+    Validates date in ISO8601 format according to BAM specification
+    :param date: str to validate
+    :return: True if valid and False if invalid
+    """
+    regex = r'^(\d{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])' \
+            r'(T(2[0-3]|[01][0-9]):?[0-5][0-9]:?[0-5][0-9](Z|[+-][0-5][0-9]:?[0-5][0-9]))?$'
+    return compile(regex).match(date)

@@ -39,7 +39,7 @@ def cli():
 @click.option('--library', 'library_names', required=True, multiple=True,
               help='Library name. One value for all samples or one for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
-              help='Run date.  One value for all samples or one for each FASTQ directory path')
+              help='Run date in ISO8601 format. One value for each FASTQ directory path')
 @click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
 @click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),
@@ -86,7 +86,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
 @click.option('--library', 'library_names', required=True, multiple=True,
               help='Library name. One value for all samples or one for each FASTQ directory path')
 @click.option('--date', 'run_dates', required=True, multiple=True,
-              help='Run date.  One value for all samples or one for each FASTQ directory path')
+              help='Run date in ISO8601 format. One value for each FASTQ directory path')
 @click.option('--platform', 'platform_name', required=True, help='Name of the sequencing platform')
 @click.option('--center', 'sequencing_center', required=True, help='Sequencing center name.')
 @click.option('--reference', required=True, type=click.Path(exists=True),

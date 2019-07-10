@@ -2,7 +2,7 @@ from os.path import abspath, isfile, exists
 
 from pkg_resources import resource_filename
 
-from wfauto import load_json_file
+from wfauto import load_json_file, is_valid_run_date
 from wfauto.fastq import collect_fastq_files, extract_platform_units
 from wfauto.references import collect_resources_files, check_intervals_files
 from wfauto.vcf import collect_vcf_files, strip_version
@@ -53,6 +53,10 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
 
     inputs = load_params_file('haplotype-calling')
     inputs['HaplotypeCalling.ref_name'] = genome_version
+
+    invalid_dates = [d for d in run_dates if not is_valid_run_date(d)]
+    if len(invalid_dates) != 0:
+        raise Exception('Invalid run date(s): ' + ', '.join(invalid_dates))
 
     directories = [directories] if isinstance(directories, str) else directories
     for i in range(len(directories)):
