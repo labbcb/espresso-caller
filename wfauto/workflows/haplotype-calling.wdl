@@ -1,10 +1,10 @@
 ## HaplotypeCalling workflow - from paired-end FASTQ files to per-sample raw gVCF files
 ## Welliton de Souza - well309@gmail.com
-import "https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/1.0.1/paired-fastq-to-unmapped-bam.wdl" as PairedFastqToUnmappedBam
-import "https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/1.1.0/processing-for-variant-discovery-gatk4.wdl" as ProcessingForVariantDiscoveryGATK4
-import "https://raw.githubusercontent.com/gatk-workflows/gatk4-germline-snps-indels/1.1.1/haplotypecaller-gvcf-gatk4.wdl" as HaplotypeCallerGvcfGATK4
-import "https://raw.githubusercontent.com/gatk-workflows/seq-format-validation/1.0.1/validate-bam.wdl" as ValidateBams
-import "https://raw.githubusercontent.com/labbcb/workflows/master/workflows/bam-to-cram/1.1.0/bam-to-cram.wdl" as ConvertToCram
+import "paired-fastq-to-unmapped-bam.wdl" as PairedFastqToUnmappedBam
+import "processing-for-variant-discovery-gatk4.wdl" as ProcessingForVariantDiscoveryGATK4
+import "haplotypecaller-gvcf-gatk4.wdl" as HaplotypeCallerGvcfGATK4
+import "validate-bam.wdl" as ValidateBams
+import "bam-to-cram.wdl" as ConvertToCram
 
 workflow HaplotypeCalling {
 

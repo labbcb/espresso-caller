@@ -1,8 +1,13 @@
 include wfauto/inputs/haplotype-calling.b37.resources.json
 include wfauto/inputs/haplotype-calling.hg38.resources.json
 include wfauto/inputs/haplotype-calling.params.json
-include wfauto/workflows/haplotype-calling.wdl
 include wfauto/inputs/joint-discovery.b37.resources.json
 include wfauto/inputs/joint-discovery.hg38.resources.json
 include wfauto/inputs/joint-discovery.params.json
+include wfauto/workflows/bam-to-cram.wdl
+include wfauto/workflows/haplotype-calling.wdl
+include wfauto/workflows/haplotypecaller-gvcf-gatk4.wdl
 include wfauto/workflows/joint-discovery-gatk4-local.wdl
+include wfauto/workflows/paired-fastq-to-unmapped-bam.wdl
+include wfauto/workflows/processing-for-variant-discovery-gatk4.wdl
+include wfauto/workflows/validate-bam.wdl

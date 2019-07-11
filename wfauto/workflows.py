@@ -1,4 +1,5 @@
-from os.path import abspath, isfile, exists
+from os.path import abspath, isfile, exists, join, basename
+from zipfile import ZipFile
 
 from pkg_resources import resource_filename
 
@@ -8,7 +9,15 @@ from wfauto.references import collect_resources_files, check_intervals_files
 from wfauto.vcf import collect_vcf_files, strip_version
 
 WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
-                  'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl'}
+                  'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl',
+                  'bam-to-cram': 'workflows/bam-to-cram.wdl',
+                  'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
+                  'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
+                  'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
+                  'validate-bam': 'workflows/validate-bam.wdl'}
+
+IMPORTS_FILES = {'haplotype-calling': ['bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
+                                       'processing-for-variant-discovery-gatk4', 'validate-bam']}
 
 
 def get_workflow_file(workflow):
@@ -30,6 +39,26 @@ def load_params_file(workflow):
 
     params_file = resource_filename(__name__, 'inputs/{}.params.json'.format(workflow))
     return load_json_file(params_file)
+
+
+def zip_imports_files(workflow, dest_dir):
+    """
+    Zip WDL files and write in destination directory
+    :param workflow: workflow name
+    :param dest_dir: destination directory
+    :return: path to zip file or None if workflow does not require sub-workflows
+    """
+
+    if workflow not in IMPORTS_FILES.keys():
+        return None
+
+    zip_file = join(dest_dir, workflow + '.inputs.zip')
+    with ZipFile(zip_file, 'w') as file:
+        for sub_workflow in IMPORTS_FILES.get(workflow):
+            workflow_file = get_workflow_file(sub_workflow)
+            file.write(workflow_file, basename(workflow_file))
+
+    return zip_file
 
 
 def haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center, reference,

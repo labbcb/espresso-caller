@@ -7,7 +7,7 @@ from time import sleep
 import click
 from wftools.cromwell import CromwellClient
 
-from wfauto.workflows import get_workflow_file
+from wfauto.workflows import get_workflow_file, zip_imports_files
 
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
@@ -30,6 +30,10 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     click.echo('Workflow file: ' + workflow_file, err=True)
 
+    imports_file = zip_imports_files(workflow, destination)
+    if imports_file:
+        click.echo('Workflow imports file: ' + imports_file)
+
     inputs_file = join(destination, '{}.{}.inputs.json'.format(workflow, version))
     with open(inputs_file, 'w') as file:
         dump(inputs, file, indent=4, sort_keys=True)
@@ -43,7 +47,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     if not host:
         host = 'http://localhost:8000'
     client = CromwellClient(host)
-    workflow_id = client.submit(workflow_file, inputs_file)
+    workflow_id = client.submit(workflow_file, inputs_file, dependencies=imports_file)
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
