@@ -1,7 +1,7 @@
 from os.path import isfile
 from unittest import TestCase
 from tempfile import mkdtemp
-from wfauto.workflows import zip_imports_files
+from espresso.workflows import zip_imports_files
 
 
 class TestZipImportsFiles(TestCase):

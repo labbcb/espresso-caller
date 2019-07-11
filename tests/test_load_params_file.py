@@ -1,5 +1,5 @@
 from unittest import TestCase
-from wfauto.workflows import load_params_file, WORKFLOW_FILES
+from espresso.workflows import load_params_file, WORKFLOW_FILES
 
 
 class TestLoadParamsFile(TestCase):

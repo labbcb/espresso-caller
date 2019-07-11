@@ -7,7 +7,7 @@ from time import sleep
 import click
 from wftools.cromwell import CromwellClient
 
-from wfauto.workflows import get_workflow_file, zip_imports_files
+from espresso.workflows import get_workflow_file, zip_imports_files
 
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):

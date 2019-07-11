@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from wfauto.references import load_references
-from wfauto.workflows import WORKFLOW_FILES
+from espresso.references import load_references
+from espresso.workflows import WORKFLOW_FILES
 
 
 class TestLoadReferences(TestCase):

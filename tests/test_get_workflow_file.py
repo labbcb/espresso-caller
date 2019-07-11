@@ -1,6 +1,6 @@
 from os.path import isfile
 from unittest import TestCase
-from wfauto.workflows import get_workflow_file, WORKFLOW_FILES
+from espresso.workflows import get_workflow_file, WORKFLOW_FILES
 
 
 class TestGetWorkflowFile(TestCase):

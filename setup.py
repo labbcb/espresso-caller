@@ -3,18 +3,18 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name='wfauto',
-    version='1.0.0',
+    name='espresso',
+    version='1.1.0',
     packages=find_packages(),
-    url='https://github.com/labbcb/workflow-wfauto',
+    url='https://github.com/labbcb/espresso-caller',
     license='',
-    author='Welliton Souza',
-    author_email='well309@gmail.com',
-    description='Automates genomic data processing',
+    author='Welliton de Souza, Benilton Carvalho',
+    author_email='well309@gmail.com, benilton@unicamp.br',
+    description='Automates WGS/WES genomic variant calling',
     requires=['click', 'wftools'],
     include_package_data=True,
     entry_points='''
         [console_scripts]
-        wfauto=wfauto.scripts.wfauto:cli
+        espresso=espresso.scripts.espresso:cli
     ''',
 )

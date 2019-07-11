@@ -3,8 +3,8 @@ from os.path import exists, abspath
 
 import click
 
-from wfauto.scripts import submit_workflow
-from wfauto.workflows import haplotype_caller_inputs, joint_discovery_inputs
+from espresso.scripts import submit_workflow
+from espresso.workflows import haplotype_caller_inputs, joint_discovery_inputs
 
 
 @click.group()

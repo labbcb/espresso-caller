@@ -3,10 +3,10 @@ from zipfile import ZipFile
 
 from pkg_resources import resource_filename
 
-from wfauto import load_json_file, is_valid_run_date
-from wfauto.fastq import collect_fastq_files, extract_platform_units
-from wfauto.references import collect_resources_files, check_intervals_files
-from wfauto.vcf import collect_vcf_files, strip_version
+from espresso import load_json_file, is_valid_run_date
+from espresso.fastq import collect_fastq_files, extract_platform_units
+from espresso.references import collect_resources_files, check_intervals_files
+from espresso.vcf import collect_vcf_files, strip_version
 
 WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
                   'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl',

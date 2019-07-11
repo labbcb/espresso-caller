@@ -1,6 +1,6 @@
 import unittest
 
-from wfauto.vcf import strip_version
+from espresso.vcf import strip_version
 
 
 class TestStripVersion(unittest.TestCase):

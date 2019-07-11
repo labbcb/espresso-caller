@@ -1,7 +1,7 @@
 from pkg_resources import resource_filename
 from os.path import isfile, join, abspath
 
-from wfauto import load_json_file
+from espresso import load_json_file
 
 
 def join_list_mixed(x, sep=', '):

@@ -1,4 +1,4 @@
-from wfauto import search_regex, extract_sample_name
+from espresso import search_regex, extract_sample_name
 
 VCF_NAME_REGEX = '(?P<sample>.+)(\\.\\w)?\\.g\\.vcf(\\.gz)?$'
 
