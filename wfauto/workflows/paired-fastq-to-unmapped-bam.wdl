@@ -124,7 +124,7 @@ task PairedFastQsToUnmappedBAM {
   runtime {
     docker: docker
     memory: select_first([machine_mem_gb, 10]) + " GB"
-    cpu: "1"
+    cpu: "4"
     disks: "local-disk " + select_first([disk_space_gb, 100]) + " HDD"
     preemptible: select_first([preemptible_attempts, 3])
   }
