@@ -52,7 +52,7 @@ def zip_imports_files(workflow, dest_dir):
     if workflow not in IMPORTS_FILES.keys():
         return None
 
-    zip_file = join(dest_dir, workflow + '.inputs.zip')
+    zip_file = join(dest_dir, workflow + '.imports.zip')
     with ZipFile(zip_file, 'w') as file:
         for sub_workflow in IMPORTS_FILES.get(workflow):
             workflow_file = get_workflow_file(sub_workflow)
