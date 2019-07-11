@@ -27,6 +27,7 @@
 ## for detailed licensing information pertaining to the included programs.
 
 # From https://raw.githubusercontent.com/gatk-workflows/gatk4-germline-snps-indels/1.1.1/haplotypecaller-gvcf-gatk4.wdl
+# Set CPUs for tasks
 
 # WORKFLOW DEFINITION 
 workflow HaplotypeCallerGvcf_GATK4 {
@@ -144,6 +145,7 @@ task CramToBamTask {
     memory: select_first([machine_mem_gb, 15]) + " GB"
     disks: "local-disk " + select_first([disk_space_gb, disk_size]) + if use_ssd then " SSD" else " HDD"
     preemptible: select_first([preemptible_attempts, 3])
+    cpu: "4"
  }
   output {
     File output_bam = "${sample_name}.bam"
@@ -197,6 +199,7 @@ task HaplotypeCaller {
     memory: machine_mem_gb + " GB"
     disks: "local-disk " + select_first([disk_space_gb, disk_size]) + if use_ssd then " SSD" else " HDD"
     preemptible: select_first([preemptible_attempts, 3])
+    cpu: "4"
   }
 
   output {
@@ -236,6 +239,7 @@ task MergeGVCFs {
     memory: machine_mem_gb + " GB"
     disks: "local-disk " + select_first([disk_space_gb, 100]) + if use_ssd then " SSD" else " HDD"
     preemptible: select_first([preemptible_attempts, 3])
+    cpu: "4"
   }
 
 

@@ -35,6 +35,7 @@
 ## for detailed licensing information pertaining to the included programs.
 
 # From https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/1.1.0/processing-for-variant-discovery-gatk4.wdl
+# Set CPUs for tasks
 
 # WORKFLOW DEFINITION 
 workflow PreProcessingForVariantDiscovery_GATK4 {
@@ -393,6 +394,7 @@ task MergeBamAlignment {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "4"
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -441,6 +443,7 @@ task SortAndFixTags {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "4"
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -483,6 +486,7 @@ task MarkDuplicates {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "16"
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
@@ -587,6 +591,7 @@ task BaseRecalibrator {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "4"
   }
   output {
     File recalibration_report = "${recalibration_report_filename}"
@@ -661,6 +666,7 @@ task ApplyBQSR {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "4"
   }
   output {
     File recalibrated_bam = "${output_bam_basename}.bam"
@@ -694,6 +700,7 @@ task GatherBamFiles {
     docker: docker_image
     memory: mem_size
     disks: "local-disk " + disk_size + " HDD"
+    cpu: "4"
   }
   output {
     File output_bam = "${output_bam_basename}.bam"
