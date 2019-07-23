@@ -4,6 +4,8 @@ from os.path import join, basename
 from re import compile
 from re import search, IGNORECASE
 
+name = 'espresso-caller'
+
 
 def search_regex(directory, regex):
     """
