@@ -50,6 +50,8 @@ def cli():
               help='Version of reference files')
 @click.option('--vcf', 'vcf_directories', multiple=True, type=click.Path(exists=True),
               help='Path to directory containing raw gVCF and their index files')
+@click.option('--prefix', 'prefixes', multiple=True,
+              help='Add prefix to sample names from raw gVCF directory. One value for each gVCF directory path')
 @click.option('--sleep', 'sleep_time', default=300, type=click.INT,
               help='Time to sleep (in seconds) between each workflow status check')
 @click.option('--dont_run', is_flag=True, default=False, show_default=True,
@@ -62,13 +64,13 @@ def cli():
 @click.option('--bwa_commandline_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center,
-                      reference, genome_version, vcf_directories, dont_run, sleep_time, move, gatk_path_override,
+def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center, reference,
+                      genome_version, vcf_directories, prefixes, dont_run, sleep_time, move, gatk_path_override,
                       gotc_path_override, samtools_path_override, bwa_commandline_override, callset_name, destination):
     """Run haplotype-calling and joint-discovery workflows"""
-    destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
+    destination = abspath(destination)
 
     inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
@@ -77,7 +79,12 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
 
     vcf_directories = list(vcf_directories)
     vcf_directories.append(destination)
-    inputs = joint_discovery_inputs(vcf_directories, reference, genome_version, callset_name, gatk_path_override)
+
+    prefixes = list(prefixes)
+    prefixes.append('')
+
+    inputs = joint_discovery_inputs(vcf_directories, prefixes, reference, genome_version, callset_name,
+                                    gatk_path_override)
     submit_workflow(host, 'joint-discovery', genome_version, inputs, destination, sleep_time, dont_run, move)
 
 
@@ -112,20 +119,21 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
                       reference, genome_version, dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
                       samtools_path_override, bwa_commandline_override, destination):
     """Run only haplotype-calling workflow"""
-    destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
 
     inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run, move)
+    submit_workflow(host, 'haplotype-calling', genome_version, inputs, abspath(destination), sleep_time, dont_run, move)
 
 
 @cli.command('joint')
 @click.option('--host', help='Cromwell server URL')
 @click.option('--vcf', 'directories', required=True, multiple=True, type=click.Path(exists=True),
               help='Path to directory containing raw gVCF and their index files')
+@click.option('--prefix', 'prefixes', multiple=True,
+              help='Add prefix to sample names from raw gVCF directory. One value for each gVCF directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -139,12 +147,11 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
 @click.option('--gatk_path_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def joint_discovery(host, directories, reference, version, dont_run, sleep_time, move, gatk_path_override, callset_name,
-                    destination):
+def joint_discovery(host, directories, prefixes, reference, version, dont_run, sleep_time, move, gatk_path_override,
+                    callset_name, destination):
     """Run only joint-discovery-gatk4 workflow"""
-    destination = abspath(destination)
     if not exists(destination):
         mkdir(destination)
 
-    inputs = joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', version, inputs, destination, sleep_time, dont_run, move)
+    inputs = joint_discovery_inputs(directories, prefixes, reference, version, callset_name, gatk_path_override)
+    submit_workflow(host, 'joint-discovery', version, inputs, abspath(destination), sleep_time, dont_run, move)

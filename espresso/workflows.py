@@ -123,10 +123,11 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     return inputs
 
 
-def joint_discovery_inputs(directories, reference, version, callset_name, gatk_path_override=None):
+def joint_discovery_inputs(directories, prefixes, reference, version, callset_name, gatk_path_override=None):
     """
     Create inputs for 'joint-discovery-gatk4-local' workflow
     :param directories:
+    :param prefixes:
     :param reference:
     :param version:
     :param gatk_path_override:
@@ -136,9 +137,11 @@ def joint_discovery_inputs(directories, reference, version, callset_name, gatk_p
 
     inputs = load_params_file('joint-discovery')
 
-    directories = [directories] if isinstance(directories, str) else directories
-    for directory in directories:
-        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory)
+    if len(directories) != len(prefixes):
+        raise Exception("Number of directories {} and prefixes {} are uneven.".format(directories, prefixes))
+
+    for directory, prefix in zip(directories, prefixes):
+        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
         inputs['JointGenotyping.input_gvcfs'].extend(vcf_files)
         inputs['JointGenotyping.input_gvcfs_indices'].extend(vcf_index_files)
         inputs['JointGenotyping.sample_names'].extend([strip_version(s, version) for s in sample_names])
