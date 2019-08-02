@@ -120,7 +120,8 @@ workflow HaplotypeCalling {
         Array[File] bqsr_report = PreProcessingForVariantDiscovery_GATK4.bqsr_report
         Array[File] cram_files = BamToCram.cram_files
         Array[File] cram_index = BamToCram.cram_index
-        Array[File] unmapped_bams = flatten(ConvertPairedFastQsToUnmappedBamWf.output_bams)
+        Array[File] bam_files = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam
+        Array[File] bam_index = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam_index
     }
 
     meta {
