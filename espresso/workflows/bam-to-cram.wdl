@@ -15,7 +15,7 @@ workflow BamToCram {
     File ref_fasta
 
     String? gitc_docker_override
-    String gitc_docker = select_first([gitc_docker_override, "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"])
+    String gitc_docker = select_first([gitc_docker_override, "welliton/samtools:1.9"])
     String? samtools_path_override
     String samtools_path = select_first([samtools_path_override, "samtools"])
 
