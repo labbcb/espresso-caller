@@ -459,6 +459,9 @@ task GenotypeGVCFs {
   command <<<
     set -e
 
+    # disable TileDB file locking for shared file systems
+    export TILEDB_DISABLE_FILE_LOCKING=1
+
     tar -xf ${workspace_tar}
     WORKSPACE=$( basename ${workspace_tar} .tar)
 
