@@ -5,7 +5,7 @@ from os.path import join, basename, exists
 from time import sleep
 
 import click
-from wftools.cromwell import CromwellClient
+from ..cromwell import CromwellClient
 
 from espresso.workflows import get_workflow_file, zip_imports_files
 
