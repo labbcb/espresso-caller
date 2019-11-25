@@ -5,8 +5,7 @@ from os.path import join, basename, exists
 from time import sleep
 
 import click
-from ..cromwell import CromwellClient
-
+from espresso.cromwell import CromwellClient
 from espresso.workflows import get_workflow_file, zip_imports_files
 
 
@@ -51,7 +50,8 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
-    click.echo('Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, version), err=True)
+    click.echo('Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, version),
+               err=True)
 
     try:
         while True:
