@@ -4,7 +4,7 @@ from setuptools import find_packages
 
 setup(
     name='espresso-caller',
-    version='1.3.0',
+    version='1.2.0',
     packages=find_packages(),
     url='https://github.com/labbcb/espresso-caller',
     license='',
