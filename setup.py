@@ -3,7 +3,7 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name='espresso-caller',
+    name='espresso',
     version='1.2.0',
     packages=find_packages(),
     url='https://github.com/labbcb/espresso-caller',
