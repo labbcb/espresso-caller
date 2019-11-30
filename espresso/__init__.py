@@ -42,16 +42,16 @@ def merge_dicts(*dict_args):
 
 def extract_sample_name(file, regex):
     """
-    Extract sample name from FASTQ file name
+    Extract sample name from FASTQ or VCF file name
     :param file: a single FASTQ or VCF file
     :param regex: regex pattern used to extract sample name
     :return: sample name
     """
-    name = basename(file)
-    result = search(regex, name, IGNORECASE)
+    filename = basename(file)
+    result = search(regex, filename, IGNORECASE)
 
     if not result:
-        raise Exception('Unable to extract sample name from ' + name)
+        raise Exception('Unable to extract sample name from ' + filename)
 
     return result.group('sample')
 
