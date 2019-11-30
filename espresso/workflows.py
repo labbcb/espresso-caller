@@ -6,7 +6,7 @@ from pkg_resources import resource_filename
 from espresso import load_json_file, is_valid_run_date
 from espresso.fastq import collect_fastq_files, extract_platform_units
 from espresso.references import collect_resources_files, check_intervals_files
-from espresso.vcf import collect_vcf_files, strip_version
+from espresso.vcf import collect_vcf_files
 
 WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
                   'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl',
@@ -144,7 +144,7 @@ def joint_discovery_inputs(directories, prefixes, reference, version, callset_na
         vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
         inputs['JointGenotyping.input_gvcfs'].extend(vcf_files)
         inputs['JointGenotyping.input_gvcfs_indices'].extend(vcf_index_files)
-        inputs['JointGenotyping.sample_names'].extend([strip_version(s, version) for s in sample_names])
+        inputs['JointGenotyping.sample_names'].extend(sample_names)
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
