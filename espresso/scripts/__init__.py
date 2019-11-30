@@ -5,8 +5,8 @@ from os.path import join, basename, exists
 from time import sleep
 
 import click
-from espresso.cromwell import CromwellClient
-from espresso.workflows import get_workflow_file, zip_imports_files
+from ..cromwell import CromwellClient
+from ..workflows import get_workflow_file, zip_imports_files
 
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):

@@ -1,6 +1,6 @@
 import gzip
 
-from espresso import search_regex, extract_sample_name
+from . import search_regex, extract_sample_name
 
 FASTQ_NAME_REGEX = '(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'
 
