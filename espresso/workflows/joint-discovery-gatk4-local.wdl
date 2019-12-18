@@ -662,7 +662,7 @@ task SNPsVariantRecalibrator {
   Int disk_size
 
   command {
-    ${gatk_path} --java-options "-Xmx3g -Xms3g" \
+    ${gatk_path} --java-options "-Xmx6g -Xms6g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -680,7 +680,7 @@ task SNPsVariantRecalibrator {
   }
   runtime {
     docker: docker
-    memory: "3.5 GB"
+    memory: "7 GB"
     cpu: "2"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: 5
