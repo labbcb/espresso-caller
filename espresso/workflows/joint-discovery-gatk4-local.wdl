@@ -41,6 +41,8 @@
 ## page at https://hub.docker.com/r/broadinstitute/genomes-in-the-cloud/ for detailed
 ## licensing information pertaining to the included programs.
 
+## FROM https://raw.githubusercontent.com/gatk-workflows/gatk4-germline-snps-indels/master/joint-discovery-gatk4-local.wdl
+
 workflow JointGenotyping {
   # Input Sample
   String callset_name
@@ -659,10 +661,19 @@ task SNPsVariantRecalibrator {
 
   String gatk_path
   String docker
+  Int? machine_mem_gb
+  Int auto_mem = ceil(2 * size([sites_only_variant_filtered_vcf,
+                                hapmap_resource_vcf,
+                                omni_resource_vcf,
+                                one_thousand_genomes_resource_vcf,
+                                dbsnp_resource_vcf],
+                                "GiB"))
+  Int machine_mem = select_first([machine_mem_gb, if auto_mem < 7 then 7 else auto_mem])
+  Int java_mem = machine_mem-2
   Int disk_size
 
   command {
-    ${gatk_path} --java-options "-Xmx6g -Xms6g" \
+    ${gatk_path} --java-options "-Xmx${java_mem}g -Xms${java_mem}g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -680,7 +691,7 @@ task SNPsVariantRecalibrator {
   }
   runtime {
     docker: docker
-    memory: "7 GB"
+    memory: machine_mem + " GB"
     cpu: "2"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: 5
@@ -704,7 +715,7 @@ task GatherTranches {
   command <<<
     set -e
     set -o pipefail
-    
+
       ${gatk_path} --java-options "-Xmx6g -Xms6g" \
       GatherTranches \
       --input ${sep=" --input " input_fofn}  \
@@ -780,7 +791,7 @@ task GatherVcfs {
   Array[File] input_vcfs_fofn
   Array[File] input_vcf_indexes_fofn
   String output_vcf_name
-  
+
   String gatk_path
   String docker
   Int disk_size
@@ -865,7 +876,7 @@ task GatherMetrics {
     set -e
     set -o pipefail
 
-    
+
     ${gatk_path} --java-options "-Xmx2g -Xms2g" \
     AccumulateVariantCallingMetrics \
     --INPUT ${sep=" --INPUT " input_details_fofn} \
