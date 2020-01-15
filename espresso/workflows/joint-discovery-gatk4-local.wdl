@@ -661,19 +661,10 @@ task SNPsVariantRecalibrator {
 
   String gatk_path
   String docker
-  Int? machine_mem_gb
-  Int auto_mem = ceil(2 * size([sites_only_variant_filtered_vcf,
-                                hapmap_resource_vcf,
-                                omni_resource_vcf,
-                                one_thousand_genomes_resource_vcf,
-                                dbsnp_resource_vcf],
-                                "GiB"))
-  Int machine_mem = select_first([machine_mem_gb, if auto_mem < 7 then 7 else auto_mem])
-  Int java_mem = machine_mem-2
   Int disk_size
 
   command {
-    ${gatk_path} --java-options "-Xmx${java_mem}g -Xms${java_mem}g" \
+    ${gatk_path} --java-options "-Xmx24g -Xms24g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -691,7 +682,7 @@ task SNPsVariantRecalibrator {
   }
   runtime {
     docker: docker
-    memory: machine_mem + " GB"
+    memory: "25 GB"
     cpu: "2"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: 5
