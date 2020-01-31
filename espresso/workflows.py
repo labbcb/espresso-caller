@@ -96,7 +96,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.fastq_2'].extend(reverse_files)
 
         if disable_platform_unit:
-            inputs['HaplotypeCalling.platform_unit'].extend(["" for f in forward_files])
+            inputs['HaplotypeCalling.platform_unit'].extend(["-" for f in forward_files])
         else:
             inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
 
