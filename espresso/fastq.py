@@ -1,5 +1,6 @@
 import gzip
 
+from os.path import abspath
 from . import search_regex, extract_sample_name
 
 FASTQ_NAME_REGEX = '(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'
@@ -27,7 +28,7 @@ def collect_fastq_files(directory):
     reverse_files.sort()
 
     sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
-    return forward_files, reverse_files, sample_names
+    return [abspath(f) for f in forward_files], [abspath(f) for f in reverse_files], sample_names
 
 
 def extract_platform_unit(fastq_file):
