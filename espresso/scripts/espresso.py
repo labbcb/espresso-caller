@@ -44,6 +44,8 @@ def cli():
               help='Name of the sequencing platform. One value for each FASTQ directory path')
 @click.option('--center', 'sequencing_center', required=True,
               help='Sequencing center name. One value for each FASTQ directory path')
+@click.option('--disable_platform_unit', is_flag=True, default=False,
+              help='Disable extraction of platform unit (PU) from FASTQ header')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -64,7 +66,7 @@ def cli():
 @click.option('--bwa_commandline_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center, reference,
+def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center, disable_platform_unit, reference,
                       genome_version, vcf_directories, prefixes, dont_run, sleep_time, move, gatk_path_override,
                       gotc_path_override, samtools_path_override, bwa_commandline_override, callset_name, destination):
     """Run haplotype-calling and joint-discovery workflows"""
@@ -72,7 +74,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
         mkdir(destination)
     destination = abspath(destination)
 
-    inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center,
+    inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center, disable_platform_unit,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
     submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run, move)

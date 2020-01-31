@@ -61,7 +61,7 @@ def zip_imports_files(workflow, dest_dir):
     return zip_file
 
 
-def haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center, reference,
+def haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center, disable_platform_unit, reference,
                             genome_version, gatk_path_override=None, gotc_path_override=None,
                             samtools_path_override=None, bwa_commandline_override=None):
     """
@@ -71,6 +71,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     :param platform_name:
     :param run_dates:
     :param sequencing_center:
+    :param disable_platform_unit:
     :param reference:
     :param genome_version:
     :param gatk_path_override:
@@ -93,7 +94,11 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.sample_name'].extend(sample_names)
         inputs['HaplotypeCalling.fastq_1'].extend(forward_files)
         inputs['HaplotypeCalling.fastq_2'].extend(reverse_files)
-        inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
+
+        if disable_platform_unit:
+            inputs['HaplotypeCalling.platform_unit'].extend([None for f in forward_files])
+        else:
+            inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
 
         num_samples = len(sample_names)
         inputs['HaplotypeCalling.library_name'].extend([library_names[i]] * num_samples)

@@ -4,13 +4,13 @@ from setuptools import find_packages
 
 setup(
     name='espresso',
-    version='1.2.0',
+    version='1.2.1',
     packages=find_packages(),
     url='https://github.com/labbcb/espresso-caller',
     license='',
     author='Welliton de Souza, Benilton Carvalho',
     author_email='well309@gmail.com, benilton@unicamp.br',
-    description='Automates WGS/WES genomic variant calling',
+    description='Automated and reproducible tool for identifying genomic variations at scale',
     requires=['click', 'requests'],
     include_package_data=True,
     entry_points='''
