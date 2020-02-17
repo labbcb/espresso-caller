@@ -95,7 +95,7 @@ Next we have to inform the path to resources files (`--reference <resources dire
 
 Some computing environments do not support container technology.
 In this case we have to inform the _absolute paths_ to this software.
-See [installing required software script](https://github.com/labbcb/bcblab-workflows/blob/master/install_softwares.sh).
+See [installing required software script](install_software.sh).
 
 - `--gatk_path_override` path to __GATK version 4__, it must point to `gatk` wrapper script (not the Jar file).
 - `--gotc_path_override` path to directory containing all softwares (`bwa`, `picard.jar`, etc)
