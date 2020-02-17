@@ -1,6 +1,8 @@
-# Automated and reproducible tool for identifying genomic variations at scale
+# Automated and reproducible tool for identifying genomic variants at scale
     
-Processing high-throughput sequencing data was the biggest challenge in the past, dealing with small datasets of large sample data. Genomics projects with thousands of samples have became very popular due to decreasing in sequencing costs generating even more data. In the future we will be facing a more difficult challenge: how to process and store large-scale datasets efficiently.
+Processing high-throughput sequencing data was the biggest challenge in the past, dealing with small datasets of large sample data.
+Genomics projects with thousands of samples have became popular due to decreasing in sequencing costs.
+Now we are facing a new challenge: how to process and store large-scale datasets efficiently.
 
 The [Sequence Alignment/Map Format Specification (SAM)](https://samtools.github.io/hts-specs/SAMv1.pdf) and its binary version (BAM) is the most popular and recommended file format to store sequence alignment data. However, due to the increasing throughput of sequencing platforms, BAM files have lost their efficiency, as we are dealing more frequently with deeper whole-genome sequencing (WGS), whole-exome sequencing (WES) and other large-scale genomics data.
 
@@ -23,46 +25,33 @@ Also, [Docker Hub](https://hub.docker.com) is the main repository for popular op
 
 Back to workflows... the workflow file + inputs file have been working well for small datasets. With our [wftools](https://github.com/labbcb/wftools) software, we can submit workflows (and their inputs) to execution services, such as Cromwell in server mode, check workflow executions status and logs, and collect output files copying them to desirable directory. The input JSON file must contain workflow-specific parameter to work, for example, a workflow that require FASTQ files as input we have to provide a _list of absolute paths to FASTQ files_ (two list if paired-end), other workflows may require several resource files that can be specific for different genome versions. It is important to note that Cromwell checks the file existence immediately prior to its use within the task, and this is associated with several downstream errors that force the system to abort the execution of the workflow. Additionally, the input JSON files are manually produced.
 
-This document presents _espresso_ (working title), a tool that _automates execution of workflows for processing whole-exome and whole-genome datasets_.
+Espresso-Caller is a tool that automates execution of workflows for identification of genomic variants from whole-exome and whole-genome datasets.
 It collects raw sequencing paired-end FASTQ or raw gVCF files, together with resources files (__b37__ or __hg38__ versions), assessing their existence, to generate the JSON file that is used as input of workflows for processing WES/WGS data.
 Our software takes some conventions to automatically find the required files and to define sample metadata.
 Internally it submits WDL files to Cromwell server through [Cromwell API](https://cromwell.readthedocs.io/en/stable/api/RESTAPI/).
 The next section introduces the workflows, next section provides examples of command lines and explanation of arguments, conventions and outputs.
-The last section shows advanced uses of _wftools_
+The last section shows advanced uses of _espresso_
 This document ends with the actual usage help.
 
 ## Workflows
 
-_espresso_ provides three workflows: __hc__ (haplotype-calling) takes raw FASTQ files and their metadata as input plus resources files and generates per-sample raw gVCF alongside unmapped BAM and analysis-ready CRAM files. __joint__ (joint-discovery) takes raw gVCF files and merge into a single unified VCF; __all__ (variant-discovery - working title) executes all data processing steps: from raw FASTQs to unified VCF.
+_espresso_ provides three workflows: __hc__ (HaplotypeCalling) takes raw FASTQ files and their metadata as input plus resources files and generates per-sample raw gVCF alongside unmapped BAM and analysis-ready CRAM files. __joint__ (JointDiscovery) takes raw gVCF files and merge into a single unified VCF; __all__  executes all data processing steps: from raw FASTQs to unified VCF.
 
-Our tool wraps several [in-house workflows](https://github.com/labbcb/workflows) and workflows defined by the Broad Institute as [GATK Best Practices](https://software.broadinstitute.org/gatk/) defined in WDL format.
+Our tool bundles [in-house workflows](https://github.com/labbcb/workflows) and workflows defined by the Broad Institute as [GATK Best Practices](https://software.broadinstitute.org/gatk/) defined in WDL format.
 The workflow files are stored inside the tool package.
 The list below presents each workflow in the order that is executed by this tool.
 
-[__haplotype-calling__](https://github.com/labbcb/bcblab-workflows/blob/master/haplotype-calling/2.0.0/haplotype-calling.wdl) runs the following workflows in this order:
+[HaplotypeCalling](espresso/workflows/haplotype-calling.wdl) runs the following workflows:
 
-1. [Convert raw paired-end FASTQ files to unmapped BAM format (uBAM)](https://github.com/gatk-workflows/seq-format-conversion/blob/master/paired-fastq-to-unmapped-bam.wdl)
-2. [Map sequences to reference genome, recalibrate alignments and generate analysis-ready BAM files](https://github.com/gatk-workflows/gatk4-data-processing/blob/master/processing-for-variant-discovery-gatk4.wdl)
-3. [Produce sample-specific sufficient statistics to call variants](https://github.com/gatk-workflows/gatk4-germline-snps-indels/blob/master/haplotypecaller-gvcf-gatk4.wdl)
-4. [Validate BAM files](https://github.com/gatk-workflows/seq-format-validation/blob/master/validate-bam.wdl)
-5. [Convert BAM files to CRAM format](https://github.com/labbcb/workflows/blob/master/workflows/bam-to-cram/1.0.0/bam-to-cram.wdl)
+1. [Convert raw paired-end FASTQ files to unmapped BAM format (uBAM)](espresso/workflows/paired-fastq-to-unmapped-bam.wdl)
+2. [Map sequences to reference genome, recalibrate alignments and generate analysis-ready BAM files](espresso/workflows/processing-for-variant-discovery-gatk4.wdl)
+3. [Produce sample-specific sufficient statistics to call variants](espresso/workflows/haplotypecaller-gvcf-gatk4.wdl)
+4. [Validate BAM files](espresso/workflows/validate-bam.wdl)
+5. [Convert BAM files to CRAM format](espresso/workflows/bam-to-cram.wdl)
 
-[__joint-discovery__](https://github.com/gatk-workflows/gatk4-germline-snps-indels/blob/master/joint-discovery-gatk4.wdl), we combine the sample-specific sufficient statistics to produce final genotype calls. For this step, we use the original WDL file produced by the Broad Institute.
+[JointDiscovery](espresso/workflows/joint-discovery-gatk4-local.wdl), we combine the sample-specific sufficient statistics to produce final genotype calls. For this step, we use the original WDL file produced by the Broad Institute.
 
-> TODO create a WDL file for this one.
-
-## Running espresso-caller
-
-_espresso_ requires Python 3.4 or higher.
-It is a private project hosted at [BCBLab GitHub repository](https://github.com/labbcb/espresso).
-TO install run this commands:
-
-```bash
-pip3 install --user --force git+https://github.com/labbcb/wftools.git
-pip3 install --user --force git+https://github.com/labbcb/espresso.git
-```
-
-Our software use some _convention over configuration_ (where configuration is the inputs JSON file).
+Espresso-Caller follows some _convention over configuration_ (where configuration is the inputs JSON file).
 Your data files must files the following conventions to work:
 
 For __all__ and __hc__:
@@ -78,20 +67,20 @@ For __all__ and __hc__:
 - Relative paths are allowed in command arguments
 
 Resource files can be downloaded using the following scripts.
-Downloaded files will have the right names to work with _wftools_.
+Downloaded files will have the right names to work with _espresso_.
 
-- [b37](https://github.com/labbcb/bcblab-workflows/blob/master/download_resources_b37_files.sh)
-- [hg38](https://github.com/labbcb/bcblab-workflows/blob/master/download_resources_hg38_files.sh)
+- [b37](download_resources_b37_files.sh)
+- [hg38](download_resources_hg38_files.sh)
 
 To download resource files run.
 It is important to inform the _absolute path_ to destination directory.
 
 ```bash
-bash download_resources_b37_files.sh /home/benilton/bioinf/ref/b37
-bash download_resources_hg38_files.sh /home/benilton/bioinf/ref/hg38
+bash download_resources_b37_files.sh /home/data/ref/b37
+bash download_resources_hg38_files.sh /home/data/ref/hg38
 ```
 
-The following command will run _wftools_ with two directories containing raw FASTQ files.
+The following command will run _espresso_ with two directories containing raw FASTQ files.
 Samples files can be separated by directories to use different metadata for each group of samples (or batch).
 If two `--fastq <fastq directory>` argument is defined you have to inform the following arguments twice.
 
@@ -112,43 +101,43 @@ See [installing required software script](https://github.com/labbcb/bcblab-workf
 - `--gotc_path_override` path to directory containing all softwares (`bwa`, `picard.jar`, etc)
 - `--samtools_path_override` path to `samtools`.
 
-The `--dont_run` flag does _wftools_ to __not submit workflows to Cromwell server__.
+The `--dont_run` flag does _espresso_ to __not submit workflows to Cromwell server__.
 In this mode, the tool will check all required files, copy required workflow files and generate inputs JSON file writing both to destination directory.
 It is very recommend that you run our tool in this mode and check JSON file _before_ running in production.
-Also, it is useful when there are some change to do in the default JSON file and then submit workflow using _wftools_ instead.
+Also, it is useful when there are some change to do in the default JSON file and then submit workflow using _espresso_ instead.
 
-The optional `--move` flag will tell _wftools_ to _move_ output files from Cromwell execution directory to destination directory.
+The optional `--move` flag will tell _espresso_ to _move_ output files from Cromwell execution directory to destination directory.
 It is useful for processing large-scale genomics datasets avoiding file duplication.
 
 The last two arguments are required: callset name and destination directory to write all files.
 
 ```bash
 espresso all \
- --fastq ~/bioinf/raw/projdc/batch1 \
- --fastq ~/bioinf/raw/projdc/batch2 \
- --library batch1 \
- --library batch2 \
- --date 2018-10-19 \
- --date 2019-02-07 \
- --platform ILLUMINA \
- --platform ILLUMINA \
- --center Macrogen \
- --center Macrogen \
- --reference ~/bioinf/ref/b37 \
- --version b37 \
- --gatk_path_override ~/bioinf/bin/gatk-4.1.0.0/gatk \
- --gotc_path_override ~/bioinf/bin \
- --samtools_path_override ~/bioinf/bin/samtools-1.9/samtools \
- --move \
- --dont_run \
- projdc.b37 \
- ~/bioinf/res/projdc_b37
+	--fastq ~/raw/batch1 \
+	--fastq ~/raw/batch2 \
+	--library Batch1 \
+	--library Batch2 \
+	--date 2018-10-19 \
+	--date 2019-02-07 \
+	--platform ILLUMINA \
+	--platform ILLUMINA \
+	--center MyCenter \
+	--center MyCenter \
+	--reference ~/ref/b37 \
+	--version b37 \
+	--gatk_path_override ~/bin/gatk-4.1.0.0/gatk \
+	--gotc_path_override ~/bin \
+	--samtools_path_override ~/bin/samtools-1.9/samtools \
+	--move \
+	--dont_run \
+	MyDataset.b37 \
+	~/res/my_dataset
 ```
 
 	Starting the haplotype-calling workflow with reference genome version b37
-	Workflow file: /home/benilton/bioinf/res/projdc_b37/haplotype-calling.wdl
-	Inputs JSON file: /home/benilton/bioinf/res/projdc_b37/haplotype-calling.b37.inputs.json
-	Workflow will not be submitted to Cromwell. See workflow files in /home/benilton/bioinf/res/projdc_b37
+	Workflow file: /home/data/res/my_dataset/haplotype-calling.wdl
+	Inputs JSON file: /home/data/res/my_dataset/haplotype-calling.b37.inputs.json
+	Workflow will not be submitted to Cromwell. See workflow files in /home/data/res/my_dataset
 
 If you run without `--dont_run` argument you will see the text below.
 As you can see, after workflow is submitted no output is presented until execution is finished.
@@ -157,14 +146,14 @@ Then the tool will print the collected output files and exit.
 > In this version __all__ run __hc__ first then __joint__. TODO: write WDL file that do both
 
 	Starting haplotype-calling workflow with reference genome version b37
-	Workflow file: /home/benilton/bioinf/res/projdc_b37/haplotype-calling.wdl
-	Inputs JSON file: /home/benilton/bioinf/res/projdc_b37/haplotype-calling.b37.inputs.json
+	Workflow file: /home/data/res/my_dataset/haplotype-calling.wdl
+	Inputs JSON file: /home/data/res/my_dataset/haplotype-calling.b37.inputs.json
 	Workflow submitted to Cromwell Server (http://localhost:8000)
 	Workflow id: 9977f400-d1b6-41ff-ab92-7ebbbf7a30a8
 
 ## Expected outputs
 
-At the end of execution _wftools_ will _collect output files_ copying them to destination directory.
+At the end of execution _espresso_ will _collect output files_ copying them to destination directory.
 These are the file you expect to see.
 
 - `{callset}.vcf.gz` is the _final unified VCF file_  where `callset` was previously defined (index `{callset}.vcf.gz.tbi`)
@@ -185,46 +174,6 @@ For each sample it should have.
 - `{sample}.unmapped.bam` is the unmapped sequences in BAM format (exactly the same sequences from FASTQ but with recalibrated qualities)
 - `{sample}.{version}.recal_data.csv` is the file used to recalibrate PHRED qualities
 
-
-## Advanced guide
-
-### Time-based processing workflow
-
-At BCBLab we receive _batches_ of sequencing data yearly.
-It is very recommend to merge _all per-sample raw gVCF files_, the old ones with new data to improve GATK variant calling accuracy.
-_wftools_ collects, through `--vcf <raw gVCFs directory>` argument, previously generated VCF files in the 'joint-discovery' workflow.
-Here an example of how it works.
-Each result directory will have an unified VCF files containing all sample from previous years.
-
-```bash
-# processing 2019 datasets
-espresso all \
-	--fastq /data/raw/bipmed/batch_2019 \
-	--library batch_2019 --date 2019 --platform ILLUMINA --center Macrogen \
-	--genome /home/benilton/bioinf/ref/hg38 --version hg38 \
-	BIPMed.2019.hg38 \
-	/data/res/bipmed/batch_2019/hg38
-
-# processing 2020 datasets
-espresso all \
-	--fastq /data/raw/bipmed/batch_2020 \
-	--vcf /data/res/bipmed/batch_2019/hg38 \
-	--library batch_2020 --date 2020 --platform ILLUMINA --center Macrogen \
-	--genome /home/benilton/bioinf/ref/hg38 --version hg38 \
-	BIPMed.2020.hg38 \
-	/data/res/bipmed/batch_2020/hg38
-
-# processing 2021 datasets
-espresso all \
-	--fastq /data/raw/bipmed/batch_2021 \
-	--vcf /data/res/bipmed/batch_2019/hg38 \
-	--vcf /data/res/bipmed/batch_2020/hg38 \
-	--library batch_2021 --date 2021 --platform ILLUMINA --center Macrogen \
-	--genome /home/benilton/bioinf/ref/hg38 --version hg38 \
-	BIPMed.2021.hg38 \
-	/data/res/bipmed/2021/hg38
-```
-
 ### Running __hc__ or __joint__ individually
 
 It is possible to run only __hc__ by `espresso hc ...` and __joint__ by `espresso joint ...`.
@@ -236,72 +185,16 @@ However there are some conventions that your VCF files must follow (only if they
 - Index files with the same name plus `.tbi` extension in the same directory.
 
 
-### Submit previously generated inputs file using _wftools_
+### Reproduce data processing
 
-Validate workflow file
+With WDL and JSON files written in the _result directory_ it is possible to re-execute data processing _without_ espresso.
+To do that we need the Cromwell binary file.
+It should also works on different workflow engine such as [miniwdl](https://github.com/chanzuckerberg/miniwdl) or workflow submission toolm such as [wf](https://github.com/labbcb/wf).
 
-```bash
-wftools validate /home/benilton/bioinf/res/projdc_b37/haplotype-calling.wdl
-```
-
-	Valid
-
-Submit workflow to Cromwell server
+Run workflow Cromwell in Local mode
 
 ```bash
-wftools submit \
-	--inputs /home/benilton/bioinf/res/projdc_b37/haplotype-calling.b37.inputs.json \
-	/home/benilton/bioinf/res/projdc_b37/haplotype-calling.wdl
+java -jar cromwell.jar run \
+	-i /home/data/res/my_dataset/haplotype-calling.b37.inputs.json \
+	/home/data/res/my_dataset/haplotype-calling.wdl
 ```
-
-Check status
-
-```bash
-wftools status
-```
-
-Collect output files _moving_ them to directory.
-When `--move` is used the output files are moved from Cromwell _root execution directory_ to the specified one.
-The `--no-task-dir` flag is used to no create sub-directories for each task.
-As we know that haplotype-calling and joint-discovery do not output files with the same name we can skip this.
-
-```bash
-wftools collect --no-task-dir --move <workflow id>  ~/bioinf/res/projdc_b37
-```
-
----
-
-	Usage: espresso [OPTIONS] COMMAND [ARGS]...
-
-	  Automates execution of workflows for processing WES/WGS data
-
-	  Raw paired-end FASTQ or raw gVCF files are collected, together with
-	  resources files (b37 or hg38) to generate JSON file that is used as input
-	  for data processing workflows (haplotype-calling, joint-discovery or
-	  both). It assumes that each directory containing FASTQ files is a library
-	  or batch. FASTQ file names must follow this pattern:
-	  (sample_name)_R?[12].fastq(.gz)? Input and resources files are checked
-	  before workflows are submitted to Cromwell server. Output files are
-	  collected writing them to destination directory.
-
-	  'variant-discovery' workflow executes all data processing steps: from raw
-	  FASTQs to unified VCF. It is also able to combine previous raw gVCF files
-	  when executing 'joint-discovery' workflow.
-
-	  'haplotype-calling' workflow takes FASTQ files and their metadata as input
-	  (plus resources files) and run Broad Institute GATK workflows: convert
-	  FASTQ to uBAM; align sequences to reference genome; merge aligned with
-	  unmapped sequences to create ready-analysis BAM; validate BAM files;
-	  convert BAM files to CRAM format; and call variants generating one raw
-	  gVCF per sample.
-
-	  'joint-discovery' workflows takes raw gVCF files and merge into a single
-	  unified VCF.
-
-	Options:
-	  --help  Show this message and exit.
-
-	Commands:
-	  all    Run haplotype-calling and joint-discovery workflows
-	  hc     Run only haplotype-calling workflow
-	  joint  Run only joint-discovery-gatk4 workflow
