@@ -198,3 +198,9 @@ java -jar cromwell.jar run \
 	-i /home/data/res/my_dataset/haplotype-calling.b37.inputs.json \
 	/home/data/res/my_dataset/haplotype-calling.wdl
 ```
+
+## Development
+
+```bash
+python3 -m venv venv
+```

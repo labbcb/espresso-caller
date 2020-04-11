@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='espresso-caller',
-    version='1.2.2',
+    version='1.2.3',
     packages=find_packages(),
     url='https://github.com/labbcb/espresso-caller',
     license='MIT',

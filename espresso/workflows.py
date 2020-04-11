@@ -89,7 +89,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         raise Exception('Invalid run date(s): ' + ', '.join(invalid_dates))
 
     directories = [directories] if isinstance(directories, str) else directories
-    for i in range(len(directories)):
+    for i in enumerate(directories):
         forward_files, reverse_files, sample_names = collect_fastq_files(directories[i])
         inputs['HaplotypeCalling.sample_name'].extend(sample_names)
         inputs['HaplotypeCalling.fastq_1'].extend(forward_files)

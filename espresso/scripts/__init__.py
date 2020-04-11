@@ -5,9 +5,8 @@ from os.path import join, basename, exists
 from time import sleep
 
 import click
-from ..cromwell import CromwellClient
 from ..workflows import get_workflow_file, zip_imports_files
-
+import espresso.cromwell as cromwell
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
     """
@@ -45,8 +44,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     if not host:
         host = 'http://localhost:8000'
-    client = CromwellClient(host)
-    workflow_id = client.submit(workflow_file, inputs_file, dependencies=imports_file)
+    workflow_id = cromwell.submit(host, workflow_file, inputs_file, dependencies=imports_file)
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
@@ -56,7 +54,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     try:
         while True:
             sleep(sleep_time)
-            status = client.status(workflow_id)
+            status = cromwell.status(host, workflow_id)
             if status != 'Submitted' and status != 'Running':
                 click.echo('Workflow terminated: ' + status, err=True)
                 break
@@ -64,10 +62,10 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
             exit(1)
     except KeyboardInterrupt:
         click.echo('Aborting workflow.')
-        client.abort(workflow_id)
+        cromwell.abort(host, workflow_id)
         exit(1)
 
-    outputs = client.outputs(workflow_id)
+    outputs = cromwell.outputs(host, workflow_id)
     for output in outputs.values():
         if isinstance(output, str):
             files = [output]
