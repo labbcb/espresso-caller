@@ -20,6 +20,6 @@ setup(
     include_package_data=True,
     entry_points='''
         [console_scripts]
-        espresso=espresso.scripts.espresso:cli
+        espresso=espresso.espresso:cli
     ''',
 )

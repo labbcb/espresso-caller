@@ -1,7 +1,7 @@
 from json import load
 from os import listdir
 from os.path import join, basename
-from re import compile, match, search, IGNORECASE
+from re import compile, search, IGNORECASE
 
 name = 'espresso-caller'
 
