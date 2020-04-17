@@ -1,15 +1,14 @@
 import gzip
 
 from os.path import abspath
-from . import search_regex, extract_sample_name
-
-FASTQ_NAME_REGEX = '(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'
+from .util import search_regex, extract_sample_name
 
 
-def collect_fastq_files(directory):
+def collect_fastq_files(directory, fastq_name_regex='(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'):
     """
     Search for paired-end FASTQ files and check parity
     :param directory: Directory containing paired-end FASTQ files
+    :param fastq_name_regex: regular expression to extract sample name from file name
     :return: two lists with paths to FASTQ files (forward, reverse)
     """
     forward_files = search_regex(directory, '_R?1\\.fastq(\\.gz)?')
@@ -27,7 +26,7 @@ def collect_fastq_files(directory):
     forward_files.sort()
     reverse_files.sort()
 
-    sample_names = [extract_sample_name(f, FASTQ_NAME_REGEX) for f in forward_files]
+    sample_names = [extract_sample_name(f, fastq_name_regex) for f in forward_files]
     return [abspath(f) for f in forward_files], [abspath(f) for f in reverse_files], sample_names
 
 

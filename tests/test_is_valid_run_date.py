@@ -1,5 +1,5 @@
 import unittest
-from espresso import is_valid_run_date
+from espresso.workflows import is_valid_run_date
 
 
 class TestIsValidRunDate(unittest.TestCase):

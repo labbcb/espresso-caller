@@ -1,13 +1,12 @@
-from . import search_regex, extract_sample_name
-
-VCF_NAME_REGEX = '(?P<sample>.+?)(\\.\\w+?)?\\.g\\.vcf(\\.gz)?$'
+from .util import search_regex, extract_sample_name
 
 
-def collect_vcf_files(directory, prefix=''):
+def collect_vcf_files(directory, prefix='', vcf_name_regex='(?P<sample>.+?)(\\.\\w+?)?\\.g\\.vcf(\\.gz)?$'):
     """
     Collect VCF and their index files
     :param directory: list of directories to search
     :param prefix: prepend to sample name
+    :param vcf_name_regex: regular expression to extract sample name from file name
     :return: three lists of VCF files, VCF index files and sample names
     """
 
@@ -25,6 +24,6 @@ def collect_vcf_files(directory, prefix=''):
 
     vcf_files.sort()
     vcf_index_files.sort()
-    sample_names = [prefix + extract_sample_name(f, VCF_NAME_REGEX) for f in vcf_files]
+    sample_names = [prefix + extract_sample_name(f, vcf_name_regex) for f in vcf_files]
 
     return vcf_files, vcf_index_files, sample_names

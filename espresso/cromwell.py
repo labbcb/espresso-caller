@@ -17,6 +17,7 @@ def abort(host, workflow_id, api_version='v1'):
         raise Exception(response.get('message'))
     return response.get('status')
 
+
 def status(host, workflow_id, api_version='v1'):
     """
     Retrieves the current state for a workflow
@@ -31,8 +32,9 @@ def status(host, workflow_id, api_version='v1'):
         raise Exception(response.get('message'))
     return response.get('status')
 
+
 def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=None, language=None,
-            language_version=None, root=None, hold=None, api_version='v1'):
+           language_version=None, root=None, hold=None, api_version='v1'):
     """
     Submit a workflow for execution
     :param host: Cromwell server URL
@@ -70,6 +72,7 @@ def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=
         raise Exception(response.get('message'))
     return response.get('id')
 
+
 def outputs(host, workflow_id, api_version='v1'):
     """
     Get the outputs for a workflow
@@ -84,6 +87,7 @@ def outputs(host, workflow_id, api_version='v1'):
         raise Exception(response.get('message'))
     return response.get('outputs')
 
+
 def get(url, data=None, raw_response_content=False):
     """
     GET API endpoint
@@ -94,6 +98,7 @@ def get(url, data=None, raw_response_content=False):
     """
     response = requests.get(url, params=data)
     return response.content if raw_response_content else response.json()
+
 
 def patch(url, data, raw_response_content=False):
     """
@@ -106,6 +111,7 @@ def patch(url, data, raw_response_content=False):
     response = requests.patch(url, data=data)
     return response.content if raw_response_content else response.json()
 
+
 def post(url, data=None, raw_response_content=False):
     """
     POST API endpoint
@@ -116,6 +122,7 @@ def post(url, data=None, raw_response_content=False):
     """
     response = requests.post(url, files=data)
     return response.content if raw_response_content else response.json()
+
 
 def is_url(path):
     regex = compile(
