@@ -171,6 +171,8 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     inputs = load_params_file('haplotype-calling')
     inputs['HaplotypeCalling.ref_name'] = genome_version
 
+    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
+
     invalid_dates = [d for d in run_dates if not is_valid_run_date(d)]
     if len(invalid_dates) != 0:
         raise Exception('Invalid run date(s): ' + ', '.join(invalid_dates))
@@ -178,24 +180,22 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     directories = [directories] if isinstance(directories, str) else directories
     for idx, directory in enumerate(directories):
         forward_files, reverse_files, sample_names = collect_fastq_files(directory)
-        inputs['HaplotypeCalling.sample_name'].extend(sample_names)
-        inputs['HaplotypeCalling.fastq_1'].extend(forward_files)
-        inputs['HaplotypeCalling.fastq_2'].extend(reverse_files)
+        inputs['HaplotypeCalling.sample_name'] += sample_names
+        inputs['HaplotypeCalling.fastq_1'] += forward_files
+        inputs['HaplotypeCalling.fastq_2'] += reverse_files
 
         if disable_platform_unit:
-            inputs['HaplotypeCalling.platform_unit'].extend(["-"] * len(forward_files))
+            inputs['HaplotypeCalling.platform_unit'] += ["-"] * len(forward_files)
         else:
-            inputs['HaplotypeCalling.platform_unit'].extend(extract_platform_units(forward_files))
+            inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(forward_files)
 
         num_samples = len(sample_names)
-        inputs['HaplotypeCalling.library_name'].extend([library_names[idx]] * num_samples)
-        inputs['HaplotypeCalling.run_date'].extend([run_dates[idx]] * num_samples)
-        inputs['HaplotypeCalling.platform_name'].extend([platform_name] * num_samples)
-        inputs['HaplotypeCalling.sequencing_center'].extend([sequencing_center] * num_samples)
+        inputs['HaplotypeCalling.library_name'] += [library_names[idx]] * num_samples
+        inputs['HaplotypeCalling.run_date'] += [run_dates[idx]] * num_samples
+        inputs['HaplotypeCalling.platform_name'] += [platform_name] * num_samples
+        inputs['HaplotypeCalling.sequencing_center'] += [sequencing_center] * num_samples
 
     inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
-
-    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
@@ -234,9 +234,9 @@ def joint_discovery_inputs(directories, prefixes, reference, version, callset_na
 
     for directory, prefix in zip(directories, prefixes):
         vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
-        inputs['JointGenotyping.input_gvcfs'].extend(vcf_files)
-        inputs['JointGenotyping.input_gvcfs_indices'].extend(vcf_index_files)
-        inputs['JointGenotyping.sample_names'].extend(sample_names)
+        inputs['JointGenotyping.input_gvcfs'] += vcf_files
+        inputs['JointGenotyping.input_gvcfs_indices'] += vcf_index_files
+        inputs['JointGenotyping.sample_names'] += sample_names
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
