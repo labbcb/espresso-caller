@@ -171,8 +171,6 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     inputs = load_params_file('haplotype-calling')
     inputs['HaplotypeCalling.ref_name'] = genome_version
 
-    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
-
     invalid_dates = [d for d in run_dates if not is_valid_run_date(d)]
     if len(invalid_dates) != 0:
         raise Exception('Invalid run date(s): ' + ', '.join(invalid_dates))
@@ -196,6 +194,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.sequencing_center'] += [sequencing_center] * num_samples
 
     inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
+    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
