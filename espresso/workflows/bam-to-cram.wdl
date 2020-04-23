@@ -40,12 +40,15 @@ workflow BamToCram {
 }
 
 task ConvertBamToCram {
-    File bam_file
-    File ref_fasta
 
-    String docker
-    String samtools_path
-    Int? cpu
+    input {
+        File bam_file
+        File ref_fasta
+
+        String docker
+        String samtools_path
+        Int? cpu
+    }
 
     String output_filename = basename(bam_file, ".bam") + ".cram"
 
