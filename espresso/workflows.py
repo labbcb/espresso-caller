@@ -15,8 +15,8 @@ from .references import collect_resources_files, check_intervals_files
 from .vcf import collect_vcf_files
 
 WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
-                  'joint-discovery': 'workflows/JointGenotyping.wdl',
-                  'joint-discovery-tasks': 'workflows/JointGenotypingTasks.wdl',
+                  'JointDiscovery': 'workflows/JointGenotyping.wdl',
+                  'JointDiscoveryTasks': 'workflows/JointGenotypingTasks.wdl',
                   'bam-to-cram': 'workflows/bam-to-cram.wdl',
                   'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
                   'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
@@ -25,7 +25,7 @@ WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
 
 IMPORTS_FILES = {'haplotype-calling': ['bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
                                        'processing-for-variant-discovery-gatk4', 'validate-bam'],
-                 'joint-discovery': ['joint-discovery-tasks']}
+                 'JointDiscovery': ['JointDiscoveryTasks']}
 
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
@@ -242,7 +242,7 @@ def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, ve
     :return:
     """
 
-    inputs = load_params_file('joint-discovery')
+    inputs = load_params_file('JointDiscovery')
 
     if len(directories) != len(prefixes):
         raise Exception("Number of directories {} and prefixes {} are uneven.".format(
@@ -259,7 +259,7 @@ def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, ve
     inputs['JointGenotyping.callset_name'] = callset_name
 
     inputs.update(collect_resources_files(
-        reference, 'joint-discovery', version))
+        reference, 'JointDiscovery', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
