@@ -208,16 +208,17 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -U pip
 pip install click requests
-pip install git+https://github.com/labbcb/espresso-caller.git
+pip install --force git+https://github.com/labbcb/espresso-caller.git
 ```
 
 Run `espresso` in dry mode.
 
 ```bash
-FASTQ_DIR=/home/nfs/welliton/code/rnnr-paper/1kgp_50_low_wgs
-REF_DIR=/home/nfs/ref/hg38
-DATASET_NAME=1KGP_LOW_WGS
-RESULT_DIR=espresso-results
+FASTQ_DIR=NA12878
+REF_DIR=references/hg38
+DATASET_NAME=NA12878
+RESULT_DIR=results/hg38
+GENOME_VERSION=hg38
 
 espresso all \
     --fastq $FASTQ_DIR \
@@ -227,7 +228,7 @@ espresso all \
     --center IGSR \
     --disable_platform_unit \
     --reference $REF_DIR \
-    --version hg38 \
+    --version $GENOME_VERSION \
     --dont_run \
     $DATASET_NAME \
     $RESULT_DIR

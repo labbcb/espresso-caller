@@ -1,5 +1,4 @@
 {
-  "HaplotypeCalling.ref_name": "hg38",
   "HaplotypeCalling.ref_dict": "Homo_sapiens_assembly38.dict",
   "HaplotypeCalling.ref_fasta": "Homo_sapiens_assembly38.fasta",
   "HaplotypeCalling.ref_fasta_index": "Homo_sapiens_assembly38.fasta.fai",

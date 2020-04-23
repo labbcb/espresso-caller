@@ -6,5 +6,6 @@
   "HaplotypeCalling.run_date": [],
   "HaplotypeCalling.platform_unit": [],
   "HaplotypeCalling.platform_name": [],
-  "HaplotypeCalling.sequencing_center": []
+  "HaplotypeCalling.sequencing_center": [],
+  "HaplotypeCalling.ref_name": ""
 }

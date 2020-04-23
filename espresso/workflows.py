@@ -176,6 +176,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     """
 
     inputs = load_params_file('haplotype-calling')
+    inputs['HaplotypeCalling.ref_name'] = genome_version
 
     invalid_dates = [d for d in run_dates if not is_valid_run_date(d)]
     if len(invalid_dates) != 0:
