@@ -1,3 +1,4 @@
+version 1.0
 ## Copyright Broad Institute, 2017
 ## 
 ## This WDL performs format validation on SAM/BAM files in a list
@@ -24,15 +25,13 @@
 ## page at https://hub.docker.com/r/broadinstitute/genomes-in-the-cloud/ for detailed
 ## licensing information pertaining to the included programs.
 
-# From https://raw.githubusercontent.com/gatk-workflows/seq-format-validation/1.0.1/validate-bam.wdl
-
 # WORKFLOW DEFINITION
 workflow ValidateBamsWf {
-  Array[File] bam_array 
-  String? gatk_docker_override
-  String gatk_docker = select_first([gatk_docker_override, "broadinstitute/gatk:latest"])
-  String? gatk_path_override
-  String gatk_path = select_first([gatk_path_override, "/gatk/gatk"])
+  input {
+    Array[File] bam_array 
+    String gatk_docker = "broadinstitute/gatk:latest"
+    String gatk_path = "/gatk/gatk"
+  }
 
   # Process the input files in parallel
   scatter (input_bam in bam_array) {
@@ -60,18 +59,20 @@ workflow ValidateBamsWf {
 
 # Validate a SAM or BAM using Picard ValidateSamFile
 task ValidateBAM {
-  # Command parameters
-  File input_bam
-  String output_basename
-  String? validation_mode
-  String gatk_path
+  input {
+    # Command parameters
+    File input_bam
+    String output_basename
+    String? validation_mode
+    String gatk_path
   
-  # Runtime parameters
-  String docker
-  Int? machine_mem_gb
-  Int? disk_space_gb
-  Int disk_size = ceil(size(input_bam, "GB")) + 20
-
+    # Runtime parameters
+    String docker
+    Int machine_mem_gb = 4
+    Int addtional_disk_space_gb = 50
+  }
+    
+  Int disk_size = ceil(size(input_bam, "GB")) + addtional_disk_space_gb
   String output_name = "${output_basename}_${validation_mode}.txt"
  
   command {
@@ -83,11 +84,12 @@ task ValidateBAM {
   }
   runtime {
     docker: docker
-    memory: select_first([machine_mem_gb, 1]) + " GB"
-    cpu: "1"
-    disks: "local-disk " + select_first([disk_space_gb, disk_size]) + " HDD"
+    memory: machine_mem_gb + " GB"
+    disks: "local-disk " + disk_size + " HDD"
   }
   output {
     File validation_report = "${output_name}"
   }
 }
+
+# From https://raw.githubusercontent.com/gatk-workflows/seq-format-validation/2.0.0/validate-bam.wdl

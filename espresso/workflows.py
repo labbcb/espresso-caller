@@ -14,6 +14,19 @@ from .fastq import collect_fastq_files, extract_platform_units
 from .references import collect_resources_files, check_intervals_files
 from .vcf import collect_vcf_files
 
+WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
+                  'joint-discovery': 'workflows/JointGenotyping.wdl',
+                  'joint-discovery-tasks': 'workflows/JointGenotypingTasks.wdl',
+                  'bam-to-cram': 'workflows/bam-to-cram.wdl',
+                  'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
+                  'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
+                  'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
+                  'validate-bam': 'workflows/validate-bam.wdl'}
+
+IMPORTS_FILES = {'haplotype-calling': ['bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
+                                       'processing-for-variant-discovery-gatk4', 'validate-bam'],
+                 'joint-discovery': ['joint-discovery-tasks']}
+
 
 def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
     """
@@ -39,19 +52,22 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
     if imports_file:
         click.echo('Workflow imports file: ' + imports_file)
 
-    inputs_file = join(destination, '{}.{}.inputs.json'.format(workflow, version))
+    inputs_file = join(
+        destination, '{}.{}.inputs.json'.format(workflow, version))
     with open(inputs_file, 'w') as file:
         dump(inputs, file, indent=4, sort_keys=True)
 
     click.echo('Inputs JSON file: ' + inputs_file, err=True)
 
     if dont_run:
-        click.echo('Workflow will not be submitted to Cromwell. See workflow files in ' + destination)
+        click.echo(
+            'Workflow will not be submitted to Cromwell. See workflow files in ' + destination)
         exit()
 
     if not host:
         host = 'http://localhost:8000'
-    workflow_id = cromwell.submit(host, workflow_file, inputs_file, dependencies=imports_file)
+    workflow_id = cromwell.submit(
+        host, workflow_file, inputs_file, dependencies=imports_file)
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
@@ -93,18 +109,6 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
                 click.echo('File not found: ' + file, err=True)
 
 
-WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
-                  'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl',
-                  'bam-to-cram': 'workflows/bam-to-cram.wdl',
-                  'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
-                  'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
-                  'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
-                  'validate-bam': 'workflows/validate-bam.wdl'}
-
-IMPORTS_FILES = {'haplotype-calling': ['bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
-                                       'processing-for-variant-discovery-gatk4', 'validate-bam']}
-
-
 def get_workflow_file(workflow):
     """
     Return package path to workflow file
@@ -122,7 +126,10 @@ def load_params_file(workflow):
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
 
-    params_file = resource_filename(__name__, 'inputs/{}.params.json'.format(workflow))
+    params_file = resource_filename(
+        __name__, 'inputs/{}.params.json'.format(workflow))
+    if not exists(params_file):
+        return {}
     with open(params_file) as file:
         return load(file)
 
@@ -169,23 +176,26 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     """
 
     inputs = load_params_file('haplotype-calling')
-    inputs['HaplotypeCalling.ref_name'] = genome_version
 
     invalid_dates = [d for d in run_dates if not is_valid_run_date(d)]
     if len(invalid_dates) != 0:
         raise Exception('Invalid run date(s): ' + ', '.join(invalid_dates))
 
-    directories = [directories] if isinstance(directories, str) else directories
+    directories = [directories] if isinstance(
+        directories, str) else directories
     for idx, directory in enumerate(directories):
-        forward_files, reverse_files, sample_names = collect_fastq_files(directory)
+        forward_files, reverse_files, sample_names = collect_fastq_files(
+            directory)
         inputs['HaplotypeCalling.sample_name'] += sample_names
         inputs['HaplotypeCalling.fastq_1'] += forward_files
         inputs['HaplotypeCalling.fastq_2'] += reverse_files
 
         if disable_platform_unit:
-            inputs['HaplotypeCalling.platform_unit'] += ["-"] * len(forward_files)
+            inputs['HaplotypeCalling.platform_unit'] += ["-"] * \
+                len(forward_files)
         else:
-            inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(forward_files)
+            inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(
+                forward_files)
 
         num_samples = len(sample_names)
         inputs['HaplotypeCalling.library_name'] += [library_names[idx]] * num_samples
@@ -193,30 +203,36 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
         inputs['HaplotypeCalling.platform_name'] += [platform_name] * num_samples
         inputs['HaplotypeCalling.sequencing_center'] += [sequencing_center] * num_samples
 
-    inputs.update(collect_resources_files(reference, 'haplotype-calling', genome_version))
-    check_intervals_files(inputs['HaplotypeCalling.scattered_calling_intervals_list'])
+    inputs.update(collect_resources_files(
+        reference, 'haplotype-calling', genome_version))
+    check_intervals_files(
+        inputs['HaplotypeCalling.scattered_calling_intervals_list'])
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        inputs['HaplotypeCalling.gatk_path_override'] = abspath(gatk_path_override)
+        inputs['HaplotypeCalling.gatk_path_override'] = abspath(
+            gatk_path_override)
     if gotc_path_override:
         if not exists(gotc_path_override):
             raise Exception('GOTC found not found: ' + gotc_path_override)
-        inputs['HaplotypeCalling.gotc_path_override'] = abspath(gotc_path_override) + '/'
+        inputs['HaplotypeCalling.gotc_path_override'] = abspath(
+            gotc_path_override) + '/'
     if samtools_path_override:
         if not isfile(samtools_path_override):
-            raise Exception('Samtools found not found: ' + samtools_path_override)
-        inputs['HaplotypeCalling.samtools_path_override'] = abspath(samtools_path_override)
+            raise Exception('Samtools found not found: ' +
+                            samtools_path_override)
+        inputs['HaplotypeCalling.samtools_path_override'] = abspath(
+            samtools_path_override)
     if bwa_commandline_override:
         inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
     return inputs
 
 
-def joint_discovery_inputs(directories, prefixes, reference, version, callset_name, gatk_path_override=None):
+def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override=None):
     """
-    Create inputs for 'joint-discovery-gatk4-local' workflow
+    Create inputs for 'JointGenotyping' workflow
     :param directories:
     :param prefixes:
     :param reference:
@@ -229,22 +245,27 @@ def joint_discovery_inputs(directories, prefixes, reference, version, callset_na
     inputs = load_params_file('joint-discovery')
 
     if len(directories) != len(prefixes):
-        raise Exception("Number of directories {} and prefixes {} are uneven.".format(directories, prefixes))
+        raise Exception("Number of directories {} and prefixes {} are uneven.".format(
+            directories, prefixes))
 
-    for directory, prefix in zip(directories, prefixes):
-        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
-        inputs['JointGenotyping.input_gvcfs'] += vcf_files
-        inputs['JointGenotyping.input_gvcfs_indices'] += vcf_index_files
-        inputs['JointGenotyping.sample_names'] += sample_names
+    with open(sample_map_file, 'w') as f:
+        for directory, prefix in zip(directories, prefixes):
+            vcf_files, vcf_index_files, sample_names = collect_vcf_files(
+                directory, prefix)
+            for vcf_file, vcf_index_file, sample_name in zip(vcf_files, vcf_index_files, sample_names):
+                f.write('{sample_name}\t{vcf_file}\t{vcf_index_file}'.format(
+                    sample_name=sample_name, vcf_file=vcf_file, vcf_index_file=vcf_index_file))
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
-    inputs.update(collect_resources_files(reference, 'joint-discovery', version))
+    inputs.update(collect_resources_files(
+        reference, 'joint-discovery', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
+        inputs['JointGenotyping.gatk_path_override'] = abspath(
+            gatk_path_override)
 
     return inputs
 

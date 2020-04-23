@@ -11,7 +11,8 @@ def abort(host, workflow_id, api_version='v1'):
     :param api_version: Cromwell API version
     :return: dict containing workflow ID and updated status
     """
-    path = '/api/workflows/{version}/{id}/abort'.format(id=workflow_id, version=api_version)
+    path = '/api/workflows/{version}/{id}/abort'.format(
+        id=workflow_id, version=api_version)
     response = post(urljoin(host, path))
     if response.get('status') in ('fail', 'error'):
         raise Exception(response.get('message'))
@@ -26,7 +27,8 @@ def status(host, workflow_id, api_version='v1'):
     :param api_version: Cromwell API version
     :return:
     """
-    path = '/api/workflows/{version}/{id}/status'.format(id=workflow_id, version=api_version)
+    path = '/api/workflows/{version}/{id}/status'.format(
+        id=workflow_id, version=api_version)
     response = get(urljoin(host, path))
     if response.get('status') in ('fail', 'error'):
         raise Exception(response.get('message'))
@@ -50,7 +52,8 @@ def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=
     :param api_version: Cromwell API version
     :return:
     """
-    data = dict(workflowRoot=root, workflowOnHold=hold, workflowType=language, workflowTypeVersion=language_version)
+    data = dict(workflowRoot=root, workflowOnHold=hold,
+                workflowType=language, workflowTypeVersion=language_version)
     if is_url(workflow):
         data['workflowUrl'] = workflow
     else:
@@ -81,7 +84,8 @@ def outputs(host, workflow_id, api_version='v1'):
     :param api_version: Cromwell API version
     :return:
     """
-    path = '/api/workflows/{version}/{id}/outputs'.format(id=workflow_id, version=api_version)
+    path = '/api/workflows/{version}/{id}/outputs'.format(
+        id=workflow_id, version=api_version)
     response = get(urljoin(host, path))
     if response.get('status') in ('fail', 'error'):
         raise Exception(response.get('message'))

@@ -21,12 +21,14 @@ def collect_fastq_files(directory, fastq_name_regex='(?P<sample>.+)_R?[12]\\.fas
         raise Exception('FASTQ files not found in {}'.format(directory))
 
     if forward_len != reverse_len:
-        raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(forward_len, reverse_len))
+        raise Exception('FASTQ files not even. Forward: {}, Reverse: {}'.format(
+            forward_len, reverse_len))
 
     forward_files.sort()
     reverse_files.sort()
 
-    sample_names = [extract_sample_name(f, fastq_name_regex) for f in forward_files]
+    sample_names = [extract_sample_name(
+        f, fastq_name_regex) for f in forward_files]
     return [abspath(f) for f in forward_files], [abspath(f) for f in reverse_files], sample_names
 
 

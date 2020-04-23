@@ -30,8 +30,6 @@ workflow HaplotypeCalling {
 
     File scattered_calling_intervals_list
 
-    Boolean? make_gvcf
-
     String? bwa_commandline_override
 
     String? gatk_docker_override
@@ -46,18 +44,18 @@ workflow HaplotypeCalling {
     scatter (idx in range(length(sample_name))) {
         call PairedFastqToUnmappedBam.ConvertPairedFastQsToUnmappedBamWf {
             input:
-                sample_name = [sample_name[idx]],
-                fastq_1 = [fastq_1[idx]],
-                fastq_2 = [fastq_2[idx]],
-                readgroup_name = [sample_name[idx]],
-                library_name = [library_name[idx]],
-                platform_unit = [platform_unit[idx]],
-                run_date = [run_date[idx]],
-                platform_name = [platform_name[idx]],
-                sequencing_center = [sequencing_center[idx]],
-                ubam_list_name = sample_name[idx] + "_unmapped.list",
-                gatk_docker_override = gatk_docker_override,
-                gatk_path_override = gatk_path_override
+                sample_name = sample_name[idx],
+                fastq_1 = fastq_1[idx],
+                fastq_2 = fastq_2[idx],
+                readgroup_name = sample_name[idx],
+                library_name = library_name[idx],
+                platform_unit = platform_unit[idx],
+                run_date = run_date[idx],
+                platform_name = platform_name[idx],
+                sequencing_center = sequencing_center[idx],
+                gatk_docker = gatk_docker_override,
+                gatk_path = gatk_path_override,
+                make_fofn = true
         }
 
         call ProcessingForVariantDiscoveryGATK4.PreProcessingForVariantDiscovery_GATK4 {
@@ -73,12 +71,12 @@ workflow HaplotypeCalling {
                 dbSNP_vcf_index = dbSNP_vcf_index,
                 known_indels_sites_VCFs = known_indels_sites_VCFs,
                 known_indels_sites_indices = known_indels_sites_indices,
-                bwa_commandline_override = bwa_commandline_override,
-                gatk_docker_override = gatk_docker_override,
-                gatk_path_override = gatk_path_override,
-                gotc_docker_override = gotc_docker_override,
-                gotc_path_override = gotc_path_override,
-                python_docker_override = python_docker_override
+                bwa_commandline = bwa_commandline_override,
+                gatk_docker = gatk_docker_override,
+                gatk_path = gatk_path_override,
+                gotc_docker = gotc_docker_override,
+                gotc_path = gotc_path_override,
+                python_docker = python_docker_override
         }
 
         call HaplotypeCallerGvcfGATK4.HaplotypeCallerGvcf_GATK4 {
@@ -89,19 +87,18 @@ workflow HaplotypeCalling {
                 ref_fasta = ref_fasta,
                 ref_fasta_index = ref_fasta_index,
                 scattered_calling_intervals_list = scattered_calling_intervals_list,
-                make_gvcf = make_gvcf,
-                gatk_docker_override = gatk_docker_override,
-                gatk_path_override = gatk_path_override,
-                gitc_docker_override = gitc_docker_override,
-                samtools_path_override = samtools_path_override
+                gatk_docker = gatk_docker_override,
+                gatk_path = gatk_path_override,
+                gitc_docker = gitc_docker_override,
+                samtools_path = samtools_path_override
         }
     }
 
     call ValidateBams.ValidateBamsWf {
         input:
             bam_array = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam,
-            gatk_docker_override = gatk_docker_override,
-            gatk_path_override = gatk_path_override
+            gatk_docker = gatk_docker_override,
+            gatk_path = gatk_path_override
     }
 
     call ConvertToCram.BamToCram {
@@ -122,11 +119,5 @@ workflow HaplotypeCalling {
         Array[File] cram_index = BamToCram.cram_index
         Array[File] bam_files = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam
         Array[File] bam_index = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam_index
-    }
-
-    meta {
-        author: "Welliton Souza"
-        email: "well309@gmail.com"
-        workflow_version: "2.1.0"
     }
 }

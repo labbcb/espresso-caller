@@ -1,5 +1,5 @@
 from os import mkdir
-from os.path import exists, abspath
+from os.path import exists, abspath, join
 
 import click
 
@@ -77,7 +77,8 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center,
                                      disable_platform_unit, reference, genome_version, gatk_path_override,
                                      gotc_path_override, samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version, inputs, destination, sleep_time, dont_run, move)
+    submit_workflow(host, 'haplotype-calling', genome_version,
+                    inputs, destination, sleep_time, dont_run, move)
 
     vcf_directories = list(vcf_directories)
     vcf_directories.append(destination)
@@ -85,9 +86,11 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     prefixes = list(prefixes)
     prefixes.append('')
 
-    inputs = joint_discovery_inputs(vcf_directories, prefixes, reference, genome_version, callset_name,
-                                    gatk_path_override)
-    submit_workflow(host, 'joint-discovery', genome_version, inputs, destination, sleep_time, dont_run, move)
+    sample_map_file = join(destination, 'sample_map.txt')
+    inputs = joint_discovery_inputs(sample_map_file, vcf_directories, prefixes, reference, genome_version,
+                                    callset_name, gatk_path_override)
+    submit_workflow(host, 'joint-discovery', genome_version,
+                    inputs, destination, sleep_time, dont_run, move)
 
 
 @cli.command('hc')
@@ -127,7 +130,8 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
     inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
                                      samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version, inputs, abspath(destination), sleep_time, dont_run, move)
+    submit_workflow(host, 'haplotype-calling', genome_version,
+                    inputs, abspath(destination), sleep_time, dont_run, move)
 
 
 @cli.command('joint')
@@ -155,5 +159,8 @@ def joint_discovery(host, directories, prefixes, reference, version, dont_run, s
     if not exists(destination):
         mkdir(destination)
 
-    inputs = joint_discovery_inputs(directories, prefixes, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', version, inputs, abspath(destination), sleep_time, dont_run, move)
+    sample_map_file = join(destination, 'sample_map.txt')
+    inputs = joint_discovery_inputs(
+        sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override)
+    submit_workflow(host, 'joint-discovery', version, inputs,
+                    abspath(destination), sleep_time, dont_run, move)

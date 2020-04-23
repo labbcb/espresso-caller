@@ -36,7 +36,8 @@ def load_references(workflow, version):
     :param version: Version of reference files
     :return: list of Reference
     """
-    json_file = resource_filename(__name__, 'inputs/{}.{}.resources.json'.format(workflow, version))
+    json_file = resource_filename(
+        __name__, 'inputs/{}.{}.resources.json'.format(workflow, version))
     with open(json_file) as file:
         references = load(file)
     return [Reference(param, filename) for param, filename in references.items()]
@@ -58,7 +59,8 @@ def check_intervals_files(intervals_file):
             if not isfile(line):
                 missing_files.append(line)
     if len(missing_files) != 0:
-        raise Exception('Missing intervals files in {}:\n'.format(intervals_file) + '\n'.join(missing_files))
+        raise Exception('Missing intervals files in {}:\n'.format(
+            intervals_file) + '\n'.join(missing_files))
 
 
 def collect_resources_files(reference_dir, workflow, version):
@@ -74,7 +76,8 @@ def collect_resources_files(reference_dir, workflow, version):
     references = load_references(workflow, version)
     for reference in references:
         if isinstance(reference.filename, list):
-            files = [abspath(join(reference_dir, file)) for file in reference.filename]
+            files = [abspath(join(reference_dir, file))
+                     for file in reference.filename]
             if all([isfile(file) for file in files]):
                 reference.path = files
         else:
@@ -82,9 +85,11 @@ def collect_resources_files(reference_dir, workflow, version):
             if isfile(file):
                 reference.path = file
 
-    missing_references = [reference.filename for reference in references if reference.path is None]
+    missing_references = [
+        reference.filename for reference in references if reference.path is None]
 
     if len(missing_references) != 0:
-        raise Exception('Missing resource files ' + join_list_mixed(missing_references))
+        raise Exception('Missing resource files ' +
+                        join_list_mixed(missing_references))
 
     return {r.param: r.path for r in references}

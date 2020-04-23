@@ -20,10 +20,12 @@ def collect_vcf_files(directory, prefix='', vcf_name_regex='(?P<sample>.+?)(\\.\
         raise Exception('VCF files not found in {}'.format(directory))
 
     if vcf_len != index_len:
-        raise Exception('VCF and index files not even. VCF: {}, Index: {}'.format(vcf_len, index_len))
+        raise Exception(
+            'VCF and index files not even. VCF: {}, Index: {}'.format(vcf_len, index_len))
 
     vcf_files.sort()
     vcf_index_files.sort()
-    sample_names = [prefix + extract_sample_name(f, vcf_name_regex) for f in vcf_files]
+    sample_names = [
+        prefix + extract_sample_name(f, vcf_name_regex) for f in vcf_files]
 
     return vcf_files, vcf_index_files, sample_names

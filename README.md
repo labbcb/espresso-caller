@@ -201,8 +201,6 @@ java -jar cromwell.jar run \
 
 ## Development
 
-# Espresso-Caller development notes
-
 Install latest development version.
 
 ```bash
