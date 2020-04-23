@@ -52,11 +52,11 @@ task ConvertBamToCram {
 
     String output_filename = basename(bam_file, ".bam") + ".cram"
 
-    command <<<
+    command {
         set -eo pipefail
-        ${samtools_path} view -T ${ref_fasta} -C -o ${output_filename} ${bam_file}
-        ${samtools_path} index ${output_filename}
-    >>>
+        ~{samtools_path} view -T ~{ref_fasta} -C -o ~{output_filename} ~{bam_file}
+        ~{samtools_path} index ~{output_filename}
+    }
 
     runtime {
         docker: docker

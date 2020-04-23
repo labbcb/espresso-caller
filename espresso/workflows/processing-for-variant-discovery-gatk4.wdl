@@ -76,6 +76,11 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
     Int agg_large_disk = 400
 
     Int preemptible_tries = 3
+
+    Float align_mem_size_gb = 14
+    Float marge_bam_mem_size_gb = 4
+    Float mark_duplicates_mem_size_gb = 7.5
+    Float sort_mem_size_gb = 10
   }
     String base_file_name = sample_name + "." + ref_name
 
@@ -116,7 +121,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         gotc_path = gotc_path,
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
-        compression_level = compression_level
+        compression_level = compression_level,
+        mem_size_gb = align_mem_size_gb
      }
 
     # Merge original uBAM and BWA-aligned BAM 
@@ -134,7 +140,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         gatk_path = gatk_path,
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
-        compression_level = compression_level
+        compression_level = compression_level,
+        mem_size_gb = marge_bam_mem_size_gb
     }
   }
 
@@ -150,7 +157,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
       gatk_path = gatk_path,
       disk_size = agg_large_disk,
       compression_level = compression_level,
-      preemptible_tries = preemptible_tries
+      preemptible_tries = preemptible_tries,
+      mem_size_gb = mark_duplicates_mem_size_gb
   }
 
   # Sort aggregated+deduped BAM file and fix tags
@@ -165,7 +173,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
       gatk_path = gatk_path,
       disk_size = agg_large_disk,
       preemptible_tries = 0,
-      compression_level = compression_level
+      compression_level = compression_level,
+      mem_size_gb = sort_mem_size_gb
   }
 
   # Create list of sequences for scatter-gather parallelization 
@@ -729,3 +738,4 @@ task GatherBamFiles {
 # From https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/2.0.0/processing-for-variant-discovery-gatk4.wdl
 # Add CPU cores
 # Declare and pass-through parameters for PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem
+# Add mem_size_gb parameters for tasks
