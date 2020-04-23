@@ -30,6 +30,7 @@ workflow HaplotypeCalling {
         File ref_ann
         File ref_amb
         File ref_bwt
+        File? ref_alt 
 
         File dbSNP_vcf
         File dbSNP_vcf_index
@@ -80,6 +81,7 @@ workflow HaplotypeCalling {
                 ref_ann = ref_ann,
                 ref_amb = ref_amb,
                 ref_bwt = ref_bwt,
+                ref_alt = ref_alt,
                 dbSNP_vcf = dbSNP_vcf,
                 dbSNP_vcf_index = dbSNP_vcf_index,
                 known_indels_sites_VCFs = known_indels_sites_VCFs,

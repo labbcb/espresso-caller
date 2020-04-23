@@ -53,6 +53,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
     File ref_ann
     File ref_amb
     File ref_bwt
+    File? ref_alt
 
     File dbSNP_vcf
     File dbSNP_vcf_index
@@ -109,6 +110,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         ref_ann = ref_ann,
         ref_amb = ref_amb,
         ref_bwt = ref_bwt,
+        ref_alt = ref_alt,
         docker_image = gotc_docker,
         bwa_path = gotc_path,
         gotc_path = gotc_path,
