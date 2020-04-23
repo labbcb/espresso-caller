@@ -1,7 +1,7 @@
 from json import load
 
 from pkg_resources import resource_filename
-from os.path import isfile, join, abspath
+from os.path import isfile, join, abspath, exists
 
 
 def join_list_mixed(x, sep=', '):
@@ -38,6 +38,8 @@ def load_references(workflow, version):
     """
     json_file = resource_filename(
         __name__, 'inputs/{}.{}.resources.json'.format(workflow, version))
+    if not exists(json_file):
+        return []
     with open(json_file) as file:
         references = load(file)
     return [Reference(param, filename) for param, filename in references.items()]
