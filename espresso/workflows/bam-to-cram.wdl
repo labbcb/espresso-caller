@@ -12,12 +12,15 @@ version 1.0
 
 workflow BamToCram {
 
-    Array[File] array_bams
-    File ref_fasta
+    input {
+        Array[File] array_bams
+        File ref_fasta
 
-    String? gitc_docker_override
+        String? gitc_docker_override
+        String? samtools_path_override
+    }
+    
     String gitc_docker = select_first([gitc_docker_override, "welliton/samtools:1.9"])
-    String? samtools_path_override
     String samtools_path = select_first([samtools_path_override, "samtools"])
 
     scatter (bam in array_bams) {

@@ -10,38 +10,40 @@ import "bam-to-cram.wdl" as ConvertToCram
 
 workflow HaplotypeCalling {
 
-    Array[String] sample_name
-    String ref_name
+    input {            
+        Array[String] sample_name
+        String ref_name
 
-    Array[File] fastq_1
-    Array[File] fastq_2
-    Array[String] library_name
-    Array[String] platform_unit
-    Array[String] run_date
-    Array[String] platform_name
-    Array[String] sequencing_center
+        Array[File] fastq_1
+        Array[File] fastq_2
+        Array[String] library_name
+        Array[String] platform_unit
+        Array[String] run_date
+        Array[String] platform_name
+        Array[String] sequencing_center
 
-    File ref_fasta
-    File ref_fasta_index
-    File ref_dict
+        File ref_fasta
+        File ref_fasta_index
+        File ref_dict
 
-    File dbSNP_vcf
-    File dbSNP_vcf_index
-    Array[File] known_indels_sites_VCFs
-    Array[File] known_indels_sites_indices
+        File dbSNP_vcf
+        File dbSNP_vcf_index
+        Array[File] known_indels_sites_VCFs
+        Array[File] known_indels_sites_indices
 
-    File scattered_calling_intervals_list
+        File scattered_calling_intervals_list
 
-    String? bwa_commandline_override
+        String? bwa_commandline_override
 
-    String? gatk_docker_override
-    String? gotc_docker_override
-    String? python_docker_override
-    String? gitc_docker_override
+        String? gatk_docker_override
+        String? gotc_docker_override
+        String? python_docker_override
+        String? gitc_docker_override
 
-    String? gatk_path_override
-    String? gotc_path_override
-    String? samtools_path_override
+        String? gatk_path_override
+        String? gotc_path_override
+        String? samtools_path_override
+    }
 
     scatter (idx in range(length(sample_name))) {
         call PairedFastqToUnmappedBam.ConvertPairedFastQsToUnmappedBamWf {
