@@ -229,7 +229,6 @@ espresso all \
     --disable_platform_unit \
     --reference $REF_DIR \
     --version $GENOME_VERSION \
-    --dont_run \
     $DATASET_NAME \
     $RESULT_DIR
 ```

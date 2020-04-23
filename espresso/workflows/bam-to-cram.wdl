@@ -1,3 +1,4 @@
+version 1.0
 ## Convert one or more BAM files to CRAM format and create index
 ##
 ## Requirements/expectations :

@@ -1,3 +1,5 @@
+version 1.0
+
 ## HaplotypeCalling workflow - from paired-end FASTQ files to per-sample raw gVCF files
 ## Welliton de Souza - well309@gmail.com
 import "paired-fastq-to-unmapped-bam.wdl" as PairedFastqToUnmappedBam
