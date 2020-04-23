@@ -48,6 +48,11 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
     File ref_fasta
     File ref_fasta_index
     File ref_dict
+    File ref_pac
+    File ref_sa
+    File ref_ann
+    File ref_amb
+    File ref_bwt
 
     File dbSNP_vcf
     File dbSNP_vcf_index
@@ -99,6 +104,11 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         ref_fasta = ref_fasta,
         ref_fasta_index = ref_fasta_index,
         ref_dict = ref_dict,
+        ref_pac = ref_pac,
+        ref_sa = ref_sa,
+        ref_ann = ref_ann,
+        ref_amb = ref_amb,
+        ref_bwt = ref_bwt,
         docker_image = gotc_docker,
         bwa_path = gotc_path,
         gotc_path = gotc_path,
@@ -716,3 +726,4 @@ task GatherBamFiles {
 
 # From https://raw.githubusercontent.com/gatk-workflows/gatk4-data-processing/2.0.0/processing-for-variant-discovery-gatk4.wdl
 # Add CPU cores
+# Declare and pass-through parameters for PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem

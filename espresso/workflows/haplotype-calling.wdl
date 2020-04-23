@@ -25,6 +25,11 @@ workflow HaplotypeCalling {
         File ref_fasta
         File ref_fasta_index
         File ref_dict
+        File ref_pac
+        File ref_sa
+        File ref_ann
+        File ref_amb
+        File ref_bwt
 
         File dbSNP_vcf
         File dbSNP_vcf_index
@@ -58,8 +63,7 @@ workflow HaplotypeCalling {
                 platform_name = platform_name[idx],
                 sequencing_center = sequencing_center[idx],
                 gatk_docker = gatk_docker_override,
-                gatk_path = gatk_path_override,
-                make_fofn = true
+                gatk_path = gatk_path_override
         }
 
         call ProcessingForVariantDiscoveryGATK4.PreProcessingForVariantDiscovery_GATK4 {
@@ -71,6 +75,11 @@ workflow HaplotypeCalling {
                 ref_fasta = ref_fasta,
                 ref_fasta_index = ref_fasta_index,
                 ref_dict = ref_dict,
+                ref_pac = ref_pac,
+                ref_sa = ref_sa,
+                ref_ann = ref_ann,
+                ref_amb = ref_amb,
+                ref_bwt = ref_bwt,
                 dbSNP_vcf = dbSNP_vcf,
                 dbSNP_vcf_index = dbSNP_vcf_index,
                 known_indels_sites_VCFs = known_indels_sites_VCFs,

@@ -46,8 +46,6 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     String platform_name 
     String sequencing_center 
 
-    Boolean make_fofn = false
-
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
   }
@@ -71,18 +69,16 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
   }
 
   #Create a file with the generated ubam
-  if (make_fofn) {  
-    call CreateFoFN {
-      input:
-        ubam = PairedFastQsToUnmappedBAM.output_unmapped_bam,
-        fofn_name = ubam_list_name + ".ubam"
-    }
+  call CreateFoFN {
+    input:
+      ubam = PairedFastQsToUnmappedBAM.output_unmapped_bam,
+      fofn_name = ubam_list_name + ".ubam"
   }
   
   # Outputs that will be retained when execution is complete
   output {
     File output_unmapped_bam = PairedFastQsToUnmappedBAM.output_unmapped_bam
-    File? unmapped_bam_list = CreateFoFN.fofn_list
+    File unmapped_bam_list = CreateFoFN.fofn_list
   }
 }
 
@@ -158,3 +154,5 @@ task CreateFoFN {
 }
 
 # From https://raw.githubusercontent.com/gatk-workflows/seq-format-conversion/3.0.0/paired-fastq-to-unmapped-bam.wdl
+# Remove make_fofn and call CreateFoFN
+# Change unmapped_bam_list from File? to File
