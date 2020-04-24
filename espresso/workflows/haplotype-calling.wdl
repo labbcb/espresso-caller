@@ -49,10 +49,11 @@ workflow HaplotypeCalling {
         String? gotc_path_override
         String? samtools_path_override
 
-        Float align_mem_size_gb = 20
+        Float align_mem_size_gb = 25
         Float marge_bam_mem_size_gb = 5
-        Float mark_duplicates_mem_size_gb = 30
+        Float mark_duplicates_mem_size_gb = 35
         Float sort_mem_size_gb = 15
+        Float baserecalibrator_mem_size_gb = 15
     }
 
     scatter (idx in range(length(sample_name))) {
@@ -99,7 +100,8 @@ workflow HaplotypeCalling {
                 align_mem_size_gb = align_mem_size_gb,
                 marge_bam_mem_size_gb = marge_bam_mem_size_gb,
                 mark_duplicates_mem_size_gb = mark_duplicates_mem_size_gb,
-                sort_mem_size_gb = sort_mem_size_gb
+                sort_mem_size_gb = sort_mem_size_gb,
+                baserecalibrator_mem_size_gb = baserecalibrator_mem_size_gb
         }
 
         call HaplotypeCallerGvcfGATK4.HaplotypeCallerGvcf_GATK4 {
