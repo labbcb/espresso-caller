@@ -243,7 +243,7 @@ def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, ve
     :return:
     """
 
-    inputs = load_params_file('JointDiscovery')
+    inputs = load_params_file('JointGenotyping')
 
     if len(directories) != len(prefixes):
         raise Exception("Number of directories {} and prefixes {} are uneven.".format(
@@ -260,7 +260,7 @@ def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, ve
     inputs['JointGenotyping.callset_name'] = callset_name
 
     inputs.update(collect_resources_files(
-        reference, 'JointDiscovery', version))
+        reference, 'JointGenotyping', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
