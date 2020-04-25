@@ -41,8 +41,6 @@ wget -P ${DESTINATION} \
     https://storage.googleapis.com/broad-references/hg38/v0/Axiom_Exome_Plus.genotypes.all_populations.poly.hg38.vcf.gz.tbi \
     https://storage.googleapis.com/broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz \
     https://storage.googleapis.com/broad-references/hg38/v0/hapmap_3.3.hg38.vcf.gz.tbi \
-    https://storage.googleapis.com/broad-references/hg38/v0/wgs_evaluation_regions.hg38.interval_list \
-    https://storage.googleapis.com/broad-references/hg38/v0/hg38.even.handcurated.20k.intervals \
     https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.haplotype_database.txt
 
 
