@@ -12,21 +12,21 @@ def cli():
     Automates execution of workflows for processing WES/WGS data
 
     Raw paired-end FASTQ or raw gVCF files are collected, together with resources files (b37 or hg38) to generate
-    JSON file that is used as input for data processing workflows (haplotype-calling, joint-discovery or both).
+    JSON file that is used as input for data processing workflows (haplotype-calling, JointGenotyping or both).
     It assumes that each directory containing FASTQ files is a library or batch.
     FASTQ file names must follow this pattern: (sample_name)_R?[12].fastq(.gz)?
     Input and resources files are checked before workflows are submitted to Cromwell server.
     Output files are collected writing them to destination directory.
 
     'variant-discovery' workflow executes all data processing steps: from raw FASTQs to unified VCF.
-    It is also able to combine previous raw gVCF files when executing 'joint-discovery' workflow.
+    It is also able to combine previous raw gVCF files when executing 'JointGenotyping' workflow.
 
     'haplotype-calling' workflow takes FASTQ files and their metadata as input (plus resources files) and run
     Broad Institute GATK workflows: convert FASTQ to uBAM; align sequences to reference genome; merge aligned
     with unmapped sequences to create ready-analysis BAM; validate BAM files; convert BAM files to CRAM format;
     and call variants generating one raw gVCF per sample.
 
-    'joint-discovery' workflows takes raw gVCF files and merge into a single unified VCF.
+    'JointGenotyping' workflows takes raw gVCF files and merge into a single unified VCF.
     """
     pass
 
@@ -69,7 +69,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
                       disable_platform_unit, reference, genome_version, vcf_directories, prefixes, dont_run,
                       sleep_time, move, gatk_path_override, gotc_path_override, samtools_path_override,
                       bwa_commandline_override, callset_name, destination):
-    """Run haplotype-calling and joint-discovery workflows"""
+    """Run haplotype-calling and JointGenotyping workflows"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
@@ -89,7 +89,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     sample_map_file = join(destination, 'sample_map.txt')
     inputs = joint_discovery_inputs(sample_map_file, vcf_directories, prefixes, reference, genome_version,
                                     callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', genome_version,
+    submit_workflow(host, 'JointGenotyping', genome_version,
                     inputs, destination, sleep_time, dont_run, move)
 
 
@@ -155,12 +155,12 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
 @click.argument('destination', type=click.Path())
 def joint_discovery(host, directories, prefixes, reference, version, dont_run, sleep_time, move, gatk_path_override,
                     callset_name, destination):
-    """Run only joint-discovery-gatk4 workflow"""
+    """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
 
     sample_map_file = join(destination, 'sample_map.txt')
     inputs = joint_discovery_inputs(
         sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'joint-discovery', version, inputs,
+    submit_workflow(host, 'JointGenotyping', version, inputs,
                     abspath(destination), sleep_time, dont_run, move)

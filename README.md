@@ -1,5 +1,9 @@
 # Automated and reproducible tool for identifying genomic variants at scale
-    
+
+## Required resources files
+
+[Broad References - Human genomics reference files used for sequencing analytics](https://console.cloud.google.com/marketplace/details/broad-institute/references).
+
 Processing high-throughput sequencing data was the biggest challenge in the past, dealing with small datasets of large sample data.
 Genomics projects with thousands of samples have became popular due to decreasing in sequencing costs.
 Now we are facing a new challenge: how to process and store large-scale datasets efficiently.
@@ -229,6 +233,16 @@ espresso all \
     --disable_platform_unit \
     --reference $REF_DIR \
     --version $GENOME_VERSION \
+	--dont_run \
+    $DATASET_NAME \
+    $RESULT_DIR
+
+espresso joint \
+    --vcf $RESULT_DIR \
+	--prefix "" \
+    --reference $REF_DIR \
+    --version $GENOME_VERSION \
+	--dont_run \
     $DATASET_NAME \
     $RESULT_DIR
 ```
