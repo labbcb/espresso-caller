@@ -1,9 +1,9 @@
 include espresso/inputs/haplotype-calling.b37.resources.json
 include espresso/inputs/haplotype-calling.hg38.resources.json
 include espresso/inputs/haplotype-calling.params.json
-include espresso/inputs/JointDiscovery.b37.resources.json
-include espresso/inputs/JointDiscovery.hg38.resources.json
-include espresso/inputs/JointDiscovery.params.json
+include espresso/inputs/JointGenotyping.b37.resources.json
+include espresso/inputs/JointGenotyping.hg38.resources.json
+include espresso/inputs/JointGenotyping.params.json
 include espresso/workflows/bam-to-cram.wdl
 include espresso/workflows/haplotype-calling.wdl
 include espresso/workflows/haplotypecaller-gvcf-gatk4.wdl

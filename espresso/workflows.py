@@ -231,7 +231,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     return inputs
 
 
-def joint_discovery_inputs(sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override=None):
+def joint_genotyping_inputs(sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override=None):
     """
     Create inputs for 'JointGenotyping' workflow
     :param directories:

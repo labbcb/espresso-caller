@@ -3,7 +3,7 @@ from os.path import exists, abspath, join
 
 import click
 
-from espresso.workflows import haplotype_caller_inputs, joint_discovery_inputs, submit_workflow
+from espresso.workflows import haplotype_caller_inputs, joint_genotyping_inputs, submit_workflow
 
 
 @click.group()
@@ -87,7 +87,7 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     prefixes.append('')
 
     sample_map_file = join(destination, 'sample_map.txt')
-    inputs = joint_discovery_inputs(sample_map_file, vcf_directories, prefixes, reference, genome_version,
+    inputs = joint_genotyping_inputs(sample_map_file, vcf_directories, prefixes, reference, genome_version,
                                     callset_name, gatk_path_override)
     submit_workflow(host, 'JointGenotyping', genome_version,
                     inputs, destination, sleep_time, dont_run, move)
@@ -153,14 +153,14 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
 @click.option('--gatk_path_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def joint_discovery(host, directories, prefixes, reference, version, dont_run, sleep_time, move, gatk_path_override,
+def joint_genotyping(host, directories, prefixes, reference, version, dont_run, sleep_time, move, gatk_path_override,
                     callset_name, destination):
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
 
     sample_map_file = join(destination, 'sample_map.txt')
-    inputs = joint_discovery_inputs(
+    inputs = joint_genotyping_inputs(
         sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override)
     submit_workflow(host, 'JointGenotyping', version, inputs,
                     abspath(destination), sleep_time, dont_run, move)
