@@ -251,11 +251,12 @@ def joint_genotyping_inputs(sample_map_file, directories, prefixes, reference, v
 
     with open(sample_map_file, 'w') as f:
         for directory, prefix in zip(directories, prefixes):
-            vcf_files, vcf_index_files, sample_names = collect_vcf_files(
-                directory, prefix)
+            sample_names, vcf_files, vcf_index_files = collect_vcf_files(directory, prefix)
             for vcf_file, vcf_index_file, sample_name in zip(vcf_files, vcf_index_files, sample_names):
                 f.write('{sample_name}\t{vcf_file}\t{vcf_index_file}'.format(
                     sample_name=sample_name, vcf_file=vcf_file, vcf_index_file=vcf_index_file))
+
+    inputs['JointGenotyping.sample_name_map'] = sample_map_file
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
@@ -265,8 +266,8 @@ def joint_genotyping_inputs(sample_map_file, directories, prefixes, reference, v
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        inputs['JointGenotyping.gatk_path_override'] = abspath(
-            gatk_path_override)
+        
+        inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
 
     return inputs
 

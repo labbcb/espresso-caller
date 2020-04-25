@@ -1,3 +1,4 @@
+from os.path import abspath
 from .util import search_regex, extract_sample_name
 
 
@@ -7,7 +8,7 @@ def collect_vcf_files(directory, prefix='', vcf_name_regex='(?P<sample>.+?)(\\.\
     :param directory: list of directories to search
     :param prefix: prepend to sample name
     :param vcf_name_regex: regular expression to extract sample name from file name
-    :return: three lists of VCF files, VCF index files and sample names
+    :return: three lists of sample names, VCF files, VCF index files
     """
 
     vcf_files = search_regex(directory, '\\.g\\.vcf(\\.gz)?$')
@@ -20,12 +21,10 @@ def collect_vcf_files(directory, prefix='', vcf_name_regex='(?P<sample>.+?)(\\.\
         raise Exception('VCF files not found in {}'.format(directory))
 
     if vcf_len != index_len:
-        raise Exception(
-            'VCF and index files not even. VCF: {}, Index: {}'.format(vcf_len, index_len))
+        raise Exception('VCF and index files not even. VCF: {}, Index: {}'.format(vcf_len, index_len))
 
     vcf_files.sort()
     vcf_index_files.sort()
-    sample_names = [
-        prefix + extract_sample_name(f, vcf_name_regex) for f in vcf_files]
+    sample_names = [prefix + extract_sample_name(f, vcf_name_regex) for f in vcf_files]
 
-    return vcf_files, vcf_index_files, sample_names
+    return sample_names, [abspath(vcf) for vcf in vcf_files], [abspath(index) for index in vcf_index_files]
