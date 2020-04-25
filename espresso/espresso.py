@@ -126,6 +126,7 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
     """Run only haplotype-calling workflow"""
     if not exists(destination):
         mkdir(destination)
+    destination = abspath(destination)
 
     inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
                                      reference, genome_version, gatk_path_override, gotc_path_override,
@@ -158,6 +159,7 @@ def joint_genotyping(host, directories, prefixes, reference, version, dont_run, 
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
+    destination = abspath(destination)
 
     sample_map_file = join(destination, 'sample_map.txt')
     inputs = joint_genotyping_inputs(
