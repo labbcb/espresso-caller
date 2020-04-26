@@ -82,6 +82,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
     Float? mark_duplicates_mem_size_gb
     Float? sort_mem_size_gb
     Float? baserecalibrator_mem_size_gb
+    Float? aplly_bqsr_mem_size_gb
   }
     String base_file_name = sample_name + "." + ref_name
 
@@ -237,7 +238,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         docker_image = gatk_docker,
         gatk_path = gatk_path,
         disk_size = agg_small_disk,
-        preemptible_tries = preemptible_tries
+        preemptible_tries = preemptible_tries,
+        mem_size_gb = aplly_bqsr_mem_size_gb
     }
   } 
 

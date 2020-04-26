@@ -54,6 +54,7 @@ workflow HaplotypeCalling {
         Float? mark_duplicates_mem_size_gb
         Float? sort_mem_size_gb
         Float? baserecalibrator_mem_size_gb
+        Float? aplly_bqsr_mem_size_gb
     }
 
     scatter (idx in range(length(sample_name))) {
@@ -101,7 +102,8 @@ workflow HaplotypeCalling {
                 merge_bam_mem_size_gb = merge_bam_mem_size_gb,
                 mark_duplicates_mem_size_gb = mark_duplicates_mem_size_gb,
                 sort_mem_size_gb = sort_mem_size_gb,
-                baserecalibrator_mem_size_gb = baserecalibrator_mem_size_gb
+                baserecalibrator_mem_size_gb = baserecalibrator_mem_size_gb,
+                aplly_bqsr_mem_size_gb = aplly_bqsr_mem_size_gb
         }
 
         call HaplotypeCallerGvcfGATK4.HaplotypeCallerGvcf_GATK4 {

@@ -161,7 +161,7 @@ def haplotype_calling_inputs(
         samtools_path_override=None, bwa_commandline_override=None,
         align_mem_size_gb=None, merge_bam_mem_size_gb=None,
         mark_duplicates_mem_size_gb=None, sort_mem_size_gb=None,
-        baserecalibrator_mem_size_gb=None):
+        baserecalibrator_mem_size_gb=None, aplly_bqsr_mem_size_gb=None):
     """
     Create inputs for 'haplotype-calling' workflow
     :param directories:
@@ -181,6 +181,7 @@ def haplotype_calling_inputs(
     :param mark_duplicates_mem_size_gb:
     :param sort_mem_size_gb:
     :param baserecalibrator_mem_size_gb:
+    :param aplly_bqsr_mem_size_gb:
     :return:
     """
 
@@ -247,6 +248,8 @@ def haplotype_calling_inputs(
         inputs['HaplotypeCaling.sort_mem_size_gb'] = sort_mem_size_gb
     if baserecalibrator_mem_size_gb:
         inputs['HaplotypeCaling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
+    if aplly_bqsr_mem_size_gb:
+        inputs['HaplotypeCaling.aplly_bqsr_mem_size_gb'] = baserecalibrator_mem_size_gb
 
     return inputs
 
