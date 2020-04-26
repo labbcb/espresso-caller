@@ -249,7 +249,7 @@ def haplotype_calling_inputs(
     if baserecalibrator_mem_size_gb:
         inputs['HaplotypeCaling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
     if aplly_bqsr_mem_size_gb:
-        inputs['HaplotypeCaling.aplly_bqsr_mem_size_gb'] = baserecalibrator_mem_size_gb
+        inputs['HaplotypeCaling.aplly_bqsr_mem_size_gb'] = aplly_bqsr_mem_size_gb
 
     return inputs
 
