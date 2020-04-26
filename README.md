@@ -1,5 +1,9 @@
 # Automated and reproducible tool for identifying genomic variants at scale
 
+## Reproducible example
+
+[GATK test data](https://console.cloud.google.com/storage/browser/gatk-test-data)
+
 ## Required resources files
 
 [Broad References - Human genomics reference files used for sequencing analytics](https://console.cloud.google.com/marketplace/details/broad-institute/references).
