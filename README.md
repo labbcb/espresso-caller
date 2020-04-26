@@ -2,7 +2,6 @@
 
 ## Reproducible example
 
-[GATK test data](https://console.cloud.google.com/storage/browser/gatk-test-data)
 
 ## Required resources files
 

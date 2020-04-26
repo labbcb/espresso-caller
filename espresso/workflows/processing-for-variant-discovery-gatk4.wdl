@@ -77,11 +77,11 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
 
     Int preemptible_tries = 3
 
-    Float align_mem_size_gb = 14
-    Float marge_bam_mem_size_gb = 4
-    Float mark_duplicates_mem_size_gb = 7.5
-    Float sort_mem_size_gb = 10
-    Float baserecalibrator_mem_size_gb = 6
+    Float? align_mem_size_gb
+    Float? merge_bam_mem_size_gb
+    Float? mark_duplicates_mem_size_gb
+    Float? sort_mem_size_gb
+    Float? baserecalibrator_mem_size_gb
   }
     String base_file_name = sample_name + "." + ref_name
 
@@ -142,7 +142,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
         compression_level = compression_level,
-        mem_size_gb = marge_bam_mem_size_gb
+        mem_size_gb = merge_bam_mem_size_gb
     }
   }
 

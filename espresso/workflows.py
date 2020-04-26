@@ -154,10 +154,14 @@ def zip_imports_files(workflow, dest_dir):
     return zip_file
 
 
-def haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
-                            disable_platform_unit, reference,
-                            genome_version, gatk_path_override=None, gotc_path_override=None,
-                            samtools_path_override=None, bwa_commandline_override=None):
+def haplotype_calling_inputs(
+        directories, library_names, platform_name, run_dates,
+        sequencing_center, disable_platform_unit, reference, genome_version,
+        gatk_path_override=None, gotc_path_override=None,
+        samtools_path_override=None, bwa_commandline_override=None,
+        align_mem_size_gb=None, merge_bam_mem_size_gb=None,
+        mark_duplicates_mem_size_gb=None, sort_mem_size_gb=None,
+        baserecalibrator_mem_size_gb=None):
     """
     Create inputs for 'haplotype-calling' workflow
     :param directories:
@@ -172,6 +176,11 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     :param gotc_path_override:
     :param samtools_path_override:
     :param bwa_commandline_override:
+    :param align_mem_size_gb:
+    :param merge_bam_mem_size_gb:
+    :param mark_duplicates_mem_size_gb:
+    :param sort_mem_size_gb:
+    :param baserecalibrator_mem_size_gb:
     :return:
     """
 
@@ -193,7 +202,7 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
 
         if disable_platform_unit:
             inputs['HaplotypeCalling.platform_unit'] += ["-"] * \
-                len(forward_files)
+                                                        len(forward_files)
         else:
             inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(
                 forward_files)
@@ -228,18 +237,33 @@ def haplotype_caller_inputs(directories, library_names, platform_name, run_dates
     if bwa_commandline_override:
         inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
+    if align_mem_size_gb:
+        inputs['HaplotypeCaling.align_mem_size_gb'] = align_mem_size_gb
+    if merge_bam_mem_size_gb:
+        inputs['HaplotypeCaling.merge_bam_mem_size_gb'] = merge_bam_mem_size_gb
+    if mark_duplicates_mem_size_gb:
+        inputs['HaplotypeCaling.mark_duplicates_mem_size_gb'] = mark_duplicates_mem_size_gb
+    if sort_mem_size_gb:
+        inputs['HaplotypeCaling.sort_mem_size_gb'] = sort_mem_size_gb
+    if baserecalibrator_mem_size_gb:
+        inputs['HaplotypeCaling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
+
     return inputs
 
 
-def joint_genotyping_inputs(sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override=None):
+def joint_genotyping_inputs(
+        sample_map_file, directories, prefixes, reference, version,
+        callset_name, gatk_path_override=None):
     """
     Create inputs for 'JointGenotyping' workflow
+    :param sample_map_file:
     :param directories:
     :param prefixes:
     :param reference:
     :param version:
     :param gatk_path_override:
     :param callset_name:
+    :param gatk_path_override:
     :return:
     """
 
@@ -266,7 +290,7 @@ def joint_genotyping_inputs(sample_map_file, directories, prefixes, reference, v
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        
+
         inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
 
     return inputs

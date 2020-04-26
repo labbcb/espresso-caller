@@ -3,7 +3,7 @@ from os.path import exists, abspath, join
 
 import click
 
-from espresso.workflows import haplotype_caller_inputs, joint_genotyping_inputs, submit_workflow
+import espresso.workflows as workflows
 
 
 @click.group()
@@ -63,22 +63,37 @@ def cli():
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
+@click.option('--align_mem_size_gb', type=click.FLOAT)
+@click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
+@click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
+@click.option('--sort_mem_size_gb', type=click.FLOAT)
+@click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def variant_discovery(host, fastq_directories, run_dates, library_names, platform_name, sequencing_center,
-                      disable_platform_unit, reference, genome_version, vcf_directories, prefixes, dont_run,
-                      sleep_time, move, gatk_path_override, gotc_path_override, samtools_path_override,
-                      bwa_commandline_override, callset_name, destination):
+def variant_discovery(
+        host, fastq_directories, run_dates, library_names, platform_name,
+        sequencing_center, disable_platform_unit, reference, genome_version,
+        vcf_directories, prefixes, sleep_time, move, gatk_path_override,
+        gotc_path_override, samtools_path_override, bwa_commandline_override,
+        align_mem_size_gb, merge_bam_mem_size_gb, mark_duplicates_mem_size_gb,
+        sort_mem_size_gb, baserecalibrator_mem_size_gb, dont_run, callset_name,
+        destination):
     """Run haplotype-calling and JointGenotyping workflows"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
-    inputs = haplotype_caller_inputs(fastq_directories, library_names, platform_name, run_dates, sequencing_center,
-                                     disable_platform_unit, reference, genome_version, gatk_path_override,
-                                     gotc_path_override, samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version,
-                    inputs, destination, sleep_time, dont_run, move)
+    inputs = workflows.haplotype_calling_inputs(
+        fastq_directories, library_names, platform_name, run_dates,
+        sequencing_center, disable_platform_unit, reference, genome_version,
+        gatk_path_override, gotc_path_override, samtools_path_override,
+        bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
+        mark_duplicates_mem_size_gb, sort_mem_size_gb,
+        baserecalibrator_mem_size_gb)
+
+    workflows.submit_workflow(
+        host, 'haplotype-calling', genome_version, inputs, destination,
+        sleep_time, dont_run, move)
 
     vcf_directories = list(vcf_directories)
     vcf_directories.append(destination)
@@ -87,10 +102,12 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
     prefixes.append('')
 
     sample_map_file = join(destination, 'sample_map.txt')
-    inputs = joint_genotyping_inputs(sample_map_file, vcf_directories, prefixes, reference, genome_version,
-                                    callset_name, gatk_path_override)
-    submit_workflow(host, 'JointGenotyping', genome_version,
-                    inputs, destination, sleep_time, dont_run, move)
+    inputs = workflows.joint_genotyping_inputs(
+        sample_map_file, vcf_directories, prefixes, reference, genome_version,
+        callset_name, gatk_path_override)
+
+    workflows.submit_workflow(host, 'JointGenotyping', genome_version,
+                              inputs, destination, sleep_time, dont_run, move)
 
 
 @cli.command('hc')
@@ -105,6 +122,8 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
               help='Name of the sequencing platform. One value for each FASTQ directory path')
 @click.option('--center', 'sequencing_center', required=True,
               help='Sequencing center name. One value for each FASTQ directory path')
+@click.option('--disable_platform_unit', is_flag=True, default=False,
+              help='Disable extraction of platform unit (PU) from FASTQ header')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
 @click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
@@ -119,20 +138,35 @@ def variant_discovery(host, fastq_directories, run_dates, library_names, platfor
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
+@click.option('--align_mem_size_gb', type=click.FLOAT)
+@click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
+@click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
+@click.option('--sort_mem_size_gb', type=click.FLOAT)
+@click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
 @click.argument('destination', type=click.Path())
-def haplotype_calling(host, directories, library_names, run_dates, platform_name, sequencing_center,
-                      reference, genome_version, dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
-                      samtools_path_override, bwa_commandline_override, destination):
+def haplotype_calling(
+        host, directories, library_names, run_dates, platform_name,
+        sequencing_center, disable_platform_unit, reference, genome_version,
+        dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
+        samtools_path_override, bwa_commandline_override, align_mem_size_gb,
+        merge_bam_mem_size_gb, mark_duplicates_mem_size_gb, sort_mem_size_gb,
+        baserecalibrator_mem_size_gb, destination):
     """Run only haplotype-calling workflow"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
-    inputs = haplotype_caller_inputs(directories, library_names, platform_name, run_dates, sequencing_center,
-                                     reference, genome_version, gatk_path_override, gotc_path_override,
-                                     samtools_path_override, bwa_commandline_override)
-    submit_workflow(host, 'haplotype-calling', genome_version,
-                    inputs, abspath(destination), sleep_time, dont_run, move)
+    inputs = workflows.haplotype_calling_inputs(
+        directories, library_names, platform_name, run_dates,
+        sequencing_center, disable_platform_unit, reference, genome_version,
+        gatk_path_override, gotc_path_override, samtools_path_override,
+        bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
+        mark_duplicates_mem_size_gb, sort_mem_size_gb,
+        baserecalibrator_mem_size_gb)
+
+    workflows.submit_workflow(
+        host, 'haplotype-calling', genome_version, inputs,
+        abspath(destination), sleep_time, dont_run, move)
 
 
 @cli.command('joint')
@@ -154,15 +188,18 @@ def haplotype_calling(host, directories, library_names, run_dates, platform_name
 @click.option('--gatk_path_override')
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
-def joint_genotyping(host, directories, prefixes, reference, version, dont_run, sleep_time, move, gatk_path_override,
-                    callset_name, destination):
+def joint_genotyping(
+        host, directories, prefixes, reference, version, dont_run, sleep_time,
+        move, gatk_path_override, callset_name, destination):
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
     sample_map_file = join(destination, 'sample_map.txt')
-    inputs = joint_genotyping_inputs(
-        sample_map_file, directories, prefixes, reference, version, callset_name, gatk_path_override)
-    submit_workflow(host, 'JointGenotyping', version, inputs,
-                    abspath(destination), sleep_time, dont_run, move)
+    inputs = workflows.joint_genotyping_inputs(
+        sample_map_file, directories, prefixes, reference, version,
+        callset_name, gatk_path_override)
+
+    workflows.submit_workflow(host, 'JointGenotyping', version, inputs,
+                              abspath(destination), sleep_time, dont_run, move)
