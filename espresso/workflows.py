@@ -239,17 +239,17 @@ def haplotype_calling_inputs(
         inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
     if align_mem_size_gb:
-        inputs['HaplotypeCaling.align_mem_size_gb'] = align_mem_size_gb
+        inputs['HaplotypeCalling.align_mem_size_gb'] = align_mem_size_gb
     if merge_bam_mem_size_gb:
-        inputs['HaplotypeCaling.merge_bam_mem_size_gb'] = merge_bam_mem_size_gb
+        inputs['HaplotypeCalling.merge_bam_mem_size_gb'] = merge_bam_mem_size_gb
     if mark_duplicates_mem_size_gb:
-        inputs['HaplotypeCaling.mark_duplicates_mem_size_gb'] = mark_duplicates_mem_size_gb
+        inputs['HaplotypeCalling.mark_duplicates_mem_size_gb'] = mark_duplicates_mem_size_gb
     if sort_mem_size_gb:
-        inputs['HaplotypeCaling.sort_mem_size_gb'] = sort_mem_size_gb
+        inputs['HaplotypeCalling.sort_mem_size_gb'] = sort_mem_size_gb
     if baserecalibrator_mem_size_gb:
-        inputs['HaplotypeCaling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
+        inputs['HaplotypeCalling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
     if aplly_bqsr_mem_size_gb:
-        inputs['HaplotypeCaling.aplly_bqsr_mem_size_gb'] = aplly_bqsr_mem_size_gb
+        inputs['HaplotypeCalling.aplly_bqsr_mem_size_gb'] = aplly_bqsr_mem_size_gb
 
     return inputs
 
