@@ -1,5 +1,5 @@
 from os import mkdir
-from os.path import exists, abspath, join
+from os.path import exists, abspath
 
 import click
 
@@ -193,16 +193,9 @@ def joint_genotyping(
         mkdir(destination)
     destination = abspath(destination)
 
-    inputs = workflows.generate_sample_map_inputs(
-        directories, prefixes, callset_name)
-    workflows.submit_workflow(
-        host, 'GenerateSampleMap', genome_version, inputs, destination,
-        sleep_time, dont_run, move)
-
-    sample_map_file = join(destination, callset_name + '.sample_map')
-    inputs = workflows.joint_genotyping_inputs(
-        sample_map_file, reference, genome_version, callset_name,
+    inputs = workflows.joint_discovery_inputs(
+        directories, prefixes, reference, genome_version, callset_name,
         gatk_path_override)
     workflows.submit_workflow(
-        host, 'JointGenotyping', genome_version, inputs, destination,
+        host, 'joint-discovery', genome_version, inputs, destination,
         sleep_time, dont_run, move)

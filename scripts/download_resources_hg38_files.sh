@@ -32,7 +32,6 @@ wget -q -P ${DESTINATION} \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/wgs_evaluation_regions.hg38.interval_list \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/hg38.even.handcurated.20k.intervals \
-    https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/Homo_sapiens_assembly38.haplotype_database.txt \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_phase1.snps.high_confidence.hg38.vcf.gz.tbi \
     https://storage.googleapis.com/gcp-public-data--broad-references/hg38/v0/1000G_omni2.5.hg38.vcf.gz \

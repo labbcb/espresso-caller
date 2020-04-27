@@ -16,20 +16,17 @@ from .vcf import collect_vcf_files
 
 WORKFLOW_FILES = {
     'haplotype-calling': 'workflows/haplotype-calling.wdl',
-    'JointGenotyping': 'workflows/JointGenotyping.wdl',
-    'JointGenotypingTasks': 'workflows/JointGenotypingTasks.wdl',
+    'joint-discovery': 'workflows/joint-discovery-gatk4-local.wdl',
     'bam-to-cram': 'workflows/bam-to-cram.wdl',
     'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
     'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
     'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
-    'validate-bam': 'workflows/validate-bam.wdl',
-    'GenerateSampleMap': 'workflows/GenerateSampleMap.wdl'}
+    'validate-bam': 'workflows/validate-bam.wdl'}
 
 IMPORTS_FILES = {
     'haplotype-calling': [
         'bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
-        'processing-for-variant-discovery-gatk4', 'validate-bam'],
-    'JointGenotyping': ['JointGenotypingTasks']}
+        'processing-for-variant-discovery-gatk4', 'validate-bam']}
 
 
 def submit_workflow(host, workflow, genome_version, inputs, destination, sleep_time=300, dont_run=False, move=False):
@@ -259,53 +256,34 @@ def haplotype_calling_inputs(
     return inputs
 
 
-def generate_sample_map_inputs(directories, prefixes, callset_name):
-    """
-    Creates inputs object for 'GenerateSampleMap' workflow.
-    :param directories:
-    :param prefixes:
-    :param callset_name:
-    """
-    inputs = load_params_file('GenerateSampleMap')
-
-    if len(directories) != len(prefixes):
-        raise Exception("Number of directories {} and prefixes {} are uneven.".format(
-            directories, prefixes))
-
-    for directory, prefix in zip(directories, prefixes):
-        sample_names, vcf_files = collect_vcf_files(directory, prefix)
-        inputs['GenerateSampleMap.sample_names'] += sample_names
-        inputs['GenerateSampleMap.file_paths'] += vcf_files
-
-    inputs['GenerateSampleMap.sample_map_name'] = callset_name
-
-    return inputs
-
-
-def joint_genotyping_inputs(
-        sample_map_file, reference, version, callset_name,
+def joint_discovery_inputs(
+        directories, prefixes, reference, version, callset_name,
         gatk_path_override=None):
     """
-    Create inputs for 'JointGenotyping' workflow
-    :param sample_map_file:
+    Create inputs for 'joint-discovery-gatk4-local' workflow
+    :param directories:
+    :param prefixes:
     :param reference:
     :param version:
     :param gatk_path_override:
     :param callset_name:
-    :param gatk_path_override:
     :return:
     """
 
-    inputs = load_params_file('JointGenotyping')
+    inputs = load_params_file('joint-discovery')
 
-    if not isfile(sample_map_file):
-        raise Exception('Sample map file not found: ' + sample_map_file)
-    inputs['JointGenotyping.sample_name_map'] = sample_map_file
+    if len(directories) != len(prefixes):
+        raise Exception("Number of directories {} and prefixes {} are uneven.".format(directories, prefixes))
+
+    for directory, prefix in zip(directories, prefixes):
+        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
+        inputs['JointGenotyping.input_gvcfs'] += vcf_files
+        inputs['JointGenotyping.input_gvcfs_indices'] += vcf_index_files
+        inputs['JointGenotyping.sample_names'] += sample_names
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
-    inputs.update(collect_resources_files(
-        reference, 'JointGenotyping', version))
+    inputs.update(collect_resources_files(reference, 'joint-discovery', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
