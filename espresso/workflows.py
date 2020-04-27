@@ -279,7 +279,7 @@ def joint_genotyping_inputs(
     with open(sample_map_file, 'w') as f:
         for directory, prefix in zip(directories, prefixes):
             sample_names, vcf_files = collect_vcf_files(directory, prefix)
-            f.writelines([f'{sample_name}\t{vcf_file}\n' for sample_name, vcf_file in zip(sample_names, vcf_files)])
+            f.writelines(['%s\t%s\n'.format(sample_name, vcf_file) for sample_name, vcf_file in zip(sample_names, vcf_files)])
 
     inputs['JointGenotyping.sample_name_map'] = sample_map_file
 
