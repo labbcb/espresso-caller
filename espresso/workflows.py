@@ -23,7 +23,7 @@ WORKFLOW_FILES = {
     'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
     'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
     'validate-bam': 'workflows/validate-bam.wdl',
-    'GenerateSampleMap': 'GenerateSampleMap.wdl'}
+    'GenerateSampleMap': 'workflows/GenerateSampleMap.wdl'}
 
 IMPORTS_FILES = {
     'haplotype-calling': [
