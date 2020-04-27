@@ -293,9 +293,9 @@ def joint_discovery_inputs(
         inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
 
     if indels_mem_size_gb:
-        inputs['JointGenotyping.IndelsVariantRecalibrator.mem_size_gb'] = indels_mem_size_gb
+        inputs['JointGenotyping.indels_variant_recalibrator_mem_size_gb'] = indels_mem_size_gb
     if snps_mem_size_gb:
-        inputs['JointGenotyping.SNPsVariantRecalibrator.mem_size_gb'] = snps_mem_size_gb
+        inputs['JointGenotyping.snps_variant_recalibrator_mem_size_gb'] = snps_mem_size_gb
 
     return inputs
 

@@ -186,8 +186,8 @@ def haplotype_calling(
 @click.option('--move', is_flag=True, default=False,
               help='Move output files to destination directory instead of copying them')
 @click.option('--gatk_path_override')
-@click.option('--indels_mem_size_gb', type=click.FLOAT)
-@click.option('--snps_mem_size_gb', type=click.FLOAT)
+@click.option('--indels_variant_recalibrator_mem_size_gb', 'indels_mem_size_gb', type=click.FLOAT)
+@click.option('--snps_variant_recalibrator_mem_size_gb', 'snps_mem_size_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def joint_genotyping(
