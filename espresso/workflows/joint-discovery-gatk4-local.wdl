@@ -554,8 +554,11 @@ task IndelsVariantRecalibrator {
   String docker
   Int disk_size
 
+  Float mem_size_gb = 26
+  Int command_mem_gb = ceil(mem_size_gb)
+
   command {
-    ${gatk_path} --java-options "-Xmx24g -Xms24g" \
+    ${gatk_path} --java-options "-Xmx${command_mem_gb}g -Xms${command_mem_gb}g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -571,7 +574,7 @@ task IndelsVariantRecalibrator {
   }
   runtime {
     docker: docker
-    memory: "26 GB"
+    memory: mem_size_gb + " GB"
     cpu: "2"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: 5
@@ -662,8 +665,11 @@ task SNPsVariantRecalibrator {
   String docker
   Int disk_size
 
+  Float mem_size_gb = 3.5
+  Int command_mem_gb = ceil(mem_size_gb)
+
   command {
-    ${gatk_path} --java-options "-Xmx24g -Xms24g" \
+    ${gatk_path} --java-options "-Xmx${command_mem_gb}g -Xms${command_mem_gb}g" \
       VariantRecalibrator \
       -V ${sites_only_variant_filtered_vcf} \
       -O ${recalibration_filename} \
@@ -681,7 +687,7 @@ task SNPsVariantRecalibrator {
   }
   runtime {
     docker: docker
-    memory: "25 GB"
+    memory: mem_size_gb + " GB"
     cpu: "2"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: 5

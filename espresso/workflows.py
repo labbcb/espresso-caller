@@ -258,7 +258,7 @@ def haplotype_calling_inputs(
 
 def joint_discovery_inputs(
         directories, prefixes, reference, version, callset_name,
-        gatk_path_override=None):
+        gatk_path_override=None, indels_mem_size_gb=None, snps_mem_size_gb=None):
     """
     Create inputs for 'joint-discovery-gatk4-local' workflow
     :param directories:
@@ -267,6 +267,8 @@ def joint_discovery_inputs(
     :param version:
     :param gatk_path_override:
     :param callset_name:
+    :param indels_mem_size_gb:
+    :param snps_mem_size_gb:
     :return:
     """
 
@@ -289,6 +291,11 @@ def joint_discovery_inputs(
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
         inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
+
+    if indels_mem_size_gb:
+        inputs['JointGenotyping.IndelsVariantRecalibrator.mem_size_gb'] = indels_mem_size_gb
+    if snps_mem_size_gb:
+        inputs['JointGenotyping.SNPsVariantRecalibrator.mem_size_gb'] = snps_mem_size_gb
 
     return inputs
 

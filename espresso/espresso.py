@@ -69,6 +69,8 @@ def cli():
 @click.option('--sort_mem_size_gb', type=click.FLOAT)
 @click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
 @click.option('--aplly_bqsr_mem_size_gb', type=click.FLOAT)
+@click.option('--indels_mem_size_gb', type=click.FLOAT)
+@click.option('--snps_mem_size_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def variant_discovery(
@@ -78,7 +80,7 @@ def variant_discovery(
         gotc_path_override, samtools_path_override, bwa_commandline_override,
         align_mem_size_gb, merge_bam_mem_size_gb, mark_duplicates_mem_size_gb,
         sort_mem_size_gb, baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb,
-        dont_run, callset_name, destination):
+        indels_mem_size_gb, snps_mem_size_gb, dont_run, callset_name, destination):
     """Run haplotype-calling and JointGenotyping workflows"""
     if not exists(destination):
         mkdir(destination)
@@ -104,7 +106,8 @@ def variant_discovery(
 
     joint_genotyping(
         host, vcf_directories, prefixes, reference, genome_version, dont_run,
-        sleep_time, move, gatk_path_override, callset_name, destination)
+        sleep_time, move, gatk_path_override, indels_mem_size_gb, snps_mem_size_gb,
+        callset_name, destination)
 
 
 @cli.command('hc')
@@ -183,11 +186,14 @@ def haplotype_calling(
 @click.option('--move', is_flag=True, default=False,
               help='Move output files to destination directory instead of copying them')
 @click.option('--gatk_path_override')
+@click.option('--indels_mem_size_gb', type=click.FLOAT)
+@click.option('--snps_mem_size_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def joint_genotyping(
         host, directories, prefixes, reference, genome_version, dont_run,
-        sleep_time, move, gatk_path_override, callset_name, destination):
+        sleep_time, move, gatk_path_override, indels_mem_size_gb, snps_mem_size_gb,
+        callset_name, destination):
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
@@ -195,7 +201,7 @@ def joint_genotyping(
 
     inputs = workflows.joint_discovery_inputs(
         directories, prefixes, reference, genome_version, callset_name,
-        gatk_path_override)
+        gatk_path_override, indels_mem_size_gb, snps_mem_size_gb)
     workflows.submit_workflow(
         host, 'joint-discovery', genome_version, inputs, destination,
         sleep_time, dont_run, move)
