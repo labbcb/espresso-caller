@@ -4,6 +4,7 @@ include espresso/inputs/haplotype-calling.params.json
 include espresso/inputs/JointGenotyping.b37.resources.json
 include espresso/inputs/JointGenotyping.hg38.resources.json
 include espresso/inputs/JointGenotyping.params.json
+include espresso/inputs/generate-sample-map.params.json
 include espresso/workflows/bam-to-cram.wdl
 include espresso/workflows/haplotype-calling.wdl
 include espresso/workflows/haplotypecaller-gvcf-gatk4.wdl
@@ -12,3 +13,4 @@ include espresso/workflows/JointGenotypingTasks.wdl
 include espresso/workflows/paired-fastq-to-unmapped-bam.wdl
 include espresso/workflows/processing-for-variant-discovery-gatk4.wdl
 include espresso/workflows/validate-bam.wdl
+include espresso/workflows/generate-sample-map.wdl

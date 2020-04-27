@@ -102,13 +102,9 @@ def variant_discovery(
     prefixes = list(prefixes)
     prefixes.append('')
 
-    sample_map_file = join(destination, 'sample_map.txt')
-    inputs = workflows.joint_genotyping_inputs(
-        sample_map_file, vcf_directories, prefixes, reference, genome_version,
-        callset_name, gatk_path_override)
-
-    workflows.submit_workflow(host, 'JointGenotyping', genome_version,
-                              inputs, destination, sleep_time, dont_run, move)
+    joint_genotyping(
+        host, vcf_directories, prefixes, reference, genome_version, dont_run,
+        sleep_time, move, gatk_path_override, callset_name, destination)
 
 
 @cli.command('hc')
@@ -178,7 +174,7 @@ def haplotype_calling(
               help='Add prefix to sample names from raw gVCF directory. One value for each gVCF directory path')
 @click.option('--reference', required=True, type=click.Path(exists=True),
               help='Path to directory containing reference files')
-@click.option('--version', required=True, type=click.Choice(['hg38', 'b37']),
+@click.option('--version', 'genome_version', required=True, type=click.Choice(['hg38', 'b37']),
               help='Version of reference files')
 @click.option('--dont_run', is_flag=True, default=False, show_default=True,
               help='Do not submit workflow to Cromwell. Just create destination directory and write JSON and WDL files')
@@ -190,17 +186,23 @@ def haplotype_calling(
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def joint_genotyping(
-        host, directories, prefixes, reference, version, dont_run, sleep_time,
-        move, gatk_path_override, callset_name, destination):
+        host, directories, prefixes, reference, genome_version, dont_run,
+        sleep_time, move, gatk_path_override, callset_name, destination):
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
-    sample_map_file = join(destination, 'sample_map.txt')
-    inputs = workflows.joint_genotyping_inputs(
-        sample_map_file, directories, prefixes, reference, version,
-        callset_name, gatk_path_override)
+    inputs = workflows.generate_sample_map_inputs(
+        directories, prefixes, callset_name)
+    workflows.submit_workflow(
+        host, 'GenerateSampleMap', genome_version, inputs, destination,
+        sleep_time, dont_run, move)
 
-    workflows.submit_workflow(host, 'JointGenotyping', version, inputs,
-                              abspath(destination), sleep_time, dont_run, move)
+    sample_map_file = join(destination, callset_name + '.sample_map')
+    inputs = workflows.joint_genotyping_inputs(
+        sample_map_file, reference, genome_version, callset_name,
+        gatk_path_override)
+    workflows.submit_workflow(
+        host, 'JointGenotyping', genome_version, inputs, destination,
+        sleep_time, dont_run, move)

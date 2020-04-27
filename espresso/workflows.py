@@ -14,27 +14,31 @@ from .fastq import collect_fastq_files, extract_platform_units
 from .references import collect_resources_files, check_intervals_files
 from .vcf import collect_vcf_files
 
-WORKFLOW_FILES = {'haplotype-calling': 'workflows/haplotype-calling.wdl',
-                  'JointGenotyping': 'workflows/JointGenotyping.wdl',
-                  'JointGenotypingTasks': 'workflows/JointGenotypingTasks.wdl',
-                  'bam-to-cram': 'workflows/bam-to-cram.wdl',
-                  'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
-                  'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
-                  'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
-                  'validate-bam': 'workflows/validate-bam.wdl'}
+WORKFLOW_FILES = {
+    'haplotype-calling': 'workflows/haplotype-calling.wdl',
+    'JointGenotyping': 'workflows/JointGenotyping.wdl',
+    'JointGenotypingTasks': 'workflows/JointGenotypingTasks.wdl',
+    'bam-to-cram': 'workflows/bam-to-cram.wdl',
+    'haplotypecaller-gvcf-gatk4': 'workflows/haplotypecaller-gvcf-gatk4.wdl',
+    'paired-fastq-to-unmapped-bam': 'workflows/paired-fastq-to-unmapped-bam.wdl',
+    'processing-for-variant-discovery-gatk4': 'workflows/processing-for-variant-discovery-gatk4.wdl',
+    'validate-bam': 'workflows/validate-bam.wdl',
+    'GenerateSampleMap': 'GenerateSampleMap.wdl'}
 
-IMPORTS_FILES = {'haplotype-calling': ['bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
-                                       'processing-for-variant-discovery-gatk4', 'validate-bam'],
-                 'JointGenotyping': ['JointGenotypingTasks']}
+IMPORTS_FILES = {
+    'haplotype-calling': [
+        'bam-to-cram', 'haplotypecaller-gvcf-gatk4', 'paired-fastq-to-unmapped-bam',
+        'processing-for-variant-discovery-gatk4', 'validate-bam'],
+    'JointGenotyping': ['JointGenotypingTasks']}
 
 
-def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300, dont_run=False, move=False):
+def submit_workflow(host, workflow, genome_version, inputs, destination, sleep_time=300, dont_run=False, move=False):
     """
     Copy workflow file into destination; write inputs JSON file into destination;
     submit workflow to Cromwell server; wait to complete; and copy output files to destination
     :param host: Cromwell server URL
     :param workflow: workflow name
-    :param version: reference genome version
+    :param genome_version: reference genome version
     :param inputs: dict containing inputs data
     :param destination: directory to write all files
     :param sleep_time: time in seconds to sleep between workflow status check
@@ -53,7 +57,7 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
         click.echo('Workflow imports file: ' + imports_file)
 
     inputs_file = join(
-        destination, '{}.{}.inputs.json'.format(workflow, version))
+        destination, '{}.{}.inputs.json'.format(workflow, genome_version))
     with open(inputs_file, 'w') as file:
         dump(inputs, file, indent=4, sort_keys=True)
 
@@ -71,8 +75,9 @@ def submit_workflow(host, workflow, version, inputs, destination, sleep_time=300
 
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
-    click.echo('Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, version),
-               err=True)
+    click.echo(
+        'Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, genome_version),
+        err=True)
 
     try:
         while True:
@@ -254,14 +259,35 @@ def haplotype_calling_inputs(
     return inputs
 
 
+def generate_sample_map_inputs(directories, prefixes, callset_name):
+    """
+    Creates inputs object for 'GenerateSampleMap' workflow.
+    :param directories:
+    :param prefixes:
+    :param callset_name:
+    """
+    inputs = load_params_file('GenerateSampleMap')
+
+    if len(directories) != len(prefixes):
+        raise Exception("Number of directories {} and prefixes {} are uneven.".format(
+            directories, prefixes))
+
+    for directory, prefix in zip(directories, prefixes):
+        sample_names, vcf_files = collect_vcf_files(directory, prefix)
+        inputs['GenerateSampleMap.sample_names'] += sample_names
+        inputs['GenerateSampleMap.file_paths'] += vcf_files
+
+    inputs['GenerateSampleMap.sample_map_name'] = callset_name
+
+    return inputs
+
+
 def joint_genotyping_inputs(
-        sample_map_file, directories, prefixes, reference, version,
-        callset_name, gatk_path_override=None):
+        sample_map_file, reference, version, callset_name,
+        gatk_path_override=None):
     """
     Create inputs for 'JointGenotyping' workflow
     :param sample_map_file:
-    :param directories:
-    :param prefixes:
     :param reference:
     :param version:
     :param gatk_path_override:
@@ -272,15 +298,8 @@ def joint_genotyping_inputs(
 
     inputs = load_params_file('JointGenotyping')
 
-    if len(directories) != len(prefixes):
-        raise Exception("Number of directories {} and prefixes {} are uneven.".format(
-            directories, prefixes))
-
-    with open(sample_map_file, 'w') as f:
-        for directory, prefix in zip(directories, prefixes):
-            sample_names, vcf_files = collect_vcf_files(directory, prefix)
-            f.writelines(['{}\t{}\n'.format(sample_name, vcf_file) for sample_name, vcf_file in zip(sample_names, vcf_files)])
-
+    if not isfile(sample_map_file):
+        raise Exception('Sample map file not found: ' + sample_map_file)
     inputs['JointGenotyping.sample_name_map'] = sample_map_file
 
     inputs['JointGenotyping.callset_name'] = callset_name
