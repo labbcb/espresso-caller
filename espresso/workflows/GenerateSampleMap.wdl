@@ -31,7 +31,7 @@ version 1.0
 workflow GenerateSampleMap {
   input {
     Array[String] sample_names
-    Array[String] file_paths
+    Array[File] file_paths
     String sample_map_name
   }
   
@@ -54,7 +54,7 @@ task GenerateSampleMapFile {
   input{
     # Command parameters
     Array[String] sample_names
-    Array[String] file_paths
+    Array[File] file_paths
     String outfile 
     
     # Runtime parameters
@@ -94,3 +94,4 @@ task GenerateSampleMapFile {
 }
 
 # From https://portal.firecloud.org/?return=terra#methods/gatk/generate-sample-map/2/wdl
+# Change file_paths from String to File
