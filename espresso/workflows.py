@@ -276,10 +276,10 @@ def joint_discovery_inputs(
         raise Exception("Number of directories {} and prefixes {} are uneven.".format(directories, prefixes))
 
     for directory, prefix in zip(directories, prefixes):
-        vcf_files, vcf_index_files, sample_names = collect_vcf_files(directory, prefix)
+        sample_names, vcf_files, vcf_index_files = collect_vcf_files(directory, prefix)
+        inputs['JointGenotyping.sample_names'] += sample_names
         inputs['JointGenotyping.input_gvcfs'] += vcf_files
         inputs['JointGenotyping.input_gvcfs_indices'] += vcf_index_files
-        inputs['JointGenotyping.sample_names'] += sample_names
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
