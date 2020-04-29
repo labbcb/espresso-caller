@@ -1,12 +1,5 @@
 # Automated and reproducible tool for identifying genomic variants at scale
 
-## Reproducible example
-
-
-## Required resources files
-
-[Broad References - Human genomics reference files used for sequencing analytics](https://console.cloud.google.com/marketplace/details/broad-institute/references).
-
 Processing high-throughput sequencing data was the biggest challenge in the past, dealing with small datasets of large sample data.
 Genomics projects with thousands of samples have became popular due to decreasing in sequencing costs.
 Now we are facing a new challenge: how to process and store large-scale datasets efficiently.
@@ -216,36 +209,4 @@ source venv/bin/activate
 pip install -U pip
 pip install click requests
 pip install --force git+https://github.com/labbcb/espresso-caller.git
-```
-
-Run `espresso` in dry mode.
-
-```bash
-FASTQ_DIR=NA12878
-REF_DIR=references/hg38
-DATASET_NAME=NA12878
-RESULT_DIR=results/hg38
-GENOME_VERSION=hg38
-
-espresso all \
-    --fastq $FASTQ_DIR \
-    --library Phase3 \
-    --date 2015-07-30 \
-    --platform Illumina \
-    --center IGSR \
-    --disable_platform_unit \
-    --reference $REF_DIR \
-    --version $GENOME_VERSION \
-	--dont_run \
-    $DATASET_NAME \
-    $RESULT_DIR
-
-espresso joint \
-    --vcf $RESULT_DIR \
-	--prefix "" \
-    --reference $REF_DIR \
-    --version $GENOME_VERSION \
-	--dont_run \
-    $DATASET_NAME \
-    $RESULT_DIR
 ```
