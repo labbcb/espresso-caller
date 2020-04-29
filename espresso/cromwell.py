@@ -132,7 +132,7 @@ def post(url, data=None, raw_response_content=False):
 
 def is_url(path):
     """Check if path is a valid URL"""
-    regex = compile(
+    regex = re.compile(
         r'^(?:http|ftp)s?://(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
         r'localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|[/?]\S+)$', re.IGNORECASE)
 
