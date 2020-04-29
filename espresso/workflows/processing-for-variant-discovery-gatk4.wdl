@@ -83,6 +83,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
     Float? sort_mem_size_gb
     Float? baserecalibrator_mem_size_gb
     Float? aplly_bqsr_mem_size_gb
+
+    Int? align_num_cpu
   }
     String base_file_name = sample_name + "." + ref_name
 
@@ -124,7 +126,8 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
         compression_level = compression_level,
-        mem_size_gb = align_mem_size_gb
+        mem_size_gb = align_mem_size_gb,
+        num_cpu = align_num_cpu
      }
 
     # Merge original uBAM and BWA-aligned BAM 

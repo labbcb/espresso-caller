@@ -172,7 +172,7 @@ def haplotype_calling_inputs(
         samtools_path_override=None, bwa_commandline_override=None,
         align_mem_size_gb=None, merge_bam_mem_size_gb=None,
         mark_duplicates_mem_size_gb=None, sort_mem_size_gb=None,
-        baserecalibrator_mem_size_gb=None, aplly_bqsr_mem_size_gb=None):
+        baserecalibrator_mem_size_gb=None, aplly_bqsr_mem_size_gb=None, align_num_cpu=None):
     """
     Create inputs for 'haplotype-calling' workflow
     :param directories:
@@ -193,6 +193,7 @@ def haplotype_calling_inputs(
     :param sort_mem_size_gb:
     :param baserecalibrator_mem_size_gb:
     :param aplly_bqsr_mem_size_gb:
+    :param align_num_cpu:
     :return:
     """
 
@@ -213,11 +214,9 @@ def haplotype_calling_inputs(
         inputs['HaplotypeCalling.fastq_2'] += reverse_files
 
         if disable_platform_unit:
-            inputs['HaplotypeCalling.platform_unit'] += ["-"] * \
-                                                        len(forward_files)
+            inputs['HaplotypeCalling.platform_unit'] += ["-"] * len(forward_files)
         else:
-            inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(
-                forward_files)
+            inputs['HaplotypeCalling.platform_unit'] += extract_platform_units(forward_files)
 
         num_samples = len(sample_names)
         inputs['HaplotypeCalling.library_name'] += [library_names[idx]] * num_samples
@@ -261,6 +260,8 @@ def haplotype_calling_inputs(
         inputs['HaplotypeCalling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
     if aplly_bqsr_mem_size_gb:
         inputs['HaplotypeCalling.aplly_bqsr_mem_size_gb'] = aplly_bqsr_mem_size_gb
+    if align_num_cpu:
+        inputs['HaplotypeCalling.align_num_cpu'] = align_num_cpu
 
     return inputs
 

@@ -1,4 +1,4 @@
-# Espresso-Caller
+# Automated and reproducible tool for identifying genomic variants at scale
 
 Processing high-throughput sequencing data was the biggest challenge in the past, dealing with small datasets of large sample data.
 Genomics projects with thousands of samples have became popular due to decreasing in sequencing costs.

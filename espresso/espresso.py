@@ -72,6 +72,7 @@ def cli():
 @click.option('--aplly_bqsr_mem_size_gb', type=click.FLOAT)
 @click.option('--indels_variant_recalibrator_mem_size_gb', 'indels_mem_size_gb', type=click.FLOAT)
 @click.option('--snps_variant_recalibrator_mem_size_gb', 'snps_mem_size_gb', type=click.FLOAT)
+@click.option('--align_num_cpu', type=click.INT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def variant_discovery(
@@ -81,7 +82,7 @@ def variant_discovery(
         gotc_path_override, samtools_path_override, bwa_commandline_override,
         align_mem_size_gb, merge_bam_mem_size_gb, mark_duplicates_mem_size_gb,
         sort_mem_size_gb, baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb,
-        indels_mem_size_gb, snps_mem_size_gb, dont_run, callset_name, destination):
+        indels_mem_size_gb, snps_mem_size_gb, dont_run, callset_name, align_num_cpu, destination):
     """Run haplotype-calling and JointGenotyping workflows"""
     if not exists(destination):
         mkdir(destination)
@@ -93,7 +94,7 @@ def variant_discovery(
         gatk_path_override, gotc_path_override, samtools_path_override,
         bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
         mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb)
+        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
 
     workflows.submit_workflow(
         host, 'haplotype-calling', genome_version, inputs, destination,
@@ -144,6 +145,7 @@ def variant_discovery(
 @click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
 @click.option('--sort_mem_size_gb', type=click.FLOAT)
 @click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
+@click.option('--align_num_cpu', type=click.INT)
 @click.argument('destination', type=click.Path())
 def haplotype_calling(
         host, directories, library_names, run_dates, platform_name,
@@ -151,7 +153,7 @@ def haplotype_calling(
         dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
         samtools_path_override, bwa_commandline_override, align_mem_size_gb,
         merge_bam_mem_size_gb, mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, destination):
+        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu, destination):
     """Run only haplotype-calling workflow"""
     if not exists(destination):
         mkdir(destination)
@@ -163,7 +165,7 @@ def haplotype_calling(
         gatk_path_override, gotc_path_override, samtools_path_override,
         bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
         mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb)
+        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
 
     workflows.submit_workflow(
         host, 'haplotype-calling', genome_version, inputs,
