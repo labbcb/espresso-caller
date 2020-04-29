@@ -1,3 +1,5 @@
+"""Espresso-Caller command line tool"""
+
 from os import mkdir
 from os.path import exists, abspath
 
@@ -28,7 +30,6 @@ def cli():
 
     'JointGenotyping' workflows takes raw gVCF files and merge into a single unified VCF.
     """
-    pass
 
 
 @cli.command('all')
@@ -69,8 +70,8 @@ def cli():
 @click.option('--sort_mem_size_gb', type=click.FLOAT)
 @click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
 @click.option('--aplly_bqsr_mem_size_gb', type=click.FLOAT)
-@click.option('--indels_mem_size_gb', type=click.FLOAT)
-@click.option('--snps_mem_size_gb', type=click.FLOAT)
+@click.option('--indels_variant_recalibrator_mem_size_gb', 'indels_mem_size_gb', type=click.FLOAT)
+@click.option('--snps_variant_recalibrator_mem_size_gb', 'snps_mem_size_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def variant_discovery(

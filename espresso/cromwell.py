@@ -1,6 +1,8 @@
-import requests
+"""Cromwell client"""
+
 from urllib.parse import urljoin
-from re import compile, match, IGNORECASE
+import re
+import requests
 
 
 def abort(host, workflow_id, api_version='v1'):
@@ -129,8 +131,9 @@ def post(url, data=None, raw_response_content=False):
 
 
 def is_url(path):
+    """Check if path is a valid URL"""
     regex = compile(
         r'^(?:http|ftp)s?://(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
-        r'localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|[/?]\S+)$', IGNORECASE)
+        r'localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})(?::\d+)?(?:/?|[/?]\S+)$', re.IGNORECASE)
 
-    return match(regex, path) is not None
+    return re.match(regex, path) is not None

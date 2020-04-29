@@ -1,6 +1,8 @@
+"""Utility functions"""
+
 from os import listdir
 from os.path import join, basename
-from re import compile, search, IGNORECASE
+import re
 
 
 def search_regex(directory, regex):
@@ -11,7 +13,7 @@ def search_regex(directory, regex):
     :return: list of files that match regex
     """
     files = listdir(directory)
-    m = compile(regex)
+    m = re.compile(regex)
     return [join(directory, file) for file in files if m.search(basename(file))]
 
 
@@ -23,7 +25,7 @@ def extract_sample_name(file, regex):
     :return: sample name
     """
     filename = basename(file)
-    result = search(regex, filename, IGNORECASE)
+    result = re.search(regex, filename, re.IGNORECASE)
 
     if not result:
         raise Exception('Unable to extract sample name from ' + filename)

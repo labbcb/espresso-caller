@@ -1,3 +1,4 @@
+"""Variant Call Format (VCF) related functions"""
 from os.path import abspath
 
 from .util import search_regex, extract_sample_name

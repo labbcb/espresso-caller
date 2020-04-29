@@ -1,3 +1,5 @@
+"""Reference (genome, dbSNP) related functions"""
+
 from json import load
 
 from pkg_resources import resource_filename
@@ -14,6 +16,7 @@ def join_list_mixed(x, sep=', '):
     return sep.join([sep.join(y) if isinstance(y, list) else y for y in x])
 
 
+# TODO: refactor to collections.namedtuple
 class Reference:
     """Represents a resource file required by workflows"""
 

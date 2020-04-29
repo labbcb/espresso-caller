@@ -1,10 +1,13 @@
+"""Workflow input JSON generation and workflow submssion"""
+
 import shutil
 from itertools import chain
 from json import load, dump
 from os.path import abspath, isfile, exists, join, basename
-from re import compile
+import re
 from time import sleep
 from zipfile import ZipFile
+import sys
 
 import click
 from pkg_resources import resource_filename
@@ -73,7 +76,8 @@ def submit_workflow(host, workflow, genome_version, inputs, destination, sleep_t
     click.echo('Workflow submitted to Cromwell Server ({})'.format(host), err=True)
     click.echo('Workflow id: ' + workflow_id, err=True)
     click.echo(
-        'Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(workflow, genome_version),
+        'Starting {} workflow with reference genome version {}.. Ctrl-C to abort.'.format(
+            workflow, genome_version),
         err=True)
 
     try:
@@ -84,11 +88,11 @@ def submit_workflow(host, workflow, genome_version, inputs, destination, sleep_t
                 click.echo('Workflow terminated: ' + status, err=True)
                 break
         if status != 'Succeeded':
-            exit(1)
+            sys.exit(1)
     except KeyboardInterrupt:
         click.echo('Aborting workflow.')
         cromwell.abort(host, workflow_id)
-        exit(1)
+        sys.exit(1)
 
     outputs = cromwell.outputs(host, workflow_id)
     for output in outputs.values():
@@ -125,6 +129,11 @@ def get_workflow_file(workflow):
 
 
 def load_params_file(workflow):
+    """
+    Given a workflow load its inputs JSON file when exists
+    :param workflow: workflow name
+    :return: JSON file content as dict or an empty dict if file not found
+    """
     if workflow not in WORKFLOW_FILES.keys():
         raise Exception('Workflow not found: ' + workflow)
 
@@ -275,22 +284,26 @@ def joint_discovery_inputs(
     inputs = load_params_file('joint-discovery')
 
     if len(directories) != len(prefixes):
-        raise Exception("Number of directories {} and prefixes {} are uneven.".format(directories, prefixes))
+        raise Exception("Number of directories {} and prefixes {} are uneven.".format(
+            directories, prefixes))
 
     for directory, prefix in zip(directories, prefixes):
-        sample_names, vcf_files, vcf_index_files = collect_vcf_files(directory, prefix)
+        sample_names, vcf_files, vcf_index_files = collect_vcf_files(
+            directory, prefix)
         inputs['JointGenotyping.sample_names'] += sample_names
         inputs['JointGenotyping.input_gvcfs'] += vcf_files
         inputs['JointGenotyping.input_gvcfs_indices'] += vcf_index_files
 
     inputs['JointGenotyping.callset_name'] = callset_name
 
-    inputs.update(collect_resources_files(reference, 'joint-discovery', version))
+    inputs.update(collect_resources_files(
+        reference, 'joint-discovery', version))
 
     if gatk_path_override:
         if not isfile(gatk_path_override):
             raise Exception('GATK found not found: ' + gatk_path_override)
-        inputs['JointGenotyping.gatk_path_override'] = abspath(gatk_path_override)
+        inputs['JointGenotyping.gatk_path_override'] = abspath(
+            gatk_path_override)
 
     if indels_mem_size_gb:
         inputs['JointGenotyping.indels_variant_recalibrator_mem_size_gb'] = indels_mem_size_gb
@@ -308,4 +321,4 @@ def is_valid_run_date(date):
     """
     regex = r'^(\d{4})-?(1[0-2]|0[1-9])-?(3[01]|0[1-9]|[12][0-9])' \
             r'(T(2[0-3]|[01][0-9]):?[0-5][0-9]:?[0-5][0-9](Z|[+-][0-5][0-9]:?[0-5][0-9]))?$'
-    return compile(regex).match(date)
+    return re.compile(regex).match(date)

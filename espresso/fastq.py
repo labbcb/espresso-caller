@@ -1,9 +1,11 @@
+"""FASTQ related functions"""
 import gzip
 
 from os.path import abspath
 from .util import search_regex, extract_sample_name
 
 
+# TODO: refactor removing 'fastq'
 def collect_fastq_files(directory, fastq_name_regex='(?P<sample>.+)_R?[12]\\.fastq(\\.gz)?$'):
     """
     Search for paired-end FASTQ files and check parity
@@ -38,6 +40,7 @@ def extract_platform_unit(fastq_file):
     :param fastq_file: a single FASTQ file
     :return: list of str
     """
+    # TODO: str.endswith or better check
     if fastq_file[-3:] == '.gz':
         file = gzip.open(fastq_file, 'rt')
     else:
@@ -49,6 +52,6 @@ def extract_platform_unit(fastq_file):
     finally:
         file.close()
 
-
+# TODO caller should use extract_platform_unit directly
 def extract_platform_units(fastq_files):
     return [extract_platform_unit(f) for f in fastq_files]
