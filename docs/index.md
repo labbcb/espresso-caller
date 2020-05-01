@@ -204,11 +204,7 @@ java -jar cromwell.jar run \
 Install latest development version.
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -U pip
-pip install click requests
-pip install --force git+https://github.com/labbcb/espresso-caller.git
+
 ```
 
 ## Reproducible example
@@ -251,35 +247,78 @@ espresso joint \
 
 ## Memory requirements
 
-| Workflow                               | Task                               | Default GB | Argument                                   |
-| -------------------------------------- | ---------------------------------- | ---------- | ------------------------------------------ |
-| ConvertPairedFastQsToUnmappedBamWf     | PairedFastQsToUnmappedBAM          | 7          |                                            |
-| ConvertPairedFastQsToUnmappedBamWf     | CreateFoFN                         |            |                                            |
-| PreProcessingForVariantDiscovery_GATK4 | GetBwaVersion                      | 1          |                                            |
-| PreProcessingForVariantDiscovery_GATK4 | SamToFastqAndBwaMem                | 14         | `--align_mem_size_gb`                      |
-| PreProcessingForVariantDiscovery_GATK4 | MergeBamAlignment                  | 4          | `--merge_bam_mem_size_gb`                  |
-| PreProcessingForVariantDiscovery_GATK4 | SortAndFixTags                     | 10         | `--sort_mem_size_gb`                       |
-| PreProcessingForVariantDiscovery_GATK4 | MarkDuplicates                     | 7.5        | `--mark_duplicates_mem_size_gb`            |
-| PreProcessingForVariantDiscovery_GATK4 | CreateSequenceGroupingTSV          | 2          |                                            |
-| PreProcessingForVariantDiscovery_GATK4 | BaseRecalibrator                   | 6          | `--baserecalibrator_mem_size_gb`           |
-| PreProcessingForVariantDiscovery_GATK4 | GatherBqsrReports                  | 4          |                                            |
-| PreProcessingForVariantDiscovery_GATK4 | ApplyBQSR                          | 4          | `--aplly_bqsr_mem_size_gb`                 |
-| PreProcessingForVariantDiscovery_GATK4 | GatherBamFiles                     | 3          |                                            |
-| HaplotypeCallerGvcf_GATK4              | CramToBamTask                      | 15         |                                            |
-| HaplotypeCallerGvcf_GATK4              | HaplotypeCaller                    | 7          |                                            |
-| HaplotypeCallerGvcf_GATK4              | MergeGVCFs                         | 3          |                                            |
-| ValidateBamsWf                         | ValidateBAM                        | 4          |                                            |
-| BamToCram                              | ConvertBamToCram                   |            |                                            |
-| JointGenotyping                        | GetNumberOfSamples                 | 1          |                                            |
-| JointGenotyping                        | ImportGVCFs                        | 7          |                                            |
-| JointGenotyping                        | GenotypeGVCFs                      | 7          |                                            |
-| JointGenotyping                        | HardFilterAndMakeSitesOnlyVcf      | 3.5        |                                            |
-| JointGenotyping                        | IndelsVariantRecalibrator          | 26         |`--indels_variant_recalibrator_mem_size_gb` |
-| JointGenotyping                        | SNPsVariantRecalibratorCreateModel | 104        |                                            |
-| JointGenotyping                        | SNPsVariantRecalibrator            | 3.5        |`--snps_variant_recalibrator_mem_size_gb`   |
-| JointGenotyping                        | GatherTranches                     | 7          |                                            |
-| JointGenotyping                        | ApplyRecalibration                 | 7          |                                            |
-| JointGenotyping                        | GatherVcfs                         | 7          |                                            |
-| JointGenotyping                        | CollectVariantCallingMetrics       | 7          |                                            |
-| JointGenotyping                        | GatherMetrics                      | 7          |                                            |
-| JointGenotyping                        | DynamicallyCombineIntervals        | 3          |                                            |
+| Workflow.Task                                                    | Default | Espresso argument                          |
+| ---------------------------------------------------------------- | ------- | ------------------------------------------ |
+| ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM     | 7       |                                            |
+| ConvertPairedFastQsToUnmappedBamWf.CreateFoFN                    |         |                                            |
+| PreProcessingForVariantDiscovery_GATK4.GetBwaVersion             | 1       |                                            |
+| PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem       | 14      | `--align_mem_size_gb`                      |
+| PreProcessingForVariantDiscovery_GATK4.MergeBamAlignment         | 4       | `--merge_bam_mem_size_gb`                  |
+| PreProcessingForVariantDiscovery_GATK4.SortAndFixTags            | 10      | `--sort_mem_size_gb`                       |
+| PreProcessingForVariantDiscovery_GATK4.MarkDuplicates            | 7.5     | `--mark_duplicates_mem_size_gb`            |
+| PreProcessingForVariantDiscovery_GATK4.CreateSequenceGroupingTSV | 2       |                                            |
+| PreProcessingForVariantDiscovery_GATK4.BaseRecalibrator          | 6       | `--baserecalibrator_mem_size_gb`           |
+| PreProcessingForVariantDiscovery_GATK4.GatherBqsrReports         | 4       |                                            |
+| PreProcessingForVariantDiscovery_GATK4.ApplyBQSR                 | 4       | `--aplly_bqsr_mem_size_gb`                 |
+| PreProcessingForVariantDiscovery_GATK4.GatherBamFiles            | 3       |                                            |
+| HaplotypeCallerGvcf_GATK4.CramToBamTask                          | 15      |                                            |
+| HaplotypeCallerGvcf_GATK4.HaplotypeCaller                        | 7       |                                            |
+| HaplotypeCallerGvcf_GATK4.MergeGVCFs                             | 3       |                                            |
+| ValidateBamsWf.ValidateBAM                                       | 4       |                                            |
+| BamToCram.ConvertBamToCram                                       |         |                                            |
+| JointGenotyping.GetNumberOfSamples                               | 1       |                                            |
+| JointGenotyping.ImportGVCFs                                      | 7       |                                            |
+| JointGenotyping.GenotypeGVCFs                                    | 7       |                                            |
+| JointGenotyping.HardFilterAndMakeSitesOnlyVcf                    | 3.5     |                                            |
+| JointGenotyping.IndelsVariantRecalibrator                        | 26      |`--indels_variant_recalibrator_mem_size_gb` |
+| JointGenotyping.SNPsVariantRecalibratorCreateModel               | 104     |                                            |
+| JointGenotyping.SNPsVariantRecalibrator                          | 3.5     |`--snps_variant_recalibrator_mem_size_gb`   |
+| JointGenotyping.GatherTranches                                   | 7       |                                            |
+| JointGenotyping.ApplyRecalibration                               | 7       |                                            |
+| JointGenotyping.GatherVcfs                                       | 7       |                                            |
+| JointGenotyping.CollectVariantCallingMetrics                     | 7       |                                            |
+| JointGenotyping.GatherMetrics                                    | 7       |                                            |
+| JointGenotyping.DynamicallyCombineIntervals                      | 3       |                                            |
+
+## CPU requirements
+
+Number of CPU cores are defined for all tasks.
+The PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem task requires 16 CPU cores by default.
+To change this value, for example to 10, use `--align_num_cpu 10` argument.
+It is also required to set BWA command line  `--bwa_commandline_override "bwa mem -K 100000000 -p -v 3 -t 10 -Y \$bash_ref_fasta"`.
+This will instruct the software to use 10 threads (`-t 10`).
+The scape character in `\$bash_ref_fasta` is required!
+
+## Container images
+
+- ubuntu:latest
+- broadinstitute/gatk:latest (ConvertPairedFastQsToUnmappedBamWf, ValidateBamsWf)
+- broadinstitute/gatk:4.1.6.0 (PreProcessingForVariantDiscovery_GATK4)
+- broadinstitute/gatk:4.1.4.0 (HaplotypeCallerGvcf_GATK4)
+- broadinstitute/gatk:4.1.0.0 (JointGenotyping)
+- broadinstitute/genomes-in-the-cloud:2.3.1-1512499786 (PreProcessingForVariantDiscovery_GATK4)
+- broadinstitute/genomes-in-the-cloud:2.3.1-1500064817 (HaplotypeCallerGvcf_GATK4)
+- python:2.7 (PreProcessingForVariantDiscovery_GATK4, JointGenotyping)
+- welliton/samtools:1.9 (BamToCram)
+
+## Development
+
+Install latest development version.
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -U pip
+pip install click requests
+pip install --force git+https://github.com/labbcb/espresso-caller.git
+```
+
+Clone and test package
+
+```bash
+git clone https://github.com/labbcb/espresso-caller.git
+cd esresso-caller
+pip install -e .
+
+python -m unittest discover -s tests
+```

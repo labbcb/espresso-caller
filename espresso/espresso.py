@@ -64,6 +64,7 @@ def cli():
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
+@click.option('--fastq_bam_mem_size_gb', type=click.FLOAT)
 @click.option('--align_mem_size_gb', type=click.FLOAT)
 @click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
 @click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
@@ -79,7 +80,7 @@ def variant_discovery(
         host, fastq_directories, run_dates, library_names, platform_name,
         sequencing_center, disable_platform_unit, reference, genome_version,
         vcf_directories, prefixes, sleep_time, move, gatk_path_override,
-        gotc_path_override, samtools_path_override, bwa_commandline_override,
+        gotc_path_override, samtools_path_override, bwa_commandline_override, fastq_bam_mem_size_gb,
         align_mem_size_gb, merge_bam_mem_size_gb, mark_duplicates_mem_size_gb,
         sort_mem_size_gb, baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb,
         indels_mem_size_gb, snps_mem_size_gb, dont_run, callset_name, align_num_cpu, destination):
@@ -92,7 +93,7 @@ def variant_discovery(
         fastq_directories, library_names, platform_name, run_dates,
         sequencing_center, disable_platform_unit, reference, genome_version,
         gatk_path_override, gotc_path_override, samtools_path_override,
-        bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
+        bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb, merge_bam_mem_size_gb,
         mark_duplicates_mem_size_gb, sort_mem_size_gb,
         baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
 
@@ -140,6 +141,7 @@ def variant_discovery(
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
+@click.option('--fastq_bam_mem_size_gb', type=click.FLOAT)
 @click.option('--align_mem_size_gb', type=click.FLOAT)
 @click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
 @click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
@@ -151,7 +153,7 @@ def haplotype_calling(
         host, directories, library_names, run_dates, platform_name,
         sequencing_center, disable_platform_unit, reference, genome_version,
         dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
-        samtools_path_override, bwa_commandline_override, align_mem_size_gb,
+        samtools_path_override, bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb,
         merge_bam_mem_size_gb, mark_duplicates_mem_size_gb, sort_mem_size_gb,
         baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu, destination):
     """Run only haplotype-calling workflow"""
@@ -163,7 +165,7 @@ def haplotype_calling(
         directories, library_names, platform_name, run_dates,
         sequencing_center, disable_platform_unit, reference, genome_version,
         gatk_path_override, gotc_path_override, samtools_path_override,
-        bwa_commandline_override, align_mem_size_gb, merge_bam_mem_size_gb,
+        bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb, merge_bam_mem_size_gb,
         mark_duplicates_mem_size_gb, sort_mem_size_gb,
         baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
 

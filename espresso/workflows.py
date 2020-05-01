@@ -170,7 +170,7 @@ def haplotype_calling_inputs(
         sequencing_center, disable_platform_unit, reference, genome_version,
         gatk_path_override=None, gotc_path_override=None,
         samtools_path_override=None, bwa_commandline_override=None,
-        align_mem_size_gb=None, merge_bam_mem_size_gb=None,
+        fastq_bam_mem_size_gb=None, align_mem_size_gb=None, merge_bam_mem_size_gb=None,
         mark_duplicates_mem_size_gb=None, sort_mem_size_gb=None,
         baserecalibrator_mem_size_gb=None, aplly_bqsr_mem_size_gb=None, align_num_cpu=None):
     """
@@ -248,6 +248,8 @@ def haplotype_calling_inputs(
     if bwa_commandline_override:
         inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
+    if fastq_bam_mem_size_gb:
+        inputs['HaplotypeCalling.fastq_bam_mem_size_gb'] = fastq_bam_mem_size_gb
     if align_mem_size_gb:
         inputs['HaplotypeCalling.align_mem_size_gb'] = align_mem_size_gb
     if merge_bam_mem_size_gb:

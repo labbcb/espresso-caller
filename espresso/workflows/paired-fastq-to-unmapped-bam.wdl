@@ -48,6 +48,8 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
 
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
+
+    Float? fastq_bam_mem_size_gb
   }
 
     String ubam_list_name = sample_name
@@ -65,7 +67,8 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
       platform_name = platform_name,
       sequencing_center = sequencing_center,
       gatk_path = gatk_path,
-      docker = gatk_docker
+      docker = gatk_docker,
+      machine_mem_gb = fastq_bam_mem_size_gb
   }
 
   #Create a file with the generated ubam
@@ -101,11 +104,11 @@ task PairedFastQsToUnmappedBAM {
 
     # Runtime parameters
     Int addtional_disk_space_gb = 10
-    Int machine_mem_gb = 7
+    Float machine_mem_gb = 7
     Int preemptible_attempts = 3
     String docker
   }
-    Int command_mem_gb = machine_mem_gb - 1
+    Int command_mem_gb = ceil(machine_mem_gb - 1)
     Int disk_space_gb = ceil((size(fastq_1, "GB") + size(fastq_2, "GB")) * 2 ) + addtional_disk_space_gb
   command {
     ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \

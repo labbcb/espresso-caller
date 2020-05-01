@@ -55,6 +55,7 @@ workflow HaplotypeCalling {
         Float? sort_mem_size_gb
         Float? baserecalibrator_mem_size_gb
         Float? aplly_bqsr_mem_size_gb
+        Float? fastq_bam_mem_size_gb
 
         Int? align_num_cpu
     }
@@ -72,7 +73,8 @@ workflow HaplotypeCalling {
                 platform_name = platform_name[idx],
                 sequencing_center = sequencing_center[idx],
                 gatk_docker = gatk_docker_override,
-                gatk_path = gatk_path_override
+                gatk_path = gatk_path_override,
+                fastq_bam_mem_size_gb = fastq_bam_mem_size_gb
         }
 
         call ProcessingForVariantDiscoveryGATK4.PreProcessingForVariantDiscovery_GATK4 {
