@@ -129,6 +129,7 @@ task PairedFastQsToUnmappedBAM {
     memory: machine_mem_gb + " GB"
     disks: "local-disk " + disk_space_gb + " HDD"
     preemptible: preemptible_attempts
+    cpu: "2"
   }
   output {
     File output_unmapped_bam = "~{readgroup_name}.unmapped.bam"
