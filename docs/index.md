@@ -249,7 +249,7 @@ espresso joint \
 
 | Workflow.Task                                                    | Default | Espresso argument                          |
 | ---------------------------------------------------------------- | ------- | ------------------------------------------ |
-| ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM     | 7       |                                            |
+| ConvertPairedFastQsToUnmappedBamWf.PairedFastQsToUnmappedBAM     | 7       | `--fastq_bam_mem_size_gb`                  |
 | ConvertPairedFastQsToUnmappedBamWf.CreateFoFN                    |         |                                            |
 | PreProcessingForVariantDiscovery_GATK4.GetBwaVersion             | 1       |                                            |
 | PreProcessingForVariantDiscovery_GATK4.SamToFastqAndBwaMem       | 14      | `--align_mem_size_gb`                      |

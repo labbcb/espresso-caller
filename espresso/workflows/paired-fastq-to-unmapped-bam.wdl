@@ -111,7 +111,7 @@ task PairedFastQsToUnmappedBAM {
     Int command_mem_gb = ceil(machine_mem_gb - 1)
     Int disk_space_gb = ceil((size(fastq_1, "GB") + size(fastq_2, "GB")) * 2 ) + addtional_disk_space_gb
   command {
-    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g" \
+    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}g -Djava.io.tmpdir=." \
     FastqToSam \
     --FASTQ ~{fastq_1} \
     --FASTQ2 ~{fastq_2} \
@@ -122,7 +122,8 @@ task PairedFastQsToUnmappedBAM {
     --PLATFORM_UNIT ~{platform_unit} \
     --RUN_DATE ~{run_date} \
     --PLATFORM ~{platform_name} \
-    --SEQUENCING_CENTER ~{sequencing_center} 
+    --SEQUENCING_CENTER ~{sequencing_center} \
+    --TMP_DIR .
   }
   runtime {
     docker: docker
