@@ -103,6 +103,7 @@ def get(url, data=None, raw_response_content=False):
     :return: dic object or content of response in bytes
     """
     response = requests.get(url, params=data)
+    response.raise_for_status()
     return response.content if raw_response_content else response.json()
 
 
@@ -115,6 +116,7 @@ def patch(url, data, raw_response_content=False):
     :return: dic object or content of response in bytes
     """
     response = requests.patch(url, data=data)
+    response.raise_for_status()
     return response.content if raw_response_content else response.json()
 
 
@@ -127,6 +129,7 @@ def post(url, data=None, raw_response_content=False):
     :return: dic object or content of response in bytes
     """
     response = requests.post(url, files=data)
+    response.raise_for_status()
     return response.content if raw_response_content else response.json()
 
 
