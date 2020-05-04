@@ -1,7 +1,8 @@
 """Cromwell client"""
 
-from urllib.parse import urljoin
 import re
+from urllib.parse import urljoin
+
 import requests
 
 
@@ -16,25 +17,20 @@ def abort(host, workflow_id, api_version='v1'):
     path = '/api/workflows/{version}/{id}/abort'.format(
         id=workflow_id, version=api_version)
     response = post(urljoin(host, path))
-    if response.get('status') in ('fail', 'error'):
-        raise Exception(response.get('message'))
     return response.get('status')
 
 
-def status(host, workflow_id, api_version='v1'):
+def status(host, workflow_id):
     """
     Retrieves the current state for a workflow
     :param host: Cromwell server URL
     :param workflow_id:
-    :param api_version: Cromwell API version
     :return:
     """
-    path = '/api/workflows/{version}/{id}/status'.format(
-        id=workflow_id, version=api_version)
-    response = get(urljoin(host, path))
-    if response.get('status') in ('fail', 'error'):
-        raise Exception(response.get('message'))
-    return response.get('status')
+    url = '{host}/api/workflows/v1/{id}/status'.format(host=host, id=workflow_id)
+    r = requests.get(url)
+    r.raise_for_status()
+    return r.json()
 
 
 def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=None, language=None,
@@ -73,8 +69,6 @@ def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=
 
     path = '/api/workflows/{version}'.format(version=api_version)
     response = post(urljoin(host, path), data)
-    if response.get('status') in ('fail', 'error'):
-        raise Exception(response.get('message'))
     return response.get('id')
 
 
@@ -89,8 +83,6 @@ def outputs(host, workflow_id, api_version='v1'):
     path = '/api/workflows/{version}/{id}/outputs'.format(
         id=workflow_id, version=api_version)
     response = get(urljoin(host, path))
-    if response.get('status') in ('fail', 'error'):
-        raise Exception(response.get('message'))
     return response.get('outputs')
 
 

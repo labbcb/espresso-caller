@@ -32,7 +32,9 @@ IMPORTS_FILES = {
         'processing-for-variant-discovery-gatk4', 'validate-bam']}
 
 
-def submit_workflow(host, workflow, genome_version, inputs, destination, sleep_time=300, dont_run=False, move=False):
+def submit_workflow(
+        host, workflow, genome_version, inputs, destination, sleep_time=5,
+        dont_run=False, move=False):
     """
     Copy workflow file into destination; write inputs JSON file into destination;
     submit workflow to Cromwell server; wait to complete; and copy output files to destination
