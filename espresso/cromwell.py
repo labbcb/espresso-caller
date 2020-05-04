@@ -30,7 +30,7 @@ def status(host, workflow_id):
     url = '{host}/api/workflows/v1/{id}/status'.format(host=host, id=workflow_id)
     r = requests.get(url)
     r.raise_for_status()
-    return r.json()
+    return r.json().get('status')
 
 
 def submit(host, workflow, inputs=None, options=None, dependencies=None, labels=None, language=None,
