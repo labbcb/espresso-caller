@@ -107,10 +107,12 @@ def variant_discovery(
     prefixes = list(prefixes)
     prefixes.append('')
 
-    joint_genotyping(
-        host, vcf_directories, prefixes, reference, genome_version, dont_run,
-        sleep_time, move, gatk_path_override, indels_mem_size_gb, snps_mem_size_gb,
-        callset_name, destination)
+    inputs = workflows.joint_discovery_inputs(
+        vcf_directories, prefixes, reference, genome_version, callset_name,
+        gatk_path_override, indels_mem_size_gb, snps_mem_size_gb)
+    workflows.submit_workflow(
+        host, 'joint-discovery', genome_version, inputs, destination,
+        sleep_time, dont_run, move)
 
 
 @cli.command('hc')
