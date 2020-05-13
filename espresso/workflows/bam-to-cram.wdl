@@ -61,6 +61,7 @@ task ConvertBamToCram {
     runtime {
         docker: docker
         cpu: select_first([cpu, 1])
+        memory: "1 GB"
     }
 
     output {

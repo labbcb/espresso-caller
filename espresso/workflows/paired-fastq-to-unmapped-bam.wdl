@@ -49,7 +49,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
 
-    Float? fastq_bam_mem_size_gb
+    Float? fastq_bam_mem_gb
   }
 
     String ubam_list_name = sample_name
@@ -68,7 +68,7 @@ workflow ConvertPairedFastQsToUnmappedBamWf {
       sequencing_center = sequencing_center,
       gatk_path = gatk_path,
       docker = gatk_docker,
-      machine_mem_gb = fastq_bam_mem_size_gb
+      machine_mem_gb = fastq_bam_mem_gb
   }
 
   #Create a file with the generated ubam

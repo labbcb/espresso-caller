@@ -77,12 +77,12 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
 
     Int preemptible_tries = 3
 
-    Float? align_mem_size_gb
-    Float? merge_bam_mem_size_gb
-    Float? mark_duplicates_mem_size_gb
-    Float? sort_mem_size_gb
-    Float? baserecalibrator_mem_size_gb
-    Float? aplly_bqsr_mem_size_gb
+    Float? align_mem_gb
+    Float? merge_bam_mem_gb
+    Float? mark_duplicates_mem_gb
+    Float? sort_mem_gb
+    Float? baserecalibrator_mem_gb
+    Float? aplly_bqsr_mem_gb
 
     Int? align_num_cpu
   }
@@ -126,7 +126,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
         compression_level = compression_level,
-        mem_size_gb = align_mem_size_gb,
+        mem_size_gb = align_mem_gb,
         num_cpu = align_num_cpu
      }
 
@@ -146,7 +146,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         disk_size = flowcell_medium_disk,
         preemptible_tries = preemptible_tries,
         compression_level = compression_level,
-        mem_size_gb = merge_bam_mem_size_gb
+        mem_size_gb = merge_bam_mem_gb
     }
   }
 
@@ -163,7 +163,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
       disk_size = agg_large_disk,
       compression_level = compression_level,
       preemptible_tries = preemptible_tries,
-      mem_size_gb = mark_duplicates_mem_size_gb
+      mem_size_gb = mark_duplicates_mem_gb
   }
 
   # Sort aggregated+deduped BAM file and fix tags
@@ -179,7 +179,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
       disk_size = agg_large_disk,
       preemptible_tries = 0,
       compression_level = compression_level,
-      mem_size_gb = sort_mem_size_gb
+      mem_size_gb = sort_mem_gb
   }
 
   # Create list of sequences for scatter-gather parallelization 
@@ -210,7 +210,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         gatk_path = gatk_path,
         disk_size = agg_small_disk,
         preemptible_tries = preemptible_tries,
-        mem_size_gb = baserecalibrator_mem_size_gb
+        mem_size_gb = baserecalibrator_mem_gb
     }  
   }  
   
@@ -242,7 +242,7 @@ workflow PreProcessingForVariantDiscovery_GATK4 {
         gatk_path = gatk_path,
         disk_size = agg_small_disk,
         preemptible_tries = preemptible_tries,
-        mem_size_gb = aplly_bqsr_mem_size_gb
+        mem_size_gb = aplly_bqsr_mem_gb
     }
   } 
 
@@ -510,7 +510,7 @@ task MarkDuplicates {
     docker: docker_image
     memory: "~{mem_size_gb}  GiB"
     disks: "local-disk " + disk_size + " HDD"
-    cpu: "16"
+    cpu: "10"
   }
   output {
     File output_bam = "~{output_bam_basename}.bam"
@@ -618,7 +618,7 @@ task BaseRecalibrator {
     docker: docker_image
     memory: "~{mem_size_gb} GiB"
     disks: "local-disk " + disk_size + " HDD"
-    cpu: "4"
+    cpu: "10"
   }
   output {
     File recalibration_report = "~{recalibration_report_filename}"

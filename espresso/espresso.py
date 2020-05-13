@@ -64,15 +64,18 @@ def cli():
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
-@click.option('--fastq_bam_mem_size_gb', type=click.FLOAT)
-@click.option('--align_mem_size_gb', type=click.FLOAT)
-@click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
-@click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
-@click.option('--sort_mem_size_gb', type=click.FLOAT)
-@click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
-@click.option('--aplly_bqsr_mem_size_gb', type=click.FLOAT)
-@click.option('--indels_variant_recalibrator_mem_size_gb', 'indels_mem_size_gb', type=click.FLOAT)
-@click.option('--snps_variant_recalibrator_mem_size_gb', 'snps_mem_size_gb', type=click.FLOAT)
+@click.option('--fastq_bam_mem_gb', type=click.FLOAT)
+@click.option('--align_mem_gb', type=click.FLOAT)
+@click.option('--merge_bam_mem_gb', type=click.FLOAT)
+@click.option('--mark_duplicates_mem_gb', type=click.FLOAT)
+@click.option('--sort_mem_gb', type=click.FLOAT)
+@click.option('--baserecalibrator_mem_gb', type=click.FLOAT)
+@click.option('--aplly_bqsr_mem_gb', type=click.FLOAT)
+@click.option('--haplotype_caller_mem_gb', type=click.INT)
+@click.option('--merge_gvcfs_mem_gb', type=click.INT)
+@click.option('--validate_bam_mem_gb', type=click.INT)
+@click.option('--indels_variant_recalibrator_mem_gb', 'indels_mem_gb', type=click.FLOAT)
+@click.option('--snps_variant_recalibrator_mem_gb', 'snps_mem_gb', type=click.FLOAT)
 @click.option('--align_num_cpu', type=click.INT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
@@ -80,22 +83,40 @@ def variant_discovery(
         host, fastq_directories, run_dates, library_names, platform_name,
         sequencing_center, disable_platform_unit, reference, genome_version,
         vcf_directories, prefixes, sleep_time, move, gatk_path_override,
-        gotc_path_override, samtools_path_override, bwa_commandline_override, fastq_bam_mem_size_gb,
-        align_mem_size_gb, merge_bam_mem_size_gb, mark_duplicates_mem_size_gb,
-        sort_mem_size_gb, baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb,
-        indels_mem_size_gb, snps_mem_size_gb, dont_run, callset_name, align_num_cpu, destination):
+        gotc_path_override, samtools_path_override, bwa_commandline_override, fastq_bam_mem_gb,
+        align_mem_gb, merge_bam_mem_gb, mark_duplicates_mem_gb,
+        sort_mem_gb, baserecalibrator_mem_gb, aplly_bqsr_mem_gb, haplotype_caller_mem_gb,
+        indels_mem_gb, snps_mem_gb, dont_run, callset_name, align_num_cpu, merge_gvcfs_mem_gb,
+        validate_bam_mem_gb, destination):
     """Run haplotype-calling and JointGenotyping workflows"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
     inputs = workflows.haplotype_calling_inputs(
-        fastq_directories, library_names, platform_name, run_dates,
-        sequencing_center, disable_platform_unit, reference, genome_version,
-        gatk_path_override, gotc_path_override, samtools_path_override,
-        bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb, merge_bam_mem_size_gb,
-        mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
+        directories=fastq_directories,
+        library_names=library_names,
+        platform_name=platform_name,
+        run_dates=run_dates,
+        sequencing_center=sequencing_center,
+        disable_platform_unit=disable_platform_unit,
+        reference=reference,
+        genome_version=genome_version,
+        gatk_path_override=gatk_path_override,
+        gotc_path_override=gotc_path_override,
+        samtools_path_override=samtools_path_override,
+        bwa_commandline_override=bwa_commandline_override,
+        fastq_bam_mem_gb=fastq_bam_mem_gb,
+        align_mem_gb=align_mem_gb,
+        merge_bam_mem_gb=merge_bam_mem_gb,
+        mark_duplicates_mem_gb=mark_duplicates_mem_gb,
+        sort_mem_gb=sort_mem_gb,
+        baserecalibrator_mem_gb=baserecalibrator_mem_gb,
+        aplly_bqsr_mem_gb=aplly_bqsr_mem_gb,
+        haplotype_caller_mem_gb=haplotype_caller_mem_gb,
+        merge_gvcfs_mem_gb=merge_gvcfs_mem_gb,
+        validate_bam_mem_gb=validate_bam_mem_gb,
+        align_num_cpu=align_num_cpu)
 
     workflows.submit_workflow(
         host, 'haplotype-calling', genome_version, inputs, destination,
@@ -109,7 +130,7 @@ def variant_discovery(
 
     inputs = workflows.joint_discovery_inputs(
         vcf_directories, prefixes, reference, genome_version, callset_name,
-        gatk_path_override, indels_mem_size_gb, snps_mem_size_gb)
+        gatk_path_override, indels_mem_gb, snps_mem_gb)
     workflows.submit_workflow(
         host, 'joint-discovery', genome_version, inputs, destination,
         sleep_time, dont_run, move)
@@ -143,33 +164,55 @@ def variant_discovery(
 @click.option('--gotc_path_override')
 @click.option('--samtools_path_override')
 @click.option('--bwa_commandline_override')
-@click.option('--fastq_bam_mem_size_gb', type=click.FLOAT)
-@click.option('--align_mem_size_gb', type=click.FLOAT)
-@click.option('--merge_bam_mem_size_gb', type=click.FLOAT)
-@click.option('--mark_duplicates_mem_size_gb', type=click.FLOAT)
-@click.option('--sort_mem_size_gb', type=click.FLOAT)
-@click.option('--baserecalibrator_mem_size_gb', type=click.FLOAT)
+@click.option('--fastq_bam_mem_gb', type=click.FLOAT)
+@click.option('--align_mem_gb', type=click.FLOAT)
+@click.option('--merge_bam_mem_gb', type=click.FLOAT)
+@click.option('--mark_duplicates_mem_gb', type=click.FLOAT)
+@click.option('--sort_mem_gb', type=click.FLOAT)
+@click.option('--baserecalibrator_mem_gb', type=click.FLOAT)
+@click.option('--aplly_bqsr_mem_gb', type=click.FLOAT)
+@click.option('--haplotype_caller_mem_gb', type=click.INT)
+@click.option('--merge_gvcfs_mem_gb', type=click.INT)
+@click.option('--validate_bam_mem_gb', type=click.INT)
 @click.option('--align_num_cpu', type=click.INT)
 @click.argument('destination', type=click.Path())
 def haplotype_calling(
         host, directories, library_names, run_dates, platform_name,
         sequencing_center, disable_platform_unit, reference, genome_version,
         dont_run, sleep_time, move, gatk_path_override, gotc_path_override,
-        samtools_path_override, bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb,
-        merge_bam_mem_size_gb, mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu, destination):
+        samtools_path_override, bwa_commandline_override, fastq_bam_mem_gb, align_mem_gb,
+        merge_bam_mem_gb, mark_duplicates_mem_gb, sort_mem_gb,
+        baserecalibrator_mem_gb, aplly_bqsr_mem_gb, haplotype_caller_mem_gb, merge_gvcfs_mem_gb,
+        validate_bam_mem_gb, align_num_cpu, destination):
     """Run only haplotype-calling workflow"""
     if not exists(destination):
         mkdir(destination)
     destination = abspath(destination)
 
     inputs = workflows.haplotype_calling_inputs(
-        directories, library_names, platform_name, run_dates,
-        sequencing_center, disable_platform_unit, reference, genome_version,
-        gatk_path_override, gotc_path_override, samtools_path_override,
-        bwa_commandline_override, fastq_bam_mem_size_gb, align_mem_size_gb, merge_bam_mem_size_gb,
-        mark_duplicates_mem_size_gb, sort_mem_size_gb,
-        baserecalibrator_mem_size_gb, aplly_bqsr_mem_size_gb, align_num_cpu)
+        directories=directories,
+        library_names=library_names,
+        platform_name=platform_name,
+        run_dates=run_dates,
+        sequencing_center=sequencing_center,
+        disable_platform_unit=disable_platform_unit,
+        reference=reference,
+        genome_version=genome_version,
+        gatk_path_override=gatk_path_override,
+        gotc_path_override=gotc_path_override,
+        samtools_path_override=samtools_path_override,
+        bwa_commandline_override=bwa_commandline_override,
+        fastq_bam_mem_gb=fastq_bam_mem_gb,
+        align_mem_gb=align_mem_gb,
+        merge_bam_mem_gb=merge_bam_mem_gb,
+        mark_duplicates_mem_gb=mark_duplicates_mem_gb,
+        sort_mem_gb=sort_mem_gb,
+        baserecalibrator_mem_gb=baserecalibrator_mem_gb,
+        aplly_bqsr_mem_gb=aplly_bqsr_mem_gb,
+        haplotype_caller_mem_gb=haplotype_caller_mem_gb,
+        merge_gvcfs_mem_gb=merge_gvcfs_mem_gb,
+        validate_bam_mem_gb=validate_bam_mem_gb,
+        align_num_cpu=align_num_cpu)
 
     workflows.submit_workflow(
         host, 'haplotype-calling', genome_version, inputs,
@@ -193,13 +236,13 @@ def haplotype_calling(
 @click.option('--move', is_flag=True, default=False,
               help='Move output files to destination directory instead of copying them')
 @click.option('--gatk_path_override')
-@click.option('--indels_variant_recalibrator_mem_size_gb', 'indels_mem_size_gb', type=click.FLOAT)
-@click.option('--snps_variant_recalibrator_mem_size_gb', 'snps_mem_size_gb', type=click.FLOAT)
+@click.option('--indels_variant_recalibrator_mem_gb', 'indels_mem_gb', type=click.FLOAT)
+@click.option('--snps_variant_recalibrator_mem_gb', 'snps_mem_gb', type=click.FLOAT)
 @click.argument('callset_name')
 @click.argument('destination', type=click.Path())
 def joint_genotyping(
         host, directories, prefixes, reference, genome_version, dont_run,
-        sleep_time, move, gatk_path_override, indels_mem_size_gb, snps_mem_size_gb,
+        sleep_time, move, gatk_path_override, indels_mem_gb, snps_mem_gb,
         callset_name, destination):
     """Run only JointGenotyping-gatk4 workflow"""
     if not exists(destination):
@@ -208,7 +251,7 @@ def joint_genotyping(
 
     inputs = workflows.joint_discovery_inputs(
         directories, prefixes, reference, genome_version, callset_name,
-        gatk_path_override, indels_mem_size_gb, snps_mem_size_gb)
+        gatk_path_override, indels_mem_gb, snps_mem_gb)
     workflows.submit_workflow(
         host, 'joint-discovery', genome_version, inputs, destination,
         sleep_time, dont_run, move)

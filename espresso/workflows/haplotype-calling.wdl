@@ -49,13 +49,16 @@ workflow HaplotypeCalling {
         String? gotc_path_override
         String? samtools_path_override
 
-        Float? align_mem_size_gb
-        Float? merge_bam_mem_size_gb
-        Float? mark_duplicates_mem_size_gb
-        Float? sort_mem_size_gb
-        Float? baserecalibrator_mem_size_gb
-        Float? aplly_bqsr_mem_size_gb
-        Float? fastq_bam_mem_size_gb
+        Float? align_mem_gb
+        Float? merge_bam_mem_gb
+        Float? mark_duplicates_mem_gb
+        Float? sort_mem_gb
+        Float? baserecalibrator_mem_gb
+        Float? aplly_bqsr_mem_gb
+        Float? fastq_bam_mem_gb
+        Int? haplotype_caller_mem_gb
+        Int? merge_gvcfs_mem_gb
+        Float? validate_bam_mem_gb
 
         Int? align_num_cpu
     }
@@ -74,7 +77,7 @@ workflow HaplotypeCalling {
                 sequencing_center = sequencing_center[idx],
                 gatk_docker = gatk_docker_override,
                 gatk_path = gatk_path_override,
-                fastq_bam_mem_size_gb = fastq_bam_mem_size_gb
+                fastq_bam_mem_gb = fastq_bam_mem_gb
         }
 
         call ProcessingForVariantDiscoveryGATK4.PreProcessingForVariantDiscovery_GATK4 {
@@ -102,12 +105,12 @@ workflow HaplotypeCalling {
                 gotc_docker = gotc_docker_override,
                 gotc_path = gotc_path_override,
                 python_docker = python_docker_override,
-                align_mem_size_gb = align_mem_size_gb,
-                merge_bam_mem_size_gb = merge_bam_mem_size_gb,
-                mark_duplicates_mem_size_gb = mark_duplicates_mem_size_gb,
-                sort_mem_size_gb = sort_mem_size_gb,
-                baserecalibrator_mem_size_gb = baserecalibrator_mem_size_gb,
-                aplly_bqsr_mem_size_gb = aplly_bqsr_mem_size_gb,
+                align_mem_gb = align_mem_gb,
+                merge_bam_mem_gb = merge_bam_mem_gb,
+                mark_duplicates_mem_gb = mark_duplicates_mem_gb,
+                sort_mem_gb = sort_mem_gb,
+                baserecalibrator_mem_gb = baserecalibrator_mem_gb,
+                aplly_bqsr_mem_gb = aplly_bqsr_mem_gb,
                 align_num_cpu = align_num_cpu
         }
 
@@ -122,7 +125,9 @@ workflow HaplotypeCalling {
                 gatk_docker = gatk_docker_override,
                 gatk_path = gatk_path_override,
                 gitc_docker = gitc_docker_override,
-                samtools_path = samtools_path_override
+                samtools_path = samtools_path_override,
+                haplotype_caller_mem_gb = haplotype_caller_mem_gb,
+                merge_gvcfs_mem_gb = merge_gvcfs_mem_gb
         }
     }
 
@@ -130,7 +135,8 @@ workflow HaplotypeCalling {
         input:
             bam_array = PreProcessingForVariantDiscovery_GATK4.analysis_ready_bam,
             gatk_docker = gatk_docker_override,
-            gatk_path = gatk_path_override
+            gatk_path = gatk_path_override,
+            mem_gb = validate_bam_mem_gb
     }
 
     call ConvertToCram.BamToCram {

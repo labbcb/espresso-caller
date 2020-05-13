@@ -172,9 +172,10 @@ def haplotype_calling_inputs(
         sequencing_center, disable_platform_unit, reference, genome_version,
         gatk_path_override=None, gotc_path_override=None,
         samtools_path_override=None, bwa_commandline_override=None,
-        fastq_bam_mem_size_gb=None, align_mem_size_gb=None, merge_bam_mem_size_gb=None,
-        mark_duplicates_mem_size_gb=None, sort_mem_size_gb=None,
-        baserecalibrator_mem_size_gb=None, aplly_bqsr_mem_size_gb=None, align_num_cpu=None):
+        fastq_bam_mem_gb=None, align_mem_gb=None, merge_bam_mem_gb=None,
+        mark_duplicates_mem_gb=None, sort_mem_gb=None,
+        baserecalibrator_mem_gb=None, aplly_bqsr_mem_gb=None, haplotype_caller_mem_gb=None,
+        merge_gvcfs_mem_gb=None, validate_bam_mem_gb=None, align_num_cpu=None):
     """
     Create inputs for 'haplotype-calling' workflow
     :param directories:
@@ -189,12 +190,15 @@ def haplotype_calling_inputs(
     :param gotc_path_override:
     :param samtools_path_override:
     :param bwa_commandline_override:
-    :param align_mem_size_gb:
-    :param merge_bam_mem_size_gb:
-    :param mark_duplicates_mem_size_gb:
-    :param sort_mem_size_gb:
-    :param baserecalibrator_mem_size_gb:
-    :param aplly_bqsr_mem_size_gb:
+    :param align_mem_gb:
+    :param merge_bam_mem_gb:
+    :param mark_duplicates_mem_gb:
+    :param sort_mem_gb:
+    :param baserecalibrator_mem_gb:
+    :param aplly_bqsr_mem_gb:
+    :param haplotype_caller_mem_gb:
+    :param merge_gvcfs_mem_gb:
+    :param validate_bam_mem_gb:
     :param align_num_cpu:
     :return:
     """
@@ -250,20 +254,26 @@ def haplotype_calling_inputs(
     if bwa_commandline_override:
         inputs['HaplotypeCalling.bwa_commandline_override'] = bwa_commandline_override
 
-    if fastq_bam_mem_size_gb:
-        inputs['HaplotypeCalling.fastq_bam_mem_size_gb'] = fastq_bam_mem_size_gb
-    if align_mem_size_gb:
-        inputs['HaplotypeCalling.align_mem_size_gb'] = align_mem_size_gb
-    if merge_bam_mem_size_gb:
-        inputs['HaplotypeCalling.merge_bam_mem_size_gb'] = merge_bam_mem_size_gb
-    if mark_duplicates_mem_size_gb:
-        inputs['HaplotypeCalling.mark_duplicates_mem_size_gb'] = mark_duplicates_mem_size_gb
-    if sort_mem_size_gb:
-        inputs['HaplotypeCalling.sort_mem_size_gb'] = sort_mem_size_gb
-    if baserecalibrator_mem_size_gb:
-        inputs['HaplotypeCalling.baserecalibrator_mem_size_gb'] = baserecalibrator_mem_size_gb
-    if aplly_bqsr_mem_size_gb:
-        inputs['HaplotypeCalling.aplly_bqsr_mem_size_gb'] = aplly_bqsr_mem_size_gb
+    if fastq_bam_mem_gb:
+        inputs['HaplotypeCalling.fastq_bam_mem_gb'] = fastq_bam_mem_gb
+    if align_mem_gb:
+        inputs['HaplotypeCalling.align_mem_gb'] = align_mem_gb
+    if merge_bam_mem_gb:
+        inputs['HaplotypeCalling.merge_bam_mem_gb'] = merge_bam_mem_gb
+    if mark_duplicates_mem_gb:
+        inputs['HaplotypeCalling.mark_duplicates_mem_gb'] = mark_duplicates_mem_gb
+    if sort_mem_gb:
+        inputs['HaplotypeCalling.sort_mem_gb'] = sort_mem_gb
+    if baserecalibrator_mem_gb:
+        inputs['HaplotypeCalling.baserecalibrator_mem_gb'] = baserecalibrator_mem_gb
+    if aplly_bqsr_mem_gb:
+        inputs['HaplotypeCalling.aplly_bqsr_mem_gb'] = aplly_bqsr_mem_gb
+    if haplotype_caller_mem_gb:
+        inputs['HaplotypeCalling.haplotype_caller_mem_gb'] = haplotype_caller_mem_gb
+    if merge_gvcfs_mem_gb:
+        inputs['HaplotypeCalling.merge_gvcfs_mem_gb'] = merge_gvcfs_mem_gb
+    if validate_bam_mem_gb:
+        inputs['HaplotypeCalling.validate_bam_mem_gb'] = validate_bam_mem_gb
     if align_num_cpu:
         inputs['HaplotypeCalling.align_num_cpu'] = align_num_cpu
 
@@ -272,7 +282,7 @@ def haplotype_calling_inputs(
 
 def joint_discovery_inputs(
         directories, prefixes, reference, version, callset_name,
-        gatk_path_override=None, indels_mem_size_gb=None, snps_mem_size_gb=None):
+        gatk_path_override=None, indels_mem_gb=None, snps_mem_gb=None):
     """
     Create inputs for 'joint-discovery-gatk4-local' workflow
     :param directories:
@@ -281,8 +291,8 @@ def joint_discovery_inputs(
     :param version:
     :param gatk_path_override:
     :param callset_name:
-    :param indels_mem_size_gb:
-    :param snps_mem_size_gb:
+    :param indels_mem_gb:
+    :param snps_mem_gb:
     :return:
     """
 
@@ -310,10 +320,10 @@ def joint_discovery_inputs(
         inputs['JointGenotyping.gatk_path_override'] = abspath(
             gatk_path_override)
 
-    if indels_mem_size_gb:
-        inputs['JointGenotyping.indels_variant_recalibrator_mem_size_gb'] = indels_mem_size_gb
-    if snps_mem_size_gb:
-        inputs['JointGenotyping.snps_variant_recalibrator_mem_size_gb'] = snps_mem_size_gb
+    if indels_mem_gb:
+        inputs['JointGenotyping.indels_variant_recalibrator_mem_gb'] = indels_mem_gb
+    if snps_mem_gb:
+        inputs['JointGenotyping.snps_variant_recalibrator_mem_gb'] = snps_mem_gb
 
     return inputs
 

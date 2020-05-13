@@ -31,6 +31,8 @@ workflow ValidateBamsWf {
     Array[File] bam_array 
     String gatk_docker = "broadinstitute/gatk:latest"
     String gatk_path = "/gatk/gatk"
+
+    Float? mem_gb
   }
 
   # Process the input files in parallel
@@ -45,7 +47,8 @@ workflow ValidateBamsWf {
         input_bam = input_bam,
         output_basename = bam_basename + ".validation",
         docker = gatk_docker,
-        gatk_path = gatk_path
+        gatk_path = gatk_path,
+        machine_mem_gb = mem_gb
     }
   }
 
@@ -63,12 +66,12 @@ task ValidateBAM {
     # Command parameters
     File input_bam
     String output_basename
-    String? validation_mode
+    String validation_mode = "SUMMARY"
     String gatk_path
   
     # Runtime parameters
     String docker
-    Int machine_mem_gb = 4
+    Float machine_mem_gb = 4
     Int addtional_disk_space_gb = 50
   }
     
@@ -80,7 +83,7 @@ task ValidateBAM {
       ValidateSamFile \
       --INPUT ${input_bam} \
       --OUTPUT ${output_name} \
-      --MODE ${default="SUMMARY" validation_mode}
+      --MODE ${validation_mode}
   }
   runtime {
     docker: docker

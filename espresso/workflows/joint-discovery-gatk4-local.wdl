@@ -93,8 +93,8 @@ workflow JointGenotyping {
   Int? huge_disk_override
   Int huge_disk = select_first([huge_disk_override, "400"])
 
-  Float? indels_variant_recalibrator_mem_size_gb
-  Float? snps_variant_recalibrator_mem_size_gb
+  Float? indels_variant_recalibrator_mem_gb
+  Float? snps_variant_recalibrator_mem_gb
 
   # ExcessHet is a phred-scaled p-value. We want a cutoff of anything more extreme
   # than a z-score of -4.5 which is a p-value of 3.4e-06, which phred-scaled is 54.69
@@ -191,7 +191,7 @@ workflow JointGenotyping {
       disk_size = small_disk,
       docker = gatk_docker,
       gatk_path = gatk_path,
-      mem_size_gb = indels_variant_recalibrator_mem_size_gb
+      mem_size_gb = indels_variant_recalibrator_mem_gb
   }
 
   if (num_gvcfs > 10000) {
@@ -239,7 +239,7 @@ workflow JointGenotyping {
         disk_size = small_disk,
         docker = gatk_docker,
         gatk_path = gatk_path,
-        mem_size_gb = snps_variant_recalibrator_mem_size_gb
+        mem_size_gb = snps_variant_recalibrator_mem_gb
       }
     }
     call GatherTranches as SNPGatherTranches {
@@ -272,7 +272,7 @@ workflow JointGenotyping {
           disk_size = small_disk,
           docker = gatk_docker,
           gatk_path = gatk_path,
-          mem_size_gb = snps_variant_recalibrator_mem_size_gb
+          mem_size_gb = snps_variant_recalibrator_mem_gb
     }
   }
 

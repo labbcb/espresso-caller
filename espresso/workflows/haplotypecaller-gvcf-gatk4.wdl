@@ -43,7 +43,10 @@ workflow HaplotypeCallerGvcf_GATK4 {
     String gatk_path = "/gatk/gatk"
     String gitc_docker = "broadinstitute/genomes-in-the-cloud:2.3.1-1500064817"
     String samtools_path = "samtools"
-  }  
+
+    Int? haplotype_caller_mem_gb
+    Int? merge_gvcfs_mem_gb
+  }
 
     Array[File] scattered_calling_intervals = read_lines(scattered_calling_intervals_list)
 
@@ -90,7 +93,8 @@ workflow HaplotypeCallerGvcf_GATK4 {
         hc_scatter = hc_divisor,
         make_gvcf = make_gvcf,
         docker = gatk_docker,
-        gatk_path = gatk_path
+        gatk_path = gatk_path,
+        mem_gb = haplotype_caller_mem_gb
     }
   }
 
@@ -101,7 +105,8 @@ workflow HaplotypeCallerGvcf_GATK4 {
       input_vcfs_indexes = HaplotypeCaller.output_vcf_index,
       output_filename = output_filename,
       docker = gatk_docker,
-      gatk_path = gatk_path
+      gatk_path = gatk_path,
+      mem_gb = merge_gvcfs_mem_gb
   }
 
   # Outputs that will be retained when execution is complete
